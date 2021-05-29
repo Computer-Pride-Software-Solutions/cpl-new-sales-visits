@@ -1,5 +1,7 @@
 {
   "name": "SalesVisits",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
