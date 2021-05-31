@@ -17,7 +17,6 @@
     <div class="ion-text-center ion-text-uppercase"><ion-note>All DRAFT REPORTS</ion-note></div>
     <ion-list>
       <ion-item class="item-client" mode="ios" color="primary" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
-        <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
         <ion-label class="ion-text-wrap card-label" color="light">
           <h2>
             {{ report.clientCode }}
@@ -26,6 +25,8 @@
           <h3>{{ (report.clientName.length>25)? (report.clientName | slice:0:25)+' ...':(report.clientName) }}</h3>
   
         </ion-label>
+        <ion-note slot="end" color="warning">{{report.date | date}}</ion-note>
+
       </ion-item>
     </ion-list>
 
