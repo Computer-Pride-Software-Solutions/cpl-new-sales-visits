@@ -58,74 +58,7 @@ export class ClientService {
       })
     );
   }
-  getProductDetails( ItemCode: string): Observable<IProduct[]> {
-    const endpoint = 'product-details';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${ItemCode}`, {
-      params: this.param,
-      headers : this.headers,
-      withCredentials: true
-    }).pipe(
-      map((data: IProduct[]) => {
-        return data;
-      }), catchError(error => {
-        return throwError('No product found!');
-      })
-    );
-  }
-
-  getItemGroups(): Observable<IItemGroup[]>{
-    const endpoint = 'item-groups';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
-      params: this.param,
-      headers : this.headers,
-      withCredentials: true
-    }).pipe(
-      map((data: IItemGroup[]) => {
-        return data;
-      }), catchError(error => {
-        return throwError(error);
-      })
-    );
-  }
-
-  getProducts(itemGroup: string = '', custCode: string): Observable<IProduct[]>{
-    this.param = this.param.append('itemGroup', itemGroup);
-
-    const endpoint = 'items';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
-      params: this.param,
-      headers : this.headers,
-      withCredentials: true
-    }).pipe(
-      map((data: IProduct[]) => {
-        return data;
-      }), catchError(error => {
-        return throwError(error);
-      })
-    );
-  }
-
-  getSearchedItem(hint: string, custCode: string): Observable<IProduct[]>{
-    if(hint.length > 2){
-    this.param = this.param.append('hint', hint);
-    const endpoint = 'searched-item';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
-      params: this.param,
-      headers : this.headers,
-      withCredentials: true
-    }).pipe(
-      map((data: IProduct[]) => {
-        return data;
-      }), catchError(error => {
-        return throwError('No item found!');
-      })
-    );
-    }
-  }
-
-
-
-
+  
   addNewClient(clientInfo: any){
     const endpoint = 'add-client';
     this.param = this.param.append('clientInfo', clientInfo);
