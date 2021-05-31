@@ -1,17 +1,39 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Tab 3
     </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div class="container">
+    <div class="ion-padding">
+      <ion-searchbar mode="ios" placeholder="Type a client"  (ionInput)='searchDraftReports($event)'></ion-searchbar>
+    </div>
+    <div class="ion-text-center ion-text-uppercase"><ion-note>All DRAFT REPORTS</ion-note></div>
+    <ion-list>
+      <ion-item class="item-client" mode="ios" color="primary" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
+        <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
+        <ion-label class="ion-text-wrap card-label" color="light">
+          <h2>
+            {{ report.clientCode }}
+          </h2>
+          
+          <h3>{{ (report.clientName.length>25)? (report.clientName | slice:0:25)+' ...':(report.clientName) }}</h3>
+  
+        </ion-label>
+      </ion-item>
+    </ion-list>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="clearAllDraftReports()">
+    <ion-fab-button color="danger">
+      <ion-icon name="trash-outline"></ion-icon>     
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

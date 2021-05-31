@@ -1,0 +1,542 @@
+<ion-header class="main-header">
+  <ion-toolbar color="primary">
+      <ion-buttons>
+        <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
+         <ion-note color="light">{{clientDetails[0]?.CustName}}</ion-note>
+      </ion-buttons>
+      <ion-buttons slot="primary">
+        <ion-button (click)="presentActionSheet()">
+          <ion-icon  name="ellipsis-vertical" size="medium" ></ion-icon>
+        </ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+  
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ng-template class="container" ngIf="clientDetails && clientDetails?.length > 0">
+    <ion-content fullscreen class="ion-padding" scroll-y="false" style="overflow-y:hidden;">
+      <ion-slides>
+
+        <ion-slide>
+          <div class="slide">
+            <h2>
+              <ion-icon name="storefront-outline"></ion-icon>
+              <br>
+              <small>Client's Details</small>
+            </h2>
+            <div *ngIf="clientDetails.length > 0; else noDetails" style="height:400px;overflow-y: scroll;" class="slide-form">
+              <ion-list mode="ios">
+                <ion-list-header>
+                  <small>Contacts</small>
+                </ion-list-header> 
+                <ion-item>
+                  <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+                  <ion-label><small>Name: {{clientDetails[0]['CustName']}}</small></ion-label>
+                </ion-item>  
+                <ion-item>
+                  <ion-icon slot="start" name="barcode-outline"></ion-icon>
+                  <ion-label><small>Code: {{clientDetails[0]['CustCode']}}</small></ion-label>
+                </ion-item>       
+                <ion-item>
+                  <ion-icon slot="start" name="person-outline"></ion-icon>
+                  <ion-label><small>Contact person: {{clientDetails[0]['contactperson']}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="call-outline"></ion-icon>
+                  <ion-label><small>Phone: {{clientDetails[0]['phone']}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="mail-outline"></ion-icon>
+                  <ion-label><small>Email: {{clientDetails[0]['email']}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="trail-sign-outline"></ion-icon>
+                  <ion-label><small>Address 1: {{clientDetails[0]['addr1']}}</small></ion-label>
+                </ion-item>
+              </ion-list>
+
+              <ion-list mode="ios">
+                <ion-list-header>
+                  <small>Financial</small>
+                </ion-list-header>        
+                <ion-item>
+                  <ion-icon slot="start" name="pricetags-outline"></ion-icon>
+                  <ion-label><small>Price List: {{clientDetails[0]['PriceListName']}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="eye-outline"></ion-icon>
+                  <ion-label><small>Tax Reg No.: {{clientDetails[0]['taxregnno']}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="pie-chart-outline"></ion-icon>
+                  <ion-label><small>Tax Rate: {{clientDetails[0]['CustTaxRate']}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="mail-outline"></ion-icon>
+                  <ion-label><small>Credit Limit: {{clientDetails[0]['creditlimit'] | currency:'KES '}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="cash-outline"></ion-icon>
+                  <ion-label><small>Outstanding Balance: {{clientDetails[0]['OutstandingBalance'] | currency:'KES '}}</small></ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="calculator-outline"></ion-icon>
+                  <ion-label><small>Payment Terms Balance: {{clientDetails[0]['paymentterms']}}</small></ion-label>
+                </ion-item>
+              </ion-list>
+            </div>
+          </div>
+        </ion-slide>
+
+        <ion-slide>
+          <h2>
+            <!-- <fa-icon [icon]="faTruck"></fa-icon><br> -->
+            <ion-icon  name="rocket-outline"></ion-icon><br>
+
+            <small>Placing Orders</small>
+          </h2>
+
+          <!-- <div class="slide-form"> -->
+          <ion-list mode="ios" class="slide-form">
+            <form id="frmOrder">
+
+              <ion-item *ngIf="deliveryDetails && deliveryDetails.length > 0">
+                <ion-label position="floating">Delivery Address</ion-label>
+                <ionic-selectable
+                  headerColor="primary"
+                  [(ngModel)]="deliveryDetail"
+                  [items]="deliveryDetails"
+                  itemValueField="DelAddrCode"
+                  itemTextField="DelAddrDetails"
+                  [canSearch]="true"
+                  (onChange)="itemDeliveryCodeChange($event)"
+                  name="deliveryCode"
+                  [canClear]="true"
+                  closeButtonSlot="end">
+                </ionic-selectable>
+              </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Product Groups</ion-label>
+            <ionic-selectable
+              headerColor="primary"
+              [(ngModel)]="itemGroup"
+              [items]="itemGroups"
+              itemValueField="ItemGroup"
+              itemTextField="ItemGroup"
+              [canSearch]="true"
+              (onChange)="itemGroupChange($event)"
+              name="itemGroup"
+              [canClear]="true"
+              closeButtonSlot="end">
+            </ionic-selectable>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Select an Item</ion-label>
+            <ionic-selectable
+              headerColor="primary"
+              [(ngModel)]="product"
+              [items]="products"
+              itemValueField="ItemId"
+              itemTextField="ItemName"
+              [canSearch]="true"
+              (onChange)="itemsChange($event)"
+              (onSearch) = "onInput($event)"
+              name="productName"
+              [canClear]="true"
+              closeButtonSlot="end">
+            </ionic-selectable>
+          </ion-item>
+
+          <ion-item *ngIf="product">
+            <ion-label position="stacked">(incl . VAT) Price in KES</ion-label>
+            <ion-input readonly name="price" placeholder="(incl. VAT) Price" mode="ios" value="{{product?.InclPrice | number :'2.1-2'}}"></ion-input>
+          </ion-item>
+
+          <ion-item *ngIf="product">
+            <ion-label  position="stacked">QTY On Hand</ion-label>
+            <ion-input readonly name="QTYOnHand" placeholder="e.g 17  {{product?.UOM}}" mode="ios" value="{{product?.QtyOnHand | number}}  {{product?.UOM}}"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label  position="stacked">QTY ordered in {{product?.UOM}}</ion-label>
+            <ion-input name="QTY" type="number" min="0" placeholder="e.g 25" mode="ios"></ion-input>
+          </ion-item>
+        </form>
+          </ion-list>
+        <!-- </div> -->
+            <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-button (click)="addOrdersToFinalReport()" size="small" expand="block" mode="ios" color="success" style="margin:auto">Add this Order To Final Report&nbsp; <ion-icon name="add-outline"></ion-icon></ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div *ngIf="finalReport" class="stagged-item"> 
+            <ol>
+                <li  *ngFor="let order of finalReport.orders" style="margin:5px 0px; text-align:left;">
+                  <small>
+                    {{order.ItemName}} 
+                    <ion-badge color="success" mode="ios">{{order.QTY}}</ion-badge>
+                  </small>                 
+                </li> 
+            </ol>
+
+          </div>
+
+        </ion-slide>
+
+        <ion-slide>
+          <h2>
+            <!-- <fa-icon [icon]="faLayerGroup"></fa-icon><br> -->
+            <ion-icon name="layers-outline"></ion-icon><br>
+
+            <small>Current Stock</small>
+          </h2>
+
+          <ion-list class="return-of-goods slide-form" mode="ios">
+            <!-- <ion-grid class="return-of-goods"> -->
+              <form id="frmStock">
+
+                <ion-item>
+                  <ion-label position="floating">Product Groups</ion-label>
+                  <ionic-selectable
+                    headerColor="primary"
+                    [(ngModel)]="itemGroup"
+                    [items]="itemGroups"
+                    itemValueField="ItemGroup"
+                    itemTextField="ItemGroup"
+                    [canSearch]="true"
+                    (onChange)="itemGroupChange($event)"
+                    name="itemGroup"
+                    [canClear]="true"
+                    closeButtonSlot="end">
+                  </ionic-selectable>
+                </ion-item>
+
+                <ion-item>
+                  <ion-label position="floating">Products Name</ion-label>
+                  <ionic-selectable
+                    headerColor="primary"
+                    [(ngModel)]="product"
+                    [items]="products"
+                    itemValueField="ItemId"
+                    itemTextField="ItemName"
+                    [canSearch]="true"
+                    (onChange)="itemsChange($event)"
+                    (onSearch) = "onInput($event)"
+                    name="productName"
+                    [canClear]="true"
+                    closeButtonSlot="end">
+                  </ionic-selectable>
+                </ion-item>
+           
+                  <ion-item *ngIf="product">
+                    <ion-label position="stacked">(incl . VAT) Price in KES</ion-label>
+                    <ion-input readonly name="price" placeholder="(incl. VAT) Price" mode="ios" value="{{product?.InclPrice | number :'2.1-2'}}"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label  position="stacked">Current Stock QTY in {{product?.UOM}}</ion-label>
+                    <ion-input name="QTY" type="number" min="0" placeholder="e.g 25" mode="ios"></ion-input>
+                  </ion-item>
+
+                  <ion-item>
+                    <ion-label position="stacked">Item Expiry Date</ion-label>
+                    <ion-datetime name="expiryDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+                  </ion-item>
+
+            </form>
+          </ion-list>
+            <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-button size="small" (click)="addStockToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto" ><ion-icon name="add-outline"></ion-icon>Add Stock To Final Report</ion-button>
+              </ion-col>
+ 
+            </ion-row>
+
+            <div *ngIf="finalReport" class="stagged-item"> 
+              <ol>
+                  <li  *ngFor="let stock of finalReport.stock" style="margin:5px 0px; text-align:left;">
+                    <small>
+                      {{stock.ItemName}} 
+                      <ion-badge color="success" mode="ios">{{stock.QTY}}</ion-badge>
+                    </small>
+                  </li> 
+              </ol>
+            </div>
+          </ion-grid>
+        </ion-slide>
+
+        <ion-slide>
+          <h2>
+            <!-- <fa-icon [icon]="faCookieBite"></fa-icon><br> -->
+            <ion-icon  name="heart-dislike-outline"></ion-icon><br>
+
+            <small>Return of goods</small> 
+          </h2>
+              <ion-list class="return-of-goods slide-form" mode="ios"  style="overflow-y: scroll!important; height:400px">
+                <!-- <ion-grid class="return-of-goods"> -->
+                  <form id="frmReturns">
+
+                    <ion-item>
+                      <ion-label position="floating">Product Groups</ion-label>
+                      <ionic-selectable
+                        headerColor="primary"
+                        [(ngModel)]="itemGroup"
+                        [items]="itemGroups"
+                        itemValueField="ItemGroup"
+                        itemTextField="ItemGroup"
+                        [canSearch]="true"
+                        (onChange)="itemGroupChange($event)"
+                        name="itemGroup"
+                        [canClear]="true"
+                        closeButtonSlot="end">
+                      </ionic-selectable>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="floating">Select an Item</ion-label>
+                      <ionic-selectable
+                        headerColor="primary"
+                        [(ngModel)]="product"
+                        [items]="products"
+                        itemValueField="ItemId"
+                        itemTextField="ItemName"
+                        [canSearch]="true"
+                        (onChange)="itemsChange($event)"
+                        (onSearch) = "onInput($event)"
+                        name="productName"
+                        [canClear]="true"
+                        closeButtonSlot="end">
+                      </ionic-selectable>
+                    </ion-item>
+
+                
+                      <ion-item>
+                        <ion-label position="stacked">Return Reason</ion-label>
+                      <ion-select name="reason" value="Reason" mode="ios" value="Expiring">
+                        <ion-select-option value="Expiring">Expiring</ion-select-option>
+                        <ion-select-option value="Damaged">Damaged</ion-select-option>
+                        <ion-select-option value="Other reasons">Other Reasons</ion-select-option>
+                      </ion-select>
+                      </ion-item>
+
+                      <ion-item>
+                        <ion-label  position="stacked">QTY of goods returned in {{product?.UOM}}</ion-label>
+                        <ion-input name="QTY" type="number" min="0" placeholder="e.g 25" mode="ios"></ion-input>
+                      </ion-item>
+
+                      <ion-item>
+                        <ion-label position="stacked">Batch No.</ion-label>
+                        <ion-input name="bacthNumber" placeholder="e.g BC1234567" mode="ios"></ion-input>
+                      </ion-item>
+
+                  <ion-item>
+                    <ion-label position="stacked">Item Expiry Date</ion-label>
+                    <ion-datetime name="expiryDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+                  </ion-item>
+                </form>
+              </ion-list>
+            <ng-template #noItems>
+              <ion-item>
+                <ion-grid>
+                  <ion-row>
+                    <ion-col class="ion-text-center">No products found.</ion-col>
+                </ion-row>
+                </ion-grid>
+              </ion-item>
+            </ng-template>
+            
+            <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-button size="small" (click)="addReturnsOfGoodsToFinalReport()"  expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add Returns To Final Report</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <div *ngIf="finalReport"> 
+            <ol>
+                <li  *ngFor="let return of finalReport.returns" style="margin:5px 0px; text-align:left;">
+                  <small>
+                    {{return.ItemName}} 
+                    <ion-badge color="success" mode="ios">{{return.QTY}}</ion-badge>
+                  </small>             
+                </li> 
+            </ol>
+
+          </div>
+        </ion-slide>
+
+        
+
+        <ion-slide>
+          <h2>
+            <!-- <fa-icon [icon]="faMoneyBillAlt"></fa-icon><br> -->
+            <ion-icon  name="card-outline"></ion-icon><br>
+
+            <small>Payment Details</small>
+          </h2>
+          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:400px">  
+            <form id="frmPayment" enctype="multipart/form-data">     
+              <ion-item>
+                <ion-label position="stacked">Date Paid</ion-label>
+                  <ion-datetime name="datePaid" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Cheque number</ion-label>
+                <ion-input name="chequeNumber" placeholder="e.g. 12345678" type="text"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Amount</ion-label>
+                <ion-input name="amount" placeholder="e.g. 1000000" type="number"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Bank</ion-label>
+                <ion-input name="bank" placeholder="e.g. Bank of Africa" type="text"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Payment Description</ion-label>
+                <ion-textarea name="paymentDescription" placeholder="e.g Balance"></ion-textarea>
+              </ion-item>
+
+              <ion-item>
+                <ion-fab-button class="ion-margin" (click)="takePhoto()">
+                  <ion-icon name="camera-outline"></ion-icon>
+                </ion-fab-button>
+              </ion-item>
+              <ion-item>
+                <img [src]="pictureB64" alt="Cheque" width="80%"/>
+              </ion-item>
+            </form>   
+        </ion-list>
+          
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-button size="small" (click)="addPaymentToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto">Add Payment To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-slide>
+
+        <ion-slide>
+          <h2>
+            <!-- <fa-icon [icon]="faImages"></fa-icon><br> -->
+            <ion-icon name="images-outline"></ion-icon><br>
+
+            <small>Point of Sales Materials</small>
+          </h2>
+          <form id="frmPOS">
+          <div *ngIf="POS.length > 0;" style="height:300px;overflow-y: scroll;" class="slide-form">
+            <ion-item *ngFor="let item of POS; let indexOfelement=index;">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="1"><small>{{indexOfelement + 1}}</small></ion-col>
+                  <ion-col><small>{{item.val}}</small></ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-checkbox slot="end" name="{{item.val}}" [(ngModel)]="item.isChecked" mode="ios"></ion-checkbox>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </div>
+        </form>
+            <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-button size="small" (click)="addPOSMaterialToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add POS To Final Report</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-slide>
+
+        <ion-slide>
+          <h2>
+            <!-- <fa-icon [icon]="faCommentDots"></fa-icon><br> -->
+            <ion-icon name="chatbox-outline"></ion-icon><br>
+
+            <small> Report Comments</small>
+          </h2>
+          <form id="frmComment" class="slide-form">
+            <ion-item>
+              <ion-label position="floating">Comment</ion-label>
+              <ion-textarea name="comment" rows="6" cols="20" placeholder="Leave your comment here...">
+              </ion-textarea>
+            </ion-item>
+          </form>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-button size="small" (click)="addCommentToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add your Comment To Final Report</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-slide>
+
+
+      </ion-slides>
+    </ion-content>
+  </ng-template>
+  
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary">
+      <ion-icon name="chevron-up-circle-outline" ></ion-icon>
+    </ion-fab-button>
+     <ion-fab-list side="top">
+       <!--Final report-->
+      <ion-fab-button color="light" (click)="presentModal()">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </ion-fab-button>
+      <!--comment-->
+      <ion-fab-button color="light" (click)="goToSlide(6)">
+        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+      </ion-fab-button>
+      <!--POS-->
+      <ion-fab-button color="light" (click)="goToSlide(5)">
+        <ion-icon name="trail-sign-outline"></ion-icon>
+      </ion-fab-button>
+      <!--Payment-->
+      <ion-fab-button color="light" (click)="goToSlide(4)">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </ion-fab-button>
+      <!--Returns-->
+      <ion-fab-button color="light" (click)="goToSlide(3)">
+        <ion-icon name="repeat-outline"></ion-icon>
+      </ion-fab-button>
+      <!--Stocks-->
+      <ion-fab-button color="light" (click)="goToSlide(2)">
+        <ion-icon name="layers-outline"></ion-icon>
+      </ion-fab-button>
+      <!--Orders-->
+      <ion-fab-button color="light" (click)="goToSlide(1)">
+        <ion-icon name="basket-outline"></ion-icon>
+      </ion-fab-button>
+      <!---Info-->
+      <ion-fab-button color="light" (click)="goToSlide(0)">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>
+<ion-footer class="ion-text-center" style="background-color: #FFFFFF; color:#00000083">
+  <!-- <ion-toolbar style="padding: 0px;"> -->
+  <small>Swipe left or right </small>
+<!-- </ion-toolbar> -->
+</ion-footer>

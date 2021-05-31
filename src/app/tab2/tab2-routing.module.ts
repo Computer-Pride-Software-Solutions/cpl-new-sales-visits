@@ -6,7 +6,12 @@ const routes: Routes = [
   {
     path: '',
     component: Tab2Page,
-  }
+  },
+  // {
+  //   path: 'client-details/:custCode',
+  //   loadChildren: () => import('./client-details/client-details.module').then( m => m.ClientDetailsPageModule)
+  // }
+
 ];
 
 @NgModule({

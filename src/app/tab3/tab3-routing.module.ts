@@ -6,6 +6,10 @@ const routes: Routes = [
   {
     path: '',
     component: Tab3Page,
+  },
+    {
+    path: 'client-details/:custCode',
+    loadChildren: () => import('../tab2/client-details/client-details.module').then( m => m.ClientDetailsPageModule)
   }
 ];
 

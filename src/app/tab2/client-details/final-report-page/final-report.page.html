@@ -1,0 +1,159 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>
+      <h2>
+        <!-- <fa-icon [icon]="faFileInvoice"></fa-icon><br> -->
+        <!-- <ion-icon name="documents-outline"></ion-icon><br> -->
+
+        <small>Final Report</small>
+      </h2>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <div class="loader"  *ngIf="isLoading">
+    <ion-spinner name="lines" color="primary" mode="ios"></ion-spinner>
+  </div>
+  <ion-list>
+    <ion-list-header>
+     <h6><small>TODAY'S ORDERS</small></h6>
+    </ion-list-header> 
+    <ion-item>
+        <ion-grid>
+          <ion-row class="ion-text-uppercase">
+            <ion-col class="ion-text-left"><small>ITEM</small></ion-col>
+            <ion-col class="ion-text-right"><small>QTY</small></ion-col>
+            <ion-col class="ion-text-right"><small>Price</small></ion-col>
+            <ion-col class="ion-text-right"><small>LINE TOT.</small></ion-col>
+          </ion-row>
+          <ion-row *ngFor="let order of finalReport.orders; let i = index;">
+            <ion-col class="ion-text-left"><small>{{order.ItemName}}</small></ion-col>
+            <ion-col  class="ion-text-right"><small>{{order.QTY | number}}</small></ion-col>
+            <ion-col  class="ion-text-right"><small>{{order.price | currency:'KES '}}</small></ion-col>
+            <ion-col  class="ion-text-right"><small>{{order.QTY * order.price | currency:'KES '}}</small></ion-col>
+          </ion-row>
+          <ion-row>        
+            <ion-col class="ion-text-right"><small><strong>TOTAL: {{this.totalOrders | currency:'KES '}}</strong></small></ion-col>
+          </ion-row>
+        </ion-grid>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+     <h6><small>CURRENT STOCK</small></h6>
+    </ion-list-header> 
+    <ion-item>
+        <ion-grid>
+          <ion-row class="ion-text-uppercase">
+            <ion-col size="1"><small>#</small></ion-col>
+            <ion-col class="ion-text-left"> <small>ITEM</small></ion-col>
+            <ion-col size="2" class="ion-text-right"><small>QTY</small></ion-col>
+          </ion-row>
+          <ion-row *ngFor="let stock of finalReport.stock; let i = index;">
+            <ion-col size="1">{{i + 1}}</ion-col>
+            <ion-col class="ion-text-left"><small>{{stock.ItemName}}</small></ion-col>
+            <ion-col size="2" class="ion-text-right"><small>{{stock.QTY | number :'2.1-2'}}</small></ion-col>
+          </ion-row>
+        </ion-grid>
+    </ion-item>
+</ion-list>
+
+<ion-list>
+  <ion-list-header>
+     <h6><small>AVAILABLE POS MATERIAL</small></h6>
+    </ion-list-header> 
+    <ion-item>
+        <ion-grid>
+          <ion-row class="ion-text-uppercase">
+            <ion-col size="1"><small>#</small></ion-col>
+            <ion-col class="ion-text-left"><small>MATERIAL</small></ion-col>
+          </ion-row>
+          <ion-row *ngFor="let pos of finalReport.POS | keyvalue; let i = index">
+            <ion-col size="1">{{i + 1}}</ion-col>
+            <ion-col class="ion-text-left"><small>{{pos.key}}</small></ion-col>
+          </ion-row>
+        </ion-grid>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header class="ion-text-left">
+     <h6><small>RETURN OF GOODS</small></h6>
+    </ion-list-header> 
+    <ion-item>
+        <ion-grid>
+          <ion-row class="ion-text-uppercase">
+            <ion-col class="ion-text-left"><small>ITEM</small></ion-col>
+            <ion-col class="ion-text-left"><small>REASON</small></ion-col>
+            <ion-col class="ion-text-right"><small>QTY</small></ion-col>
+            <ion-col class="ion-text-left"><small>EXPIRY</small></ion-col>
+            <ion-col class="ion-text-left"><small>BATCH</small></ion-col>
+
+          </ion-row>
+          <ion-row *ngFor="let return of finalReport.returns">
+            <ion-col class="ion-text-left"><small>{{return.ItemName}}</small></ion-col>
+            <ion-col class="ion-text-left"><small>{{return.reason}}</small></ion-col>
+            <ion-col class="ion-text-right"><small>{{return.QTY | number :'2.1-2'}}</small></ion-col>
+            <ion-col class="ion-text-left"><small>{{return.expiryDate | date}}</small></ion-col>
+            <ion-col class="ion-text-left"><small>{{return.bacthNumber}}</small></ion-col>
+
+          </ion-row>
+        </ion-grid>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+     <h6><small>PAYMENT DETAILS</small></h6>
+    </ion-list-header> 
+    <ion-item>
+      <small>Amount Paid: {{finalReport.payment?.amount | currency:'KES '}}</small>
+    </ion-item>
+    <ion-item>
+      <small>Date Paid: {{finalReport.payment?.datePaid | date}}</small>
+    </ion-item>
+    <ion-item>
+      <small>Cheque No: {{finalReport.payment?.chequeNumber}}</small>
+    </ion-item>
+    <ion-item>
+      <small>Bank: {{finalReport.payment?.bank}}</small>
+    </ion-item>
+    <ion-item>
+      <small>Description: {{finalReport.payment.paymentDescription}}</small>
+    </ion-item>
+    <ion-item>
+      <img src=""/>
+    </ion-item>
+  </ion-list>
+
+<!-- <div>
+  <ion-list-header>
+    <h6><small>PAYMENT DETAILS</small></h6>
+   </ion-list-header> 
+  
+</div> -->
+
+<ion-list>
+  <ion-list-header>
+    <h6><small>Your comment</small></h6>
+   </ion-list-header> 
+   <ion-item>
+     <p>{{finalReport.comments}}</p>
+   </ion-item>
+</ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="confirmSubmission()">
+    <ion-fab-button color="primary">
+      <ion-icon name="cloud-upload-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-button (click)="dismissModal()">Close</ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-footer>

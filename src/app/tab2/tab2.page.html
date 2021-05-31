@@ -1,17 +1,45 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <div class="container">
+    <div class="ion-padding">
+      <ion-searchbar mode="ios" (ionInput)='searchClients($event)' placeholder="Type a client"></ion-searchbar>
+    </div>
+
+    <div class="ion-text-center ion-text-uppercase"><ion-note>All Clients</ion-note></div>
+    <ion-list>
+    <ion-item class="item-client" mode="ios" color="primary" *ngFor="let client of clients"  [routerLink]="'client-details/'+ client.CustCode" [detail]="true">
+      <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
+      <ion-label class="ion-text-wrap card-label" color="light">
+        <h2>
+          {{ client.CustCode }}
+        </h2>
+        
+        <h3>{{ (client.CustName.length>25)? (client.CustName | slice:0:25)+' ...':(client.CustName) }}</h3>
+
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+</div>
+
+<ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll-content
+    loadingSpinner="bubbles"
+    loadingText="Loading more Clients ...">
+  </ion-infinite-scroll-content>
+</ion-infinite-scroll>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="presentAddNewClient()">
+  <ion-fab-button color="light">
+    <ion-icon name="person-add-outline"></ion-icon>
+    
+  </ion-fab-button>
+</ion-fab>
+
 </ion-content>
+
+

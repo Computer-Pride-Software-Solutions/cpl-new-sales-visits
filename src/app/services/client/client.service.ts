@@ -1,0 +1,188 @@
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { from, Observable, throwError, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+import { IClient, IClientDetails } from 'src/app/interfaces/IClient';
+import { IItemGroup, IPriceList, IProduct } from 'src/app/interfaces/IProducts';
+import { IDeliveryDetails } from 'src/app/interfaces/IDelivery';
+import { AlertController } from '@ionic/angular';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ClientService {
+  private baseUrl = environment.BASE_URL;
+  private headers = new HttpHeaders();
+  private param = new HttpParams();
+  currentUser = localStorage.getItem('currentUser');
+
+  constructor(private httpClient: HttpClient, public alertController: AlertController) {
+    this.headers = this.headers.set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+    // this.param = this.param.append('currentUser', this.currentUser);
+  }
+
+  getClients(page: number, hint: string): Observable<IClient[]> {
+    const endpoint = 'clients';
+    let URL = `${this.baseUrl}/${endpoint}/${page}`;
+    if (hint.length > 0){
+      URL = `${this.baseUrl}/${endpoint}/${page}/${hint}`;
+    }
+    return this.httpClient.get(`${URL}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IClient[]) => {
+        return data;
+      }), catchError(error => {
+        this.presentAlert("Kindly Swipe Down to Refresh", "Logout then Login or");
+
+        return throwError(error);
+      })
+    );
+  }
+
+  getClientDetails(custCode: string): Observable<IClientDetails[]> {
+    const endpoint = 'client-details';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IClientDetails[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError('No client found!');
+      })
+    );
+  }
+  getProductDetails( ItemCode: string): Observable<IProduct[]> {
+    const endpoint = 'product-details';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${ItemCode}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IProduct[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError('No product found!');
+      })
+    );
+  }
+
+  getItemGroups(): Observable<IItemGroup[]>{
+    const endpoint = 'item-groups';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IItemGroup[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError(error);
+      })
+    );
+  }
+
+  getProducts(itemGroup: string = '', custCode: string): Observable<IProduct[]>{
+    this.param = this.param.append('itemGroup', itemGroup);
+
+    const endpoint = 'items';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IProduct[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError(error);
+      })
+    );
+  }
+
+  getSearchedItem(hint: string, custCode: string): Observable<IProduct[]>{
+    if(hint.length > 2){
+    this.param = this.param.append('hint', hint);
+    const endpoint = 'searched-item';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IProduct[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError('No item found!');
+      })
+    );
+    }
+  }
+
+
+
+
+  addNewClient(clientInfo: any){
+    const endpoint = 'add-client';
+    this.param = this.param.append('clientInfo', clientInfo);
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data) => {
+        return data;
+      }), catchError(error => {
+        return throwError(error);
+      })
+    );
+  }
+
+  getPriceList(): Observable<IPriceList[]>{
+    const endpoint = 'pricelist';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IPriceList[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError('No client found!');
+      })
+    );
+  }
+
+  getDeliveryCode(custCode): Observable<IDeliveryDetails[]>{
+    const endpoint = 'delivery-code';
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
+      params: this.param,
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data: IDeliveryDetails[]) => {
+        return data;
+      }), catchError(error => {
+        return throwError(error);
+      })
+    );
+  }
+
+  async presentAlert(msg, status) {
+    const alert = await this.alertController.create({
+      cssClass: 'secondary',
+      header: 'You have been idle for long!',
+      subHeader: `${status}`,
+      message: `${msg}`,
+      mode: 'ios',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+}
