@@ -15,6 +15,7 @@ import { IDeliveryDetails } from 'src/app/interfaces/IDelivery';
 import { ClientService } from 'src/app/services/client/client.service';
 import { FinalReportPage } from './final-report-page/final-report.page';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
+import { ProductService } from 'src/app/services/product/product.service';
 
 @Component({
   selector: 'app-client-details',
@@ -71,7 +72,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   hide:boolean=false;
   constructor(public actionSheetController: ActionSheetController,
     private activatedRoute: ActivatedRoute,
-    private orderService: ClientService,
+    private clientService: ClientService,
+    private productService: ProductService,
     public alertController: AlertController,
     public modalController: ModalController,
     private toastCtrl: ToastController,
@@ -367,7 +369,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getClientDetails(): void {
     this.subscription.add(
-      this.orderService.getClientDetails(this.custCode)
+      this.clientService.getClientDetails(this.custCode)
       .subscribe((data: IClientDetails[]) => {
         this.clientDetails = data;
       })
@@ -406,7 +408,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getItemGroup(): void{
     this.subscription.add(
-      this.orderService.getItemGroups()
+      this.productService.getItemGroups()
       .subscribe((itemGroups: IItemGroup[]) => {
         this.itemGroups = itemGroups;
       })
@@ -415,7 +417,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getDeliveryCode(): void{
     this.subscription.add(
-      this.orderService.getDeliveryCode(this.custCode).subscribe(deliveryDetails => {
+      this.clientService.getDeliveryCode(this.custCode).subscribe(deliveryDetails => {
         this.deliveryDetails = deliveryDetails;
       })
     );
@@ -440,7 +442,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getItems(itemGroup: string): void{
     this.subscription.add(
-      this.orderService.getProducts(itemGroup, this.custCode)
+      this.productService.getProducts(itemGroup, this.custCode)
       .subscribe((products: IProduct[]) => {
         this.products = products;
        })
@@ -451,7 +453,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   getSearchedItem(hint): void{
     try{
     this.subscription.add(
-      this.orderService.getSearchedItem(hint, this.custCode)
+      this.productService.getSearchedItem(hint, this.custCode)
       .subscribe((products: IProduct[]) => {
         this.products = products;
        })
