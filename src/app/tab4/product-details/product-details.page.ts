@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-details',
@@ -7,11 +9,19 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./product-details.page.scss'],
 })
 export class ProductDetailsPage implements OnInit {
-  custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
 
-  constructor(private activatedRoute: ActivatedRoute,) { }
+
+  product: any;
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit() {
+    this.product = this.router.getCurrentNavigation().extras.state.product;
+    // console.log(this.router.getCurrentNavigation().extras.state.product); // should log out 'bar'
+
   }
 
   getBackButtonText() {

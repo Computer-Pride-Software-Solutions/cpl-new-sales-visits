@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IProduct } from '../interfaces/IProducts';
 import { ProductService } from '../services/product/product.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-tab4',
@@ -11,7 +12,9 @@ import { ProductService } from '../services/product/product.service';
 export class Tab4Page implements OnInit {
   subscription: Subscription = new Subscription();
 
-  constructor(private productService: ProductService) { }
+  constructor(
+    private productService: ProductService,
+  ) { }
 
   ngOnInit() {
     this.getProducts(this.initialChunk);
@@ -70,6 +73,8 @@ export class Tab4Page implements OnInit {
 
     }, 500);
   }
+
+
   
 
 }

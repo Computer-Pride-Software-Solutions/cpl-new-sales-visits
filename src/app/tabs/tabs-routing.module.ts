@@ -41,8 +41,9 @@ const routes: Routes = [
     loadChildren: () => import('../tab2/client-details/client-details.module').then( m => m.ClientDetailsPageModule)
   },
   {
-    path: 'tabs/tab4/product-details/:ItemCode',
-    loadChildren: () => import('../tab4/product-details/product-details.module').then( m => m.ProductDetailsPageModule)
+    path: 'tabs/tab4/product-details',
+    loadChildren: () => import('../tab4/product-details/product-details.module').then( m => m.ProductDetailsPageModule),
+    // data : {"name": "sam"}
   }
 ];
 

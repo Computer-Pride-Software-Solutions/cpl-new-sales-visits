@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-buttons>
       <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
-       <!-- <ion-note color="light">{{clientDetails[0]?.CustName}}</ion-note> -->
+       <ion-note color="light">{{(product.ItemName.length>20)? (product.ItemName | slice:0:15)+' ...':(product.ItemName) }}</ion-note>
     </ion-buttons>
     <ion-buttons slot="primary">
       <!-- <ion-button (click)="presentActionSheet()">

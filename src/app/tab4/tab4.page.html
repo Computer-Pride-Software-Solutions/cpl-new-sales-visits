@@ -15,7 +15,7 @@
 
     <div class="ion-text-center ion-text-uppercase"><ion-note>All Items</ion-note></div>
     <ion-list>
-    <ion-item class="item-client" mode="ios" color="primary" *ngFor="let product of products"  [routerLink]="'product-details/'+ product.ItemCode" [detail]="true">
+    <ion-item class="item-client" mode="ios" color="primary" *ngFor="let product of products"  [routerLink]="['./product-details']"  [state]="{ product: product }"  [detail]="true">
       <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
       <ion-label class="ion-text-wrap card-label" color="light">
         <h2>
@@ -25,7 +25,7 @@
         <h6>{{ (product.ItemName.length>25)? (product.ItemName | slice:0:18)+' ...':(product.ItemName) }}</h6>
 
       </ion-label>
-      <ion-note slot="end" color="warning">99 {{product.UOM}}</ion-note>
+      <ion-note slot="end" color="warning">{{product.QtyOnHand}} {{product.UOM}}</ion-note>
 
     </ion-item>
   </ion-list>
