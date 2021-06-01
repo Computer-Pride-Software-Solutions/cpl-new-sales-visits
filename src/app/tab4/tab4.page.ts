@@ -39,8 +39,9 @@ export class Tab4Page implements OnInit {
   products: IProduct[] = [];
   getProducts(chunk: number, hint:string = ''){
     this.subscription.add(
-      this.productService.getAllProducts(chunk, hint).subscribe((products) => {
+      this.productService.getAllProducts(chunk, hint).subscribe((products: IProduct[]) => {
         this.products = products;
+        // console.log(products);
       })
     )
   }
@@ -49,28 +50,28 @@ export class Tab4Page implements OnInit {
   hint: string = '';
   searchProducts(event): boolean{
     this.hint = (event)? event.target.value.toString().toLowerCase(): '';
-    let regex = new RegExp(this.hint);
-    let searchedProducts = this.products.filter(product => regex.test(product.ItemName.toLowerCase()));
+    // let regex = new RegExp(this.hint);
+    // let searchedProducts = this.products.filter(product => regex.test(product.ItemName.toLowerCase()));
 
-    if(this.hint.length < 1 || searchedProducts.length < 1){
-      this.getProducts(this.initialChunk);
-      return false;
-    }
-    this.products = searchedProducts;
+    // if(searchedProducts.length < 1){
+    //   this.getProducts(this.initialChunk, this.hint);
+    //   return false;
+    // }
+    // this.products = searchedProducts;
+    this.getProducts(this.initialChunk, this.hint);
+    return true;
+
   }
 
-  initialChunk:number = 100;
+  initialChunk:number = 50;
   loadData(event) {
-    // this.clients = []; 
-    // this.page = this.page + 1; // setting new page to load
-    this.initialChunk += this.initialChunk;
+    this.initialChunk += 50;
     setTimeout(() => {
       event.target.complete();
 
       // App logic to determine if all data is loaded
       // and disable the infinite scroll
       this.getProducts(this.initialChunk, this.hint); // Fetching new orders
-
     }, 500);
   }
 
