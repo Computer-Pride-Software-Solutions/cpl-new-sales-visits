@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { LocationService } from 'src/app/services/location/location.service';
 import { Geolocation} from '@ionic-native/geolocation/ngx';
 import { FinalReportService } from 'src/app/services/FinalReport/final-report.service';
+import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 @Component({
   selector: 'app-final-report',
@@ -32,7 +33,9 @@ export class FinalReportPage implements OnInit, OnDestroy {
     public alertController: AlertController,
     private finalReportService: FinalReportService,
     private router: Router,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private firebaseService: FirebaseService,
+
     ) {
 
      }
@@ -56,8 +59,13 @@ export class FinalReportPage implements OnInit, OnDestroy {
     });
   }
 
-  submitFinalReport(): void{
+  async submitFinalReport(): Promise<void>{
     this.isLoading = true;
+    if (Object.keys(this.finalReport.payment).length > 0){
+      let url = await this.firebaseService.uploadImageToFirebase('payments',this.finalReport.payment.proofOfPayment)
+      this.finalReport.payment.proofOfPayment = url;
+      // console.log(url);
+    }
     if(this.locationService.currenGPS === undefined || this.locationService.currenGPS === null){
       this.locationService.getCurrentPosition().then(gps => {
         this.subscription.add(   

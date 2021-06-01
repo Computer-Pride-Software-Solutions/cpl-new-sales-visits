@@ -1,0 +1,29 @@
+ion-item ion-note {
+    float: right;
+    align-items: center;
+    display: flex;
+    font-size:0.7rem;
+}
+
+ ion-card.order{
+    --ion-background-color:var(--ion-color-primary);
+    --color:var(--ion-color-primary-contrast)!important;
+    border:solid var(--ion-color-primary) 1px!important;
+  }
+  div.container{
+      margin-bottom: 50px;
+      margin-top:20%!important;
+  }
+  ion-item.item-client{
+    margin:0.5rem 1rem!important;
+    border-radius: 8px!important;
+  }
+
+//   ion-label.card-label{
+//     --color:var(--ion-color-primary)!important;
+//   }
+
+
+  
+
+  

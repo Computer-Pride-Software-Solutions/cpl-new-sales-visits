@@ -14,7 +14,7 @@ export class Tab2Page {
 
   clients: IClient[] = [];
   lc = [];
-  subscription: Subscription;
+  subscription: Subscription = new Subscription();
   page = 0;
   hint = '';
 

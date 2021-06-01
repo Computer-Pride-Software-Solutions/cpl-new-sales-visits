@@ -15,6 +15,8 @@ import { IDeliveryDetails } from 'src/app/interfaces/IDelivery';
 import { ClientService } from 'src/app/services/client/client.service';
 import { FinalReportPage } from './final-report-page/final-report.page';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
+import { ProductService } from 'src/app/services/product/product.service';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 @Component({
   selector: 'app-client-details',
@@ -71,11 +73,13 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   hide:boolean=false;
   constructor(public actionSheetController: ActionSheetController,
     private activatedRoute: ActivatedRoute,
-    private orderService: ClientService,
+    private clientService: ClientService,
+    private productService: ProductService,
     public alertController: AlertController,
     public modalController: ModalController,
     private toastCtrl: ToastController,
-    private db: DexieService) { }
+    private db: DexieService,
+    private camera: Camera) { }
     @ViewChild(IonSlides) slides: IonSlides;
 
 
@@ -331,7 +335,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       const fd = new FormData(frm);
       if (this.formValidation(fd)){
 
-        this.finalReport.payment['proofOfPayment'] = this.picture;
+        this.finalReport.payment['proofOfPayment'] = this.pictureB64;
         for (const key of fd.keys()) {
           if (fd.get(key).toString().length > 0){
             this.finalReport.payment[key] = fd.get(key);
@@ -367,7 +371,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getClientDetails(): void {
     this.subscription.add(
-      this.orderService.getClientDetails(this.custCode)
+      this.clientService.getClientDetails(this.custCode)
       .subscribe((data: IClientDetails[]) => {
         this.clientDetails = data;
       })
@@ -406,7 +410,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getItemGroup(): void{
     this.subscription.add(
-      this.orderService.getItemGroups()
+      this.productService.getItemGroups()
       .subscribe((itemGroups: IItemGroup[]) => {
         this.itemGroups = itemGroups;
       })
@@ -415,7 +419,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getDeliveryCode(): void{
     this.subscription.add(
-      this.orderService.getDeliveryCode(this.custCode).subscribe(deliveryDetails => {
+      this.clientService.getDeliveryCode(this.custCode).subscribe(deliveryDetails => {
         this.deliveryDetails = deliveryDetails;
       })
     );
@@ -440,7 +444,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getItems(itemGroup: string): void{
     this.subscription.add(
-      this.orderService.getProducts(itemGroup, this.custCode)
+      this.productService.getProducts(itemGroup, this.custCode)
       .subscribe((products: IProduct[]) => {
         this.products = products;
        })
@@ -451,7 +455,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   getSearchedItem(hint): void{
     try{
     this.subscription.add(
-      this.orderService.getSearchedItem(hint, this.custCode)
+      this.productService.getSearchedItem(hint, this.custCode)
       .subscribe((products: IProduct[]) => {
         this.products = products;
        })
@@ -508,6 +512,21 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     // const selectedFile = document.getElementById('input').files[0];
 
 
+    const options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.DATA_URL, // if the app crashes try FILE_URI then convert it Base64 using the logic from the onFileChange() function above
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    }
+    
+    this.camera.getPicture(options).then((imageData) => {
+     // imageData is either a base64 encoded string or a file URI
+     // If it's base64 (DATA_URL):
+     let base64Image = 'data:image/jpeg;base64,' + imageData;
+     this.pictureB64 = base64Image;
+    }, (err) => {
+     // Handle error
+    });
   }
 
 

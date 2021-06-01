@@ -5,6 +5,14 @@
 export const environment = {
   production: false,
   BASE_URL: 'http://localhost:8000',
+  firebase: {
+    apiKey: "AIzaSyCRE0Y5jrBzOVKUcwxk92sj_JH_FRnQxqE",
+    authDomain: "sales-advisor-866b4.firebaseapp.com",
+    projectId: "sales-advisor-866b4",
+    storageBucket: "sales-advisor-866b4.appspot.com",
+    messagingSenderId: "848859883407",
+    appId: "1:848859883407:web:5396dc2b957b21c85d0dfa"
+  }
 };
 
 /*

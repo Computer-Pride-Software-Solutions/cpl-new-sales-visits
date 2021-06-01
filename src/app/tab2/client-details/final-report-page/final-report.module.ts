@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { FinalReportPagePageRoutingModule } from './final-report-routing.module';
 
 import { FinalReportPage } from './final-report.page';
+import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 
 @NgModule({
   imports: [
@@ -14,6 +15,9 @@ import { FinalReportPage } from './final-report.page';
     FormsModule,
     IonicModule,
     FinalReportPagePageRoutingModule
+  ],
+  providers: [
+    FirebaseService
   ],
   declarations: [FinalReportPage]
 })

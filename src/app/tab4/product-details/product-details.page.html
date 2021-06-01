@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons>
+      <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
+       <ion-note color="light">{{(product?.ItemName.length>25)? (product?.ItemName | slice:0:25)+' ...':(product?.ItemName) }}</ion-note>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <!-- <ion-button (click)="presentActionSheet()">
+        <ion-icon  name="ellipsis-vertical" size="medium" ></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+</ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-card mode="ios">
+    <ion-slides pager="true" [options]="slideOpts">
+      <ion-slide *ngFor="let img of product?.ImageURL.split(';')">
+        <img [src]="img" />
+      </ion-slide>
+    </ion-slides>
+    <ion-card-header>
+      <ion-card-subtitle>{{product?.ItemCode}}</ion-card-subtitle>
+      <ion-card-title><h6>{{product?.ItemName}}</h6></ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row class="ion-align-items-center">
+          <ion-col>
+            <small>QTY</small>
+          </ion-col>
+          <ion-col>
+           <small>INCL.</small>
+          </ion-col>
+          <ion-col>
+            <small>TAX</small>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center">
+          <ion-col>
+            <small>{{product?.QtyOnHand | number}} {{product?.UOM}}</small>
+          </ion-col>
+          <ion-col>
+            <small>{{(product?.SalePriceExcl * product?.SaleTaxRate/100) + product?.SalePriceExcl | currency:'KES '}}</small>
+          </ion-col>
+          <ion-col>
+            <small>{{(product?.SalePriceExcl * product?.SaleTaxRate/100) | currency:'KES '}}</small>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <!-- Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the Wisconsin Territory in 1836. -->
+    </ion-card-content>
+  </ion-card>
+</ion-content>
