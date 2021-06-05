@@ -1,0 +1,72 @@
+<ion-header fullscreen>
+  <ion-toolbar>
+    <ion-title >{{visitHeader.custName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+
+  <ion-title *ngIf="!visitSummary || !visitSummary.Orders.length > 0 && !visitSummary.Returns.length >  0 && !visitSummary.Comment[0]?.SalesRepRemarks.trim().length > 0">No summary Available</ion-title>
+  
+  <ion-list *ngIf="visitSummary && visitSummary.Orders.length > 0">
+    <ion-list-header>
+      <h6><small>ORDERS PLACED ON {{visitHeader.visitDate}}</small></h6>
+    </ion-list-header> 
+    <ion-item>
+      <ion-grid>
+        <ion-row class="ion-text-uppercase">
+          <!-- <ion-col class="ion-text-left"><small>#</small></ion-col> -->
+          <ion-col class="ion-text-left"><small>ITEM</small></ion-col>
+          <ion-col class="ion-text-right"><small>QTY</small></ion-col>
+          <ion-col class="ion-text-right"><small>PRICE INCL.</small></ion-col>
+        </ion-row>
+        <ion-row *ngFor="let order of visitSummary.Orders; let i = index;">
+          <!-- <ion-col class="ion-text-left"><small>{{i+1}}</small></ion-col> -->
+          <ion-col class="ion-text-left"><small>{{order.ItemName}}</small></ion-col>
+          <ion-col class="ion-text-right"><small>{{order.STKQTY | number}}</small></ion-col>
+          <ion-col class="ion-text-right"><small>{{order.STKPriceIncl | currency:'KES '}}</small></ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+
+  <ion-list  *ngIf="visitSummary && visitSummary.Returns.length > 0">
+    <ion-list-header>
+      <h6><small>ITEMS RETURNED ON {{visitHeader.visitDate}}</small></h6>
+    </ion-list-header> 
+    <ion-item>
+      <ion-grid>
+        <ion-row class="ion-text-uppercase">
+          <!-- <ion-col class="ion-text-left"><small>#</small></ion-col> -->
+          <ion-col class="ion-text-left"><small>ITEM</small></ion-col>
+          <ion-col class="ion-text-right"><small>QTY</small></ion-col>
+          <ion-col class="ion-text-right"><small>STATUS</small></ion-col>
+        </ion-row>
+        <ion-row *ngFor="let return of visitSummary.Returns; let i = index;">
+          <!-- <ion-col class="ion-text-left"><small>{{i+1}}</small></ion-col> -->
+          <ion-col class="ion-text-left"><small>{{return.ItemName}}</small></ion-col>
+          <ion-col class="ion-text-right"><small>{{return.Qty | number}}</small></ion-col>
+          <ion-col class="ion-text-right"><small>{{return.Status}}</small></ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+
+  <ion-list  *ngIf="visitSummary && visitSummary.Comment[0]?.SalesRepRemarks.trim().length > 0">
+    <ion-list-header>
+      <h6><small>SALES REP COMMENT ON {{visitHeader.visitDate}}</small></h6>
+    </ion-list-header> 
+    <ion-item>
+      {{visitSummary.Comment[0]?.SalesRepRemarks}}
+    </ion-item>
+  </ion-list>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-button (click)="dismissModal()">Close</ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-footer>

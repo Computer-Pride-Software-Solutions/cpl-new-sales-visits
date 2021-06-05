@@ -6,6 +6,10 @@ const routes: Routes = [
   {
     path: '',
     component: Tab1Page,
+  },
+  {
+    path: 'visit-summary',
+    loadChildren: () => import('./visit-summary/visit-summary.module').then( m => m.VisitSummaryPageModule)
   }
 ];
 
