@@ -1,0 +1,18 @@
+body{
+    font-size: 12px !important;
+}
+
+ion-list{
+    border: solid 1px var(--ion-color-primary);
+    margin:5px;
+    border-radius: 10px;
+}
+
+ion-content{
+    margin-bottom:20px!important;
+}
+
+h6>small{
+    font-weight:bold;
+    text-transform: uppercase;
+}
