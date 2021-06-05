@@ -7,6 +7,10 @@ const routes: Routes = [
     path: '',
     component: Tab2Page,
   },
+  {
+    path: 'new-client',
+    loadChildren: () => import('./new-client/new-client.module').then( m => m.NewClientPageModule)
+  },
   // {
   //   path: 'client-details/:custCode',
   //   loadChildren: () => import('./client-details/client-details.module').then( m => m.ClientDetailsPageModule)

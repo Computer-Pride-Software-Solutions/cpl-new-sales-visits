@@ -144,7 +144,7 @@
 </ion-list>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="confirmSubmission()">
-    <ion-fab-button color="primary">
+    <ion-fab-button *ngIf="isUserInRadius" color="primary">
       <ion-icon name="cloud-upload-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

@@ -9,6 +9,8 @@ import { ToastController } from '@ionic/angular';
 export class DexieService extends Dexie {
 
   draftReport: Dexie.Table<IDrafReport, number>;
+  currentLocation: Dexie.Table<ICurrentUserLocation, number>;
+
 
 
   constructor(private toastCtrl: ToastController) {
@@ -18,22 +20,24 @@ export class DexieService extends Dexie {
 
         db.version(1).stores({
             draftReport: '&clientCode, clientName, date, report',
+            currentLocation: '++id, lat, long, gps'
         });
         db.version(2).stores({});
 
         this.draftReport = this.table("draftReport");
+        this.currentLocation = this.table("currentLocation");
 
         db.on('changes', function (changes) {
           changes.forEach(function (change) {
             switch (change.type) {
               case 1: // CREATED
-                db.presentToast("Report successfully saved as draft!");
+                // db.presentToast("Record created successfuly!");
                 break;
               case 2: // UPDATED
-                db.presentToast("Report updated successfully!");
+                db.presentToast("Record updated successfully!");
                 break;
               case 3: // DELETED
-                db.presentToast("Report deleted successfully!");
+                db.presentToast("Record deleted successfully!");
               break;
             }
           });
@@ -59,6 +63,13 @@ export interface IDrafReport{
   clientName: string;
   date: string;
   report: any;
+}
+
+export interface ICurrentUserLocation{
+  id?: number;
+  lat: string;
+  long: string;
+  gps: string;
 }
 
 

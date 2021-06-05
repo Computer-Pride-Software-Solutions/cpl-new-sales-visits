@@ -1,15 +1,11 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-// import { faFileInvoice} from '@fortawesome/free-solid-svg-icons';
-// import { FinalReportService } from '../../services/final-report/final-report.service';
 import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { LocationService } from 'src/app/services/location/location.service';
-import { Geolocation} from '@ionic-native/geolocation/ngx';
 import { FinalReportService } from 'src/app/services/FinalReport/final-report.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
+import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 
 @Component({
   selector: 'app-final-report',
@@ -18,24 +14,25 @@ import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 })
 export class FinalReportPage implements OnInit, OnDestroy {
   // faFileInvoice = faFileInvoice;
-  isLoading = this.locationService.isLoading;
+  isLoading = false;
 
   subscription: Subscription = new Subscription();
   // custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
   salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
-  location: Promise<any>;
-
+  // location: Promise<any>;
+  
   totalOrders = 0;
   @Input() finalReport: any;
-  @Input() custCode: any;
+  @Input() clientDetails: any; 
+  @Input() isUserInRadius: boolean;
+  
   constructor(
     public modalController: ModalController,
     public alertController: AlertController,
     private finalReportService: FinalReportService,
     private router: Router,
-    private locationService: LocationService,
     private firebaseService: FirebaseService,
-
+    private db: DexieService,
     ) {
 
      }
@@ -44,7 +41,17 @@ export class FinalReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getCurrentLocation();
     this.calculateTotalOrderPrice();
+
+    // console.log(this.checkRadius());
+  }
+
+  currentGPS: string = '';
+  async getCurrentLocation(){
+    const currentLocation = await this.db.currentLocation.orderBy('id').last();
+    this.currentGPS = currentLocation.gps;
+
   }
 
   calculateTotalOrderPrice(): void{
@@ -59,32 +66,30 @@ export class FinalReportPage implements OnInit, OnDestroy {
     });
   }
 
-  async submitFinalReport(): Promise<void>{
+  async submitFinalReport(): Promise<any>{
+
     this.isLoading = true;
+
     if (Object.keys(this.finalReport.payment).length > 0){
       let url = await this.firebaseService.uploadImageToFirebase('payments',this.finalReport.payment.proofOfPayment)
       this.finalReport.payment.proofOfPayment = url;
       // console.log(url);
     }
-    if(this.locationService.currenGPS === undefined || this.locationService.currenGPS === null){
-      this.locationService.getCurrentPosition().then(gps => {
-        this.subscription.add(   
-          this.finalReportService.submitFinalReport(this.finalReport, gps, this.custCode, this.salesRep).subscribe( rsp => {
-            this.presentAlert(rsp['msg'], rsp['status']);
-            this.isLoading = false;
-          })
-        );
-    });
-    }else{
+
+ 
       this.subscription.add(   
-        this.finalReportService.submitFinalReport(this.finalReport, this.locationService.currenGPS, this.custCode, this.salesRep).subscribe( rsp => {
+        this.finalReportService.submitFinalReport(this.finalReport, this.currentGPS, this.clientDetails?.CustCode, this.salesRep).subscribe( rsp => {
           this.presentAlert(rsp['msg'], rsp['status']);
           this.isLoading = false;
         })
-      );     
-    }
+      );
+    
 
   }
+
+
+
+
 
 
   async confirmSubmission() {

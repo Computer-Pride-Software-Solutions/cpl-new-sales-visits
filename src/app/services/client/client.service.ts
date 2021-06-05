@@ -60,10 +60,10 @@ export class ClientService {
   }
   
   addNewClient(clientInfo: any){
-    const endpoint = 'add-client';
-    this.param = this.param.append('clientInfo', clientInfo);
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
-      params: this.param,
+    const endpoint = 'client';
+    // this.param = this.param.append('clientInfo', clientInfo);
+    return this.httpClient.post(`${this.baseUrl}/${endpoint}`, clientInfo, {
+      // params: this.param,
       headers : this.headers,
       withCredentials: true
     }).pipe(
@@ -78,7 +78,7 @@ export class ClientService {
   getPriceList(): Observable<IPriceList[]>{
     const endpoint = 'pricelist';
     return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
-      params: this.param,
+      // params: this.param,
       headers : this.headers,
       withCredentials: true
     }).pipe(
@@ -93,7 +93,7 @@ export class ClientService {
   getDeliveryCode(custCode): Observable<IDeliveryDetails[]>{
     const endpoint = 'delivery-code';
     return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}`, {
-      params: this.param,
+      // params: this.param,
       headers : this.headers,
       withCredentials: true
     }).pipe(
@@ -103,6 +103,16 @@ export class ClientService {
         return throwError(error);
       })
     );
+  }
+
+  mapClient(custCode: string, latlon: string){
+    const endpoint = 'client';
+    return this.httpClient.put(`${this.baseUrl}/${endpoint}/${custCode}`, {
+      latlong: latlon
+    }, {
+      headers : this.headers,
+      withCredentials: true
+    })
   }
 
   async presentAlert(msg, status) {

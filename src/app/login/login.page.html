@@ -1,0 +1,59 @@
+<!-- <ion-header>
+  <ion-toolbar>
+    <ion-title>login</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content scrollY="false" class="background">
+  <!-- <img src="../../assets/images/bg-wide.jpg"> -->
+  <div class="cover">
+    <!-- <div class="cpl-logo"></div> -->
+
+    <!-- <ion-item >
+      <ion-label class="ion-text-center">Sales Visits</ion-label>
+    </ion-item> -->
+    <ion-toolbar class="ion-padding">
+      <ion-title class="ion-text-center ion-text-uppercase">
+        <img src="../../assets//images/cplicon.png" width="100px"><br>
+          <small>Sales Visits</small>
+      </ion-title>
+    </ion-toolbar>
+    <form autocomplete="off" id="frmLogin">
+      <ion-item>
+        <ion-label position="floating">Email </ion-label>
+        <ion-input name ="email" type="email" autocomplete="off" clearInput="true" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input name="password" [type]="showPassword ? 'text' : 'password'" clearInput="true" required></ion-input>
+       
+      </ion-item>
+
+      <div class="ion-padding show-password">
+        <button (click)="onPasswordToggle()" ion-button clear item-end icon-only style="background-color:#FFFFFF!important;">
+          <ion-icon size="small" color="primary" [name]="showPassword ? 'eye-off' : 'eye'" style="margin:0px!important"></ion-icon>
+        </button>
+        <ion-note style="margin-bottom:40px!important;"> Show Password</ion-note>
+      </div>
+
+        <ion-button expand="block" class="login" (click)="onSubmit()">Login</ion-button>
+      </form>
+
+
+      <div class="request-password-reset ion-text-center">
+        <small>
+          <ion-note class="ion-text-center">Request for a password reset</ion-note>
+        </small>
+      </div>
+      
+  </div>
+
+</ion-content>
+
+
+<!-- <ion-footer class="ion-text-center ion-padding" style="background-color: #FFFFFF; color:#00000083"> -->
+  <!-- <ion-toolbar style="padding: 0px;"> -->
+  
+<!-- </ion-toolbar> -->
+<!-- </ion-footer> -->

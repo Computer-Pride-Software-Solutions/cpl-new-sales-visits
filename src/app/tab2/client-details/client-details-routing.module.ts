@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: 'final-report-page',
     loadChildren: () => import('./final-report-page/final-report.module').then( m => m.FinalReportPagePageModule)
+  },
+  {
+    path: 'map-outlet',
+    loadChildren: () => import('./map-outlet/map-outlet.module').then( m => m.MapOutletPageModule)
   }
 ];
 

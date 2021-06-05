@@ -4,6 +4,7 @@ import { IonInfiniteScroll } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { IClient } from '../interfaces/IClient';
 import { ClientService } from '../services/client/client.service';
+import { NewClientPage } from './new-client/new-client.page';
 
 @Component({
   selector: 'app-tab2',
@@ -71,15 +72,15 @@ export class Tab2Page {
   }
 
 
-  // async presentAddNewClient() {
-  //   const modal = await this.modalController.create({
-  //     component: NewClientPage,
-  //     cssClass: 'my-custom-class',
-  //     mode: 'ios',
+  async presentAddNewClient() {
+    const modal = await this.modalController.create({
+      component: NewClientPage,
+      cssClass: 'my-custom-class',
+      mode: 'ios',
 
-  //   });
-  //   return await modal.present();
-  // }
+    });
+    return await modal.present();
+  }
 
   searchClients(event){
     this.hint = event.target.value.toLowerCase();

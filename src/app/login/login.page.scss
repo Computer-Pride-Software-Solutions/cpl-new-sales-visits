@@ -1,0 +1,44 @@
+ion-content{
+    --ion-background-color:var(--ion-color-primary);
+}
+ion-content.background{
+    --background: url(../../assets/images/sidebar-3.jpg) no-repeat 100% center/cover;
+}
+
+.cover{
+    margin-top: 35%;
+    background-color:#ffffff;
+    opacity:0.9;
+    border-radius: 3rem 3rem 0rem 0rem;
+    height: 90%;
+    padding: 0px 30px ;
+
+}
+ion-item{
+    margin:0.5rem 0px;
+
+}
+ion-toolbar, ion-item, input{
+    --ion-background-color:transparent;
+}
+
+
+ion-button.login{
+    margin-top:2rem;
+}
+
+ion-input:focus {
+    outline-width: 0!important;
+}
+ion-input{
+    --ion-color: var(--ion-color-primary);
+}
+
+.show-password button::focus{
+    border:1px #ffffff!important; 
+}
+
+div.request-password-reset{
+    padding-top:60px;
+}
+
