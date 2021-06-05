@@ -1,7 +1,7 @@
 <ion-header class="main-header">
   <ion-toolbar color="primary">
       <ion-buttons>
-        <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
+        <ion-back-button [text]="getBackButtonText()" defaultHref="./" color="light"></ion-back-button>
          <ion-note color="light">{{clientDetails[0]?.CustName}}</ion-note>
       </ion-buttons>
       <ion-buttons slot="primary">
@@ -535,8 +535,16 @@
   </ion-fab>
 
 </ion-content>
-<ion-footer class="ion-text-center" style="background-color: #FFFFFF; color:#00000083">
+<ion-footer class="ion-text-center" style="background-color: #FFFFFF; ">
   <!-- <ion-toolbar style="padding: 0px;"> -->
-  <small>Swipe left or right </small>
+  <small *ngIf="!isUserInRadius() && distance > 0.00" style="color:hsla(0, 96%, 52%, 0.514)">
+    You are {{distance}} KM away from this client
+  </small>
+  <small *ngIf="isUserInRadius() && distance <= 0.00" style="color:rgba(15, 250, 152, 0.514)">You are {{distance}} KM away from this client</small>
+
+  <small *ngIf="!isUserInRadius() && distance == 0.00" style="color:rgba(250, 195, 15, 0.733)">
+    You are not assigned to this client today
+  </small>
 <!-- </ion-toolbar> -->
 </ion-footer>
+

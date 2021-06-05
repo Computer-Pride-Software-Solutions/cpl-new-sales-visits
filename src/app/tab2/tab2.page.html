@@ -15,10 +15,10 @@
       <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
       <ion-label class="ion-text-wrap card-label" color="light">
         <h2>
-          {{ client.CustCode }}
+          {{ client?.CustCode }}
         </h2>
         
-        <h3>{{ (client.CustName.length>25)? (client.CustName | slice:0:25)+' ...':(client.CustName) }}</h3>
+        <h3>{{ (client.CustName?.length>25)? (client?.CustName | slice:0:25)+' ...':(client.CustName) }}</h3>
 
       </ion-label>
     </ion-item>

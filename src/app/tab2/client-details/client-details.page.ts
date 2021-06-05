@@ -7,7 +7,7 @@ import { ToastController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+// import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { IClientDetails } from 'src/app/interfaces/IClient';
 import { IItemGroup, IProduct } from 'src/app/interfaces/IProducts';
@@ -17,6 +17,9 @@ import { FinalReportPage } from './final-report-page/final-report.page';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { ProductService } from 'src/app/services/product/product.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { MapOutletPage } from './map-outlet/map-outlet.page';
+import { LocationService } from 'src/app/services/location/location.service';
+import { AssignedVisitsService } from 'src/app/services/assigned-visits/assigned-visits.service';
 
 @Component({
   selector: 'app-client-details',
@@ -38,7 +41,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
 
-  salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   currentlySelectedItem: string;
   currentlySelectedItemId: number;
@@ -69,7 +72,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   picture: File = null;
   submit = false;
  
-  photo :SafeResourceUrl;
+  // photo :SafeResourceUrl;
   hide:boolean=false;
   constructor(public actionSheetController: ActionSheetController,
     private activatedRoute: ActivatedRoute,
@@ -79,15 +82,21 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     public modalController: ModalController,
     private toastCtrl: ToastController,
     private db: DexieService,
-    private camera: Camera) { }
+    private camera: Camera,
+    private locationService: LocationService,
+    private assignedVisitsService: AssignedVisitsService
+
+    ) { }
     @ViewChild(IonSlides) slides: IonSlides;
 
 
   ngOnInit() {
+    this.getScheduledVisits();
     this.getAllDraftReports();
     this.getClientDetails();
     this.getItemGroup();
     this.getDeliveryCode();
+    this.getCurrentLocation();
 
   }
   ngOnDestroy(): void {
@@ -117,6 +126,14 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       mode:'ios',
       buttons: [
         {
+          text: 'Map This Client',
+          icon: 'location-outline',
+          handler: () => {
+            // self.saveReportAsDraft();
+            self.mapClient();
+          }
+        }, 
+        {
         text: 'Save Report as Draft',
         icon: 'save-outline',
         handler: () => {
@@ -144,6 +161,21 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
     const { role } = await actionSheet.onDidDismiss();
     // console.log('onDidDismiss resolved with role', role);
+  }
+
+  async mapClient(){
+    const modal = await this.modalController.create({
+      component: MapOutletPage,
+      cssClass: 'my-custom-class',
+      mode: 'ios',
+      componentProps: {
+        clientName: this.clientDetails[0]?.CustName,
+        custCode: this.custCode,
+      }
+
+    });
+
+    return await modal.present();
   }
 
   deleteReportFromDraft(CustCode, CustName){
@@ -210,7 +242,10 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   //   // console.log(this.picture)
   // }
 
-
+  // currentLatLong: string;
+  // async getCurrentLocation(){
+  //   this.currentLatLong = (this.locationService.currenGPS)? await Promise.resolve(this.locationService.currenGPS) : await this.locationService.getCurrentPosition();
+  // }
 
     async presentModal() {
       const modal = await this.modalController.create({
@@ -220,6 +255,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         componentProps: {
           finalReport: this.finalReport,
           custCode: this.custCode,
+          clientDetails: this.clientDetails[0],
+          isUserInRadius: this.isUserInRadius()
         }
 
       });
@@ -374,6 +411,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       this.clientService.getClientDetails(this.custCode)
       .subscribe((data: IClientDetails[]) => {
         this.clientDetails = data;
+        // console.log(data)
       })
     );
   }
@@ -542,5 +580,43 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
     await alert.present();
   }
+
+  scheduledVisits: any = [];
+  getScheduledVisits(){
+    // console.log(this.clientDetails[0]);
+    const today = new Date().toLocaleDateString('zh-Hans-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    this.subscription.add( //this.currentUser.userCode
+      this.assignedVisitsService.getScheduledVisits(this.custCode,this.currentUser?.userCode , today).subscribe((visits)=> {
+        this.scheduledVisits = visits;
+        // console.log(visits);
+      })
+    );
+
+  }
+
+  currentGPS: string = '';
+  async getCurrentLocation(){
+    const currentLocation = await this.db.currentLocation.orderBy('id').last();
+    this.currentGPS = currentLocation?.gps;
+
+  }
+
+  distance: any;
+  isUserInRadius(): boolean{
+    const lat1 = this.currentGPS?.split(",")[0]; 
+    const long1 = this.currentGPS?.split(",")[1];
+    const lat2 = this.clientDetails[0]?.latlong.split(",")[0];
+    const long2 = this.clientDetails[0]?.latlong.split(",")[1];
+    this.distance = parseFloat(this.locationService.distance(lat1, lat2, long1, long2)).toFixed(2);
+    const geofence = (this.scheduledVisits?.length > 0)? this.scheduledVisits[0]?.Geofence: 0.00;// If the user is assigned to thic client return the assigned geofence
+    return geofence > this.distance;
+    
+  }
+
+
 
 }

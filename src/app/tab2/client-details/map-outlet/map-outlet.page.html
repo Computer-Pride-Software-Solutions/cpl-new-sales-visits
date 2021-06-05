@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>MAPPING A CLIENT</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+<div class="" style="text-align: center;">
+
+    <h2>
+      <ion-icon slot="start" name="map-outline"></ion-icon><br>
+      <small>{{clientName}}</small>
+    </h2>
+
+  <div class="border-primary">
+    <ion-list mode="ios" style="margin-bottom: 30px;">
+      <!-- <ion-list-header>
+        <small> <ion-icon slot="start" name="map-outline"></ion-icon></small>
+      </ion-list-header>  -->
+      <ion-item>
+        <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+        <ion-label><small>Client code: {{custCode}}</small></ion-label>
+      </ion-item>  
+      <ion-item>
+        <ion-icon slot="start" name="location-outline"></ion-icon>
+        <ion-label>
+          <small *ngIf="(currentLatLong); else loadingGps" >LatLong: {{currentLatLong}}</small>        
+          <ng-template #loadingGps>
+            <ion-spinner mode="ios" name="dots"></ion-spinner>
+          </ng-template>
+        </ion-label>
+      </ion-item>       
+      <ion-item>
+        <ion-icon slot="start" name="trail-sign-outline"></ion-icon>
+        <ion-label>
+          <small *ngIf="(currentLatLong); else loadingNearBy" >Near By Places: </small>
+          <ng-template #loadingNearBy>
+            <ion-spinner mode="ios" name="dots"></ion-spinner>
+          </ng-template>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+        <!-- <img *ngIf="(currentLatLong); else loadingMap" class="rounded img-fluid mx-auto d-block" alt="{{clientName}} on the map"  src="https://maps.googleapis.com/maps/api/staticmap?zoom=16&size=600x500&markers=color:red%7Clabel:S%7C{{currentLatLong}}&key=AIzaSyDAaXpqmKSvPkXY1hse3ripJVj6DS53KY4"/>
+        <ng-template #loadingMap>
+          <ion-spinner mode="ios"></ion-spinner>
+        </ng-template> -->
+    </div>
+</div>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button *ngIf="(currentLatLong && custCode)" color="primary" (click)="mapClient(custCode,currentLatLong)">
+    <ion-icon name="locate-outline"></ion-icon>   
+  </ion-fab-button>
+</ion-fab>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-button (click)="dismissModal()">Close</ion-button>
+  </ion-buttons>
+</ion-toolbar>

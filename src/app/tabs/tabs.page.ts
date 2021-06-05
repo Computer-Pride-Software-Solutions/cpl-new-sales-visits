@@ -1,14 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActionSheetController } from '@ionic/angular';
+import { LocationService } from '../services/location/location.service';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage {
+export class TabsPage implements OnInit {
 
-  constructor(public actionSheetController: ActionSheetController) {}
+  constructor(public actionSheetController: ActionSheetController, private locationService: LocationService) {}
+
+  // currentLatLong: string;
+  // async getCurrentLocation(){
+  //   this.currentLatLong = (this.locationService.currenGPS)? await Promise.resolve(this.locationService.currenGPS) : await this.locationService.getCurrentPosition();
+  // }
+
+  ngOnInit() {
+    this.locationService.watchPosition();
+  }
 
   async presentActionSheet() {
     const actionSheet = await this.actionSheetController.create({

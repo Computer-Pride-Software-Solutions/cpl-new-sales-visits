@@ -10,6 +10,7 @@ export interface IClient {
     contactperson: string;
     phone: string;
     addr1: string;
+    latlong: string;
     taxregnno: string;
     creditlimit: number;
     paymentterms: string;

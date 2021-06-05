@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>New Client</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form id="frmNewClient">  
+
+    <ion-item *ngIf="pricelists && pricelists.length > 0">
+      <ion-label>Price List</ion-label>
+      <ion-select placeholder="Select One" name="CustPriceListID">
+        <ion-select-option *ngFor="let pricelist of pricelists" value="{{pricelist.PriceListID}}">{{pricelist.PriceListName}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+   
+    <ion-item>
+      <ion-label position="stacked">Customer Name</ion-label>
+      <ion-input name="CustName" placeholder="e.g. Full Stack Consulting Ltd" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Customer Code</ion-label>
+      <ion-input name="CustCode" placeholder="e.g. ABCD" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Phone Number</ion-label>
+      <ion-input name="phone" placeholder="e.g. 020 7123 17212" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Mobile Number</ion-label>
+      <ion-input name="mobile" placeholder="e.g. 254 7123 17212" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">KRA PIN</ion-label>
+      <ion-input name="taxregnno" placeholder="e.g A12345678" type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+        <ion-label position="stacked">Address 1</ion-label>
+      <ion-input name="addr1" placeholder="Address 1" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Address 2</ion-label>
+      <ion-input name="addr2" placeholder="Address 2" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Address 3</ion-label>
+      <ion-input name="addr3" placeholder="Address 3" type="text"></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="stacked">Contact Person</ion-label>
+      <ion-input name="contactperson" placeholder="e.g 254 71231 7212" type="text"></ion-input>
+    </ion-item>
+  </form>  
+  <ion-button (click)='addNewClient()'  expand="block" mode="ios" color="primary" style="margin:20px;">Add Client</ion-button>
+
+</ion-content>
+
+
+<ion-footer>
+  <ion-toolbar>
+  <ion-buttons slot="end">
+    <ion-button (click)="dismissModal()">Close</ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-footer>
