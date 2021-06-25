@@ -70,14 +70,6 @@ export class FinalReportPage implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-
-    if (Object.keys(this.finalReport.payment).length > 0){
-      const url = await this.firebaseService.uploadImageToFirebase('payments',this.finalReport.payment.proofOfPayment);
-      this.finalReport.payment.proofOfPayment = url;
-      // console.log(url);
-    }
-
- 
       this.subscription.add(   
         this.finalReportService.submitFinalReport(
           {
