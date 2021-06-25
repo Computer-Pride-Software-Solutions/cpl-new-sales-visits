@@ -35,6 +35,7 @@ import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
   styleUrls: ['./client-details.page.scss'],
 })
 export class ClientDetailsPage implements OnInit, OnDestroy {
+  currentLatLong: any;
   today: String = new Date().toISOString();
 
   clientDetails: IClientDetails[] = [];
@@ -99,6 +100,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.getCurrentLocation();
     this.getClientDetails();
     this.getDistanceMatrix();
     this.getAllDraftReports();
@@ -107,6 +109,12 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  async getCurrentLocation(){
+    let originLatlng = await this.locationService.getCurrentPosition();
+    this.currentLatLong = originLatlng;
+
   }
 
   getBackButtonText() {
@@ -607,9 +615,9 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.isLoading = true;
 
     this.checkScheduledVisits();
-    let originLatlng = await this.locationService.getCurrentPosition();
+    // let originLatlng = await this.locationService.getCurrentPosition();
     
-    if(originLatlng === undefined || originLatlng === null || this.scheduledVisits.length === 0){
+    if(this.currentLatLong === undefined || this.currentLatLong === null || this.scheduledVisits.length === 0){
       this.presentAlert("You are most likely not assigned to this client today!", "You can't submit this order")
       return false;
     }
@@ -617,7 +625,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     //If the user was assigned by outlet get the latlng, if the user was assigned by point_of_interest get the google_place_id
     let destinationLatlng = (this.scheduledVisits[0] && this.scheduledVisits[0]?.google_place_id)? `place_id:${this.scheduledVisits[0]?.google_place_id}`: this.clientDetails[0]?.latlong;
 
-    this.googleMapService.getDistanceMatrix(originLatlng, destinationLatlng).subscribe((response)=> {
+    this.googleMapService.getDistanceMatrix(this.currentLatLong, destinationLatlng).subscribe((response)=> {
       this.userDistanceMatrix = response;
       this.isUserInRadius = (this.scheduledVisits[0]?.Geofence > this.userDistanceMatrix?.distance?.value);
       this.isLoading = false;
