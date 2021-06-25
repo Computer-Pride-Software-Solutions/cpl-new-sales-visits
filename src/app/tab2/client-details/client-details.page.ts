@@ -74,8 +74,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     comments: ''
   };
 
-  pictureB64: SafeResourceUrl = 'assets/images/sample-cheque.jpeg';
-  picture: File = null;
+  pictureB64: any;
+  src : SafeResourceUrl = 'assets/images/sample-cheque.jpeg';;
   submit = false;
   isLoading = true;
 
@@ -243,39 +243,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         report: self.finalReport
       });
 
-  
-      // console.log(report);
     });
   }
-
-  // triggerFile(){
-  //   document.getElementById('fileInput').click();
-  // }
-
-
-  // onFileChange(e){
-  //   this.picture =  <File>e.target.files[0];
-
-  //   var file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-  //   const pattern = /image-*/;
-  //   const reader = new FileReader();
-  //   if (!file.type.match(pattern)) {
-  //     alert('invalid format');
-  //     return;
-  //   }
-  //   reader.onload = this._handleReaderLoaded.bind(this);
-  //   reader.readAsDataURL(file);
-  // }
-  // _handleReaderLoaded(e) {
-  //   let reader = e.target;
-  //   this.pictureB64 = reader.result;
-  //   // console.log(this.picture)
-  // }
-
-  // currentLatLong: string;
-  // async getCurrentLocation(){
-  //   this.currentLatLong = (this.locationService.currenGPS)? await Promise.resolve(this.locationService.currenGPS) : await this.locationService.getCurrentPosition();
-  // }
 
     async presentModal() {
       const modal = await this.modalController.create({
@@ -318,7 +287,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         this.saveReportAsDraft();
       }
     }
-
 
 
     addOffersToFinalReport(): void{
@@ -561,7 +529,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.getSearchedItem(event.text);
   }
 
-  src : SafeResourceUrl;
   async takePicture(){
 
     const image = await Camera.getPhoto({
@@ -570,8 +537,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       resultType: CameraResultType.Base64
     })
     .then(CameraPhoto => {
-      this.pictureB64 = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
-
+      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
+      this.pictureB64 = CameraPhoto.base64String;
     })
   };
 
