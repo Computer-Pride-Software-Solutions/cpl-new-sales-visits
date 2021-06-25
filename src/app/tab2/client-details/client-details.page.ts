@@ -95,12 +95,12 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer
     ) { 
     //  this.locationService.watchPosition();
+      this.getCurrentLocation();
     }
     @ViewChild(IonSlides) slides: IonSlides;
 
 
   ngOnInit() {
-    this.getCurrentLocation();
     this.getClientDetails();
     this.getDistanceMatrix();
     this.getAllDraftReports();
@@ -616,11 +616,11 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
     this.checkScheduledVisits();
     // let originLatlng = await this.locationService.getCurrentPosition();
-    
     if(this.currentLatLong === undefined || this.currentLatLong === null || this.scheduledVisits.length === 0){
       this.presentAlert("You are most likely not assigned to this client today!", "You can't submit this order")
       return false;
     }
+    console.log(this.currentLatLong);
 
     //If the user was assigned by outlet get the latlng, if the user was assigned by point_of_interest get the google_place_id
     let destinationLatlng = (this.scheduledVisits[0] && this.scheduledVisits[0]?.google_place_id)? `place_id:${this.scheduledVisits[0]?.google_place_id}`: this.clientDetails[0]?.latlong;
