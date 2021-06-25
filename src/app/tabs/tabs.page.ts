@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActionSheetController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ActionSheetController, AlertController } from '@ionic/angular';
 import { LocationService } from '../services/location/location.service';
 
 @Component({
@@ -9,7 +10,11 @@ import { LocationService } from '../services/location/location.service';
 })
 export class TabsPage implements OnInit {
 
-  constructor(public actionSheetController: ActionSheetController, private locationService: LocationService) {}
+  constructor(public actionSheetController: ActionSheetController,
+     private locationService: LocationService,
+     private router: Router,
+     public alertController: AlertController,
+    ) {}
 
   // currentLatLong: string;
   // async getCurrentLocation(){
@@ -17,10 +22,11 @@ export class TabsPage implements OnInit {
   // }
 
   ngOnInit() {
-    this.locationService.watchPosition();
+    // this.locationService.watchPosition();
   }
 
   async presentActionSheet() {
+    const self = this;
     const actionSheet = await this.actionSheetController.create({
       header: 'MORE OPTIONS',
       cssClass: 'my-custom-class',
@@ -31,7 +37,7 @@ export class TabsPage implements OnInit {
         role: 'destructive',
         icon: 'log-out-outline',
         handler: () => {
-          console.log('Delete clicked');
+          self.confirmLogout()
         }
         }, 
        {
@@ -39,14 +45,40 @@ export class TabsPage implements OnInit {
         icon: 'close',
         role: 'cancel',
         handler: () => {
-          console.log('Cancel clicked');
+          // console.log('Cancel clicked');
         }
       }]
     });
     await actionSheet.present();
 
     const { role } = await actionSheet.onDidDismiss();
-    console.log('onDidDismiss resolved with role', role);
+  }
+
+  async confirmLogout() {
+    const self = this;
+    const alert = await this.alertController.create({
+      header: `Logging out!`,
+      message: `Confirm that you meant to logout.`,
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            return false;
+          }
+        }, {
+          text: 'Confirm',
+          handler: () => {
+            localStorage.removeItem('currentUser');
+            self.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
   }
 
 }

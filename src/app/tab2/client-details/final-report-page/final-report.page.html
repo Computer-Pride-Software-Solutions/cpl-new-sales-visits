@@ -14,7 +14,7 @@
   <div class="loader"  *ngIf="isLoading">
     <ion-spinner name="lines" color="primary" mode="ios"></ion-spinner>
   </div>
-  <ion-list>
+  <ion-list *ngIf="finalReport.orders.length > 0">
     <ion-list-header>
      <h6><small>TODAY'S ORDERS</small></h6>
     </ion-list-header> 
@@ -39,7 +39,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-list>
+  <ion-list *ngIf="finalReport.stock.length > 0">
     <ion-list-header>
      <h6><small>CURRENT STOCK</small></h6>
     </ion-list-header> 
@@ -61,6 +61,28 @@
 
 <ion-list>
   <ion-list-header>
+     <h6><small>ITEMS ON OFFER</small></h6>
+    </ion-list-header> 
+    <ion-item> 
+         <ion-grid >
+          <ion-row class="ion-text-uppercase">
+            <ion-col size="1"><small>#</small></ion-col>
+            <ion-col><small>Info</small></ion-col>
+            <ion-col><small>Price</small></ion-col>
+            <ion-col class="ion-text-right"><small>Items</small></ion-col>
+          </ion-row>
+          <ion-row *ngFor="let offer of finalReport.offers | keyvalue; let i = index">
+            <ion-col size="1"><small>{{i + 1}}</small></ion-col>
+            <ion-col><small>{{offer.value['offerDetails']}}</small></ion-col>
+            <ion-col><small>{{offer.value['price'] | currency:'KES '}}</small></ion-col>
+            <ion-col class="ion-text-right"><small>{{offer.value['items'].length}}</small></ion-col>
+         </ion-row>
+        </ion-grid>
+    </ion-item>
+  </ion-list>
+
+<!-- <ion-list>
+  <ion-list-header>
      <h6><small>AVAILABLE POS MATERIAL</small></h6>
     </ion-list-header> 
     <ion-item>
@@ -75,7 +97,7 @@
           </ion-row>
         </ion-grid>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
 
   <ion-list>
     <ion-list-header class="ion-text-left">
@@ -143,8 +165,8 @@
    </ion-item>
 </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="confirmSubmission()">
-    <ion-fab-button *ngIf="isUserInRadius" color="primary">
+  <ion-fab *ngIf="isUserInRadius" vertical="bottom" horizontal="end" slot="fixed" (click)="confirmSubmission()">
+    <ion-fab-button  color="primary">
       <ion-icon name="cloud-upload-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

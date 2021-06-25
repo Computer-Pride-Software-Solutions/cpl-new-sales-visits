@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class Tab4Page implements OnInit {
   subscription: Subscription = new Subscription();
+  isLoading = true;
 
   constructor(
     private productService: ProductService,
@@ -37,11 +38,13 @@ export class Tab4Page implements OnInit {
 
 
   products: IProduct[] = [];
-  getProducts(chunk: number, hint:string = ''){
+  getProducts(chunk: number, hint = null){
     this.subscription.add(
       this.productService.getAllProducts(chunk, hint).subscribe((products: IProduct[]) => {
         this.products = products;
         // console.log(products);
+        this.isLoading = false;
+
       })
     )
   }
@@ -63,9 +66,9 @@ export class Tab4Page implements OnInit {
 
   }
 
-  initialChunk:number = 50;
+  initialChunk:number = 150;
   loadData(event) {
-    this.initialChunk += 50;
+    this.initialChunk += 150;
     setTimeout(() => {
       event.target.complete();
 

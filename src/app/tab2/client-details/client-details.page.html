@@ -1,7 +1,7 @@
 <ion-header class="main-header">
   <ion-toolbar color="primary">
       <ion-buttons>
-        <ion-back-button [text]="getBackButtonText()" defaultHref="./" color="light"></ion-back-button>
+        <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
          <ion-note color="light">{{clientDetails[0]?.CustName}}</ion-note>
       </ion-buttons>
       <ion-buttons slot="primary">
@@ -17,7 +17,9 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
+  <div class="loader"  *ngIf="isLoading">
+    <ion-spinner name="lines" color="primary" mode="ios"></ion-spinner>
+  </div>
   <ng-template class="container" ngIf="clientDetails && clientDetails?.length > 0">
     <ion-content fullscreen class="ion-padding" scroll-y="false" style="overflow-y:hidden;">
       <ion-slides>
@@ -29,7 +31,7 @@
               <br>
               <small>Client's Details</small>
             </h2>
-            <div *ngIf="clientDetails.length > 0; else noDetails" style="height:400px;overflow-y: scroll;" class="slide-form">
+            <div *ngIf="clientDetails.length > 0" style="height:400px;overflow-y: scroll;" class="slide-form">
               <ion-list mode="ios">
                 <ion-list-header>
                   <small>Contacts</small>
@@ -96,7 +98,7 @@
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faTruck"></fa-icon><br> -->
-            <ion-icon  name="rocket-outline"></ion-icon><br>
+            <ion-icon  name="cart-outline"></ion-icon><br>
 
             <small>Placing Orders</small>
           </h2>
@@ -283,7 +285,7 @@
 
             <small>Return of goods</small> 
           </h2>
-              <ion-list class="return-of-goods slide-form" mode="ios"  style="overflow-y: scroll!important; height:400px">
+              <ion-list class="return-of-goods slide-form" mode="ios"  style="overflow-y: scroll!important; height:360px">
                 <!-- <ion-grid class="return-of-goods"> -->
                   <form id="frmReturns">
 
@@ -385,7 +387,7 @@
 
             <small>Payment Details</small>
           </h2>
-          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:400px">  
+          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:360px">  
             <form id="frmPayment" enctype="multipart/form-data">     
               <ion-item>
                 <ion-label position="stacked">Date Paid</ion-label>
@@ -413,7 +415,7 @@
               </ion-item>
 
               <ion-item>
-                <ion-fab-button class="ion-margin" (click)="takePhoto()">
+                <ion-fab-button class="ion-margin" (click)="takePicture()">
                   <ion-icon name="camera-outline"></ion-icon>
                 </ion-fab-button>
               </ion-item>
@@ -435,6 +437,60 @@
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faImages"></fa-icon><br> -->
+            <ion-icon name="ribbon-outline"></ion-icon><br>
+
+            <small>Promotion & Offers</small>
+          </h2>
+          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:350px">  
+
+          <form id="frmOffers">
+            
+            <ion-item>
+              <ion-label position="floating">Select Items on Offer</ion-label>
+              <ionic-selectable
+                headerColor="primary"
+                [(ngModel)]="itemOnOffer"
+                [items]="products"
+                itemValueField="ItemId"
+                itemTextField="ItemName"
+                [canSearch]="true"
+                (onChange)="itemOnOfferChange($event)"
+                (onSearch) = "onInput($event)"
+                name="ItemsOnOfer"
+                [canClear]="true"
+                closeButtonSlot="end"
+                [isMultiple]="true"
+                >
+              </ionic-selectable>
+            </ion-item>
+            <ion-item>
+              <ion-label  position="stacked">Price</ion-label>
+              <ion-input type="number" min="0" name="offerPrice" placeholder="(incl. VAT) Price" mode="ios" value=""></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">End Date</ion-label>
+              <ion-datetime name="endDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">More details</ion-label>
+              <ion-textarea name="offerDetails" mode="ios" placeholder="Buy 1 get 1 Free"></ion-textarea>
+            </ion-item>          
+          </form>
+          </ion-list>
+            <ion-grid>
+            <ion-row>
+              <!-- <ion-col >
+                <ion-button size="small" (click)="addItemToOffer()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add Item To Offer</ion-button>
+              </ion-col> -->
+              <ion-col>
+                <ion-button size="small" (click)="addOffersToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add POS To Final Report</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-slide>
+
+        <!-- <ion-slide>
+          <h2>
             <ion-icon name="images-outline"></ion-icon><br>
 
             <small>Point of Sales Materials</small>
@@ -463,7 +519,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-        </ion-slide>
+        </ion-slide> -->
 
         <ion-slide>
           <h2>
@@ -509,7 +565,7 @@
       </ion-fab-button>
       <!--POS-->
       <ion-fab-button color="light" (click)="goToSlide(5)">
-        <ion-icon name="trail-sign-outline"></ion-icon>
+        <ion-icon name="ribbon-outline"></ion-icon>
       </ion-fab-button>
       <!--Payment-->
       <ion-fab-button color="light" (click)="goToSlide(4)">
@@ -517,7 +573,7 @@
       </ion-fab-button>
       <!--Returns-->
       <ion-fab-button color="light" (click)="goToSlide(3)">
-        <ion-icon name="repeat-outline"></ion-icon>
+        <ion-icon name="heart-dislike-outline"></ion-icon>
       </ion-fab-button>
       <!--Stocks-->
       <ion-fab-button color="light" (click)="goToSlide(2)">
@@ -525,7 +581,7 @@
       </ion-fab-button>
       <!--Orders-->
       <ion-fab-button color="light" (click)="goToSlide(1)">
-        <ion-icon name="basket-outline"></ion-icon>
+        <ion-icon name="cart-outline"></ion-icon>
       </ion-fab-button>
       <!---Info-->
       <ion-fab-button color="light" (click)="goToSlide(0)">
@@ -536,15 +592,10 @@
 
 </ion-content>
 <ion-footer class="ion-text-center" style="background-color: #FFFFFF; ">
-  <!-- <ion-toolbar style="padding: 0px;"> -->
-  <small *ngIf="!isUserInRadius() && distance > 0.00" style="color:hsla(0, 96%, 52%, 0.514)">
-    You are {{distance}} KM away from this client
-  </small>
-  <small *ngIf="isUserInRadius() && distance <= 0.00" style="color:rgba(15, 250, 152, 0.514)">You are {{distance}} KM away from this client</small>
-
-  <small *ngIf="!isUserInRadius() && distance == 0.00" style="color:rgba(250, 195, 15, 0.733)">
-    You are not assigned to this client today
-  </small>
-<!-- </ion-toolbar> -->
+  <ion-text [color]="(isUserInRadius)? 'success': 'danger'">
+    <ion-icon *ngIf="isUserInRadius" name="walk-outline"></ion-icon>
+    <ion-icon *ngIf="!isUserInRadius" name="sad-outline"></ion-icon><br>
+    <small> You are {{userDistanceMatrix?.distance?.text}} away from your assigned perimeter. <br> <b *ngIf="!isUserInRadius">You can't submit this report!</b></small>
+  </ion-text>
 </ion-footer>
 

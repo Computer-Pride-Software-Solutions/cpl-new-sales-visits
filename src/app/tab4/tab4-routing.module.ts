@@ -8,10 +8,10 @@ const routes: Routes = [
     path: '',
     component: Tab4Page
   },
-  //   {
-  //   path: 'tabs/tab4/product-details/:ItemCode',
-  //   loadChildren: () => import('./product-details/product-details.module').then( m => m.ProductDetailsPageModule)
-  // }
+    {
+    path: 'tabs/tab4/product-details/:ItemCode',
+    loadChildren: () => import('./product-details/product-details.module').then( m => m.ProductDetailsPageModule)
+  }
  
 ];
 

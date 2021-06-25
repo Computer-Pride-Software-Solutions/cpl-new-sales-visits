@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { FinalReportService } from 'src/app/services/FinalReport/final-report.service';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
+import { LocationService } from 'src/app/services/location/location.service';
 
 @Component({
   selector: 'app-final-report',
@@ -20,7 +21,10 @@ export class FinalReportPage implements OnInit, OnDestroy {
   // custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
   salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
   // location: Promise<any>;
-  
+  slideOpts = {
+    initialSlide: 1,
+    speed: 400
+  };
   totalOrders = 0;
   @Input() finalReport: any;
   @Input() clientDetails: any; 
@@ -33,6 +37,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
     private router: Router,
     private firebaseService: FirebaseService,
     private db: DexieService,
+    private locationService: LocationService
     ) {
 
      }
@@ -41,18 +46,9 @@ export class FinalReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getCurrentLocation();
     this.calculateTotalOrderPrice();
-
-    // console.log(this.checkRadius());
   }
 
-  currentGPS: string = '';
-  async getCurrentLocation(){
-    const currentLocation = await this.db.currentLocation.orderBy('id').last();
-    this.currentGPS = currentLocation.gps;
-
-  }
 
   calculateTotalOrderPrice(): void{
     for (let i = 0; i < this.finalReport.orders.length; i++){
@@ -67,19 +63,32 @@ export class FinalReportPage implements OnInit, OnDestroy {
   }
 
   async submitFinalReport(): Promise<any>{
+    let originLatlng = await this.locationService.getCurrentPosition();
+    if(originLatlng === undefined || originLatlng === null){
+      this.presentAlert("We are unable to capture your current location!", "Your Mobile GPS is OFF")
+      return false;
+    }
 
     this.isLoading = true;
 
     if (Object.keys(this.finalReport.payment).length > 0){
-      let url = await this.firebaseService.uploadImageToFirebase('payments',this.finalReport.payment.proofOfPayment)
+      const url = await this.firebaseService.uploadImageToFirebase('payments',this.finalReport.payment.proofOfPayment);
       this.finalReport.payment.proofOfPayment = url;
       // console.log(url);
     }
 
  
       this.subscription.add(   
-        this.finalReportService.submitFinalReport(this.finalReport, this.currentGPS, this.clientDetails?.CustCode, this.salesRep).subscribe( rsp => {
+        this.finalReportService.submitFinalReport(
+          {
+            finalReport: this.finalReport,
+            gps: originLatlng,
+            salesRep: this.salesRep
+          },
+          this.clientDetails?.CustCode
+        ).subscribe( rsp => {
           this.presentAlert(rsp['msg'], rsp['status']);
+          this.removeReportFromDraft(this.clientDetails?.CustCode);
           this.isLoading = false;
         })
       );
@@ -87,10 +96,11 @@ export class FinalReportPage implements OnInit, OnDestroy {
 
   }
 
-
-
-
-
+  async removeReportFromDraft(clientCode: string){
+    await this.db.transaction('rw', this.db.draftReport, function () {
+      this.db.draftReport.delete(clientCode);
+    });
+  }
 
   async confirmSubmission() {
     const self = this;

@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/services/client/client.service';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { LocationService } from 'src/app/services/location/location.service';
+import { LoadingController } from '@ionic/angular';
+
 @Component({
   selector: 'app-map-outlet',
   templateUrl: './map-outlet.page.html',
@@ -20,6 +22,7 @@ export class MapOutletPage implements OnInit {
     private db: DexieService,
     private clientService: ClientService,
     public alertController: AlertController,
+    public loadingController: LoadingController
 
     ) { }
 
@@ -28,18 +31,32 @@ export class MapOutletPage implements OnInit {
   }
 
   async getCurrentLocation(){
-    const currentLocation = await this.db.currentLocation.orderBy('id').last();
-    this.currentLatLong = currentLocation?.gps;
+    let originLatlng = await this.locationService.getCurrentPosition();
+    this.currentLatLong = originLatlng;
 
   }
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Mapping client...',
+      duration: 1000
+    });
+    await loading.present();
 
-  mapClient(custCode, latlong){
+    const { role, data } = await loading.onDidDismiss();
+    console.log('Loading dismissed!');
+  }
+
+  async mapClient(custCode){
+    this.presentLoading();
+
     this.subscription.add(
-      this.clientService.mapClient(custCode, latlong).subscribe((response)=> {
+      this.clientService.mapClient(custCode, this.currentLatLong).subscribe((response)=> {
         this.presentAlert(response['msg'], '');
       })
     )
   }
+  
   async presentAlert(msg, status) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

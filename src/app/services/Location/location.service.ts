@@ -1,4 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { from, Observable, throwError, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+
 import { AlertController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { Geolocation, Geoposition, PositionError } from '@ionic-native/geolocation/ngx';
@@ -9,15 +14,17 @@ import { DexieService } from '../Database/Dexie/dexie.service';
   providedIn: 'root'
 })
 export class LocationService implements OnDestroy {
- 
+  private baseUrl = environment.BASE_URL;
+  private headers = new HttpHeaders();
+  private param = new HttpParams();
 
   watch;
   options = {
     maximumAge: 2000,
-    timeout: 5000,
+    timeout: 9000,
     enableHighAccuracy: true
   };
-  currenGPS;
+  currentLatLon;
   isLoading = false;
 
 
@@ -25,30 +32,32 @@ export class LocationService implements OnDestroy {
     private geolocation: Geolocation,
     public alertController: AlertController,
     private toastCtrl: ToastController,
-    private db: DexieService
+    private db: DexieService,
+    private httpClient: HttpClient,
 
   ) {
-    // this.watchPosition();
-    this.clearLocationDetails()
+    this.headers = this.headers.set('Content-Type', 'application/json').set('Accept', 'application/json');
 
+    // this.getCurrentLatLon();
    }
   ngOnDestroy(): void {
-    this.watch.unsubscribe();
-    this.clearLocationDetails()
+    // this.watch.unsubscribe();
+    // this.clearLocationDetails();
   }
 
-  //  getCurrentPosition(){   
-  //    return new Promise((resolve, reject) => {
-  //     this.geolocation.getCurrentPosition(this.options).then((pos: Geoposition) => {
-  //       const currenGPS = `${pos.coords.latitude},${pos.coords.longitude}`;
-  //       resolve(currenGPS);
-  //    }, (err: PositionError) => {
-  //      this.presentAlert('Please turn on your location', err.message);
-  //      this.isLoading = false;
-  //      reject(err.message);
-  //     });
-  //    });
-  //  }
+   getCurrentPosition(){   
+     return new Promise((resolve, reject) => {
+      this.geolocation.getCurrentPosition(this.options).then((pos: Geoposition) => {
+        const currenGPS = `${pos.coords.latitude},${pos.coords.longitude}`;
+        resolve(currenGPS);
+     }, (err: PositionError) => {
+       this.presentAlert('Please turn on your location', err.message);
+       this.isLoading = false;
+       reject(err.message);
+      });
+     });
+   }
+
 
   async clearLocationDetails(){
     await this.db.transaction('rw', this.db.currentLocation, function () {
@@ -74,34 +83,6 @@ export class LocationService implements OnDestroy {
      }
 
    }
-
-   distance(lat1, lat2, lon1, lon2){
-    // The math module contains a function
-    // named toRadians which converts from
-    // degrees to radians.
-    lon1 =  lon1 * Math.PI / 180;
-    lon2 = lon2 * Math.PI / 180;
-    lat1 = lat1 * Math.PI / 180;
-    lat2 = lat2 * Math.PI / 180;
-
-    // Haversine formula
-    let dlon = lon2 - lon1;
-    let dlat = lat2 - lat1;
-    let a = Math.pow(Math.sin(dlat / 2), 2)
-    + Math.cos(lat1) * Math.cos(lat2)
-    * Math.pow(Math.sin(dlon / 2),2);
-
-    let c = 2 * Math.asin(Math.sqrt(a));
-
-    // Radius of earth in kilometers. Use 3956
-    // for miles
-    let r = 6371;
-
-    // calculate the result
-    return(c * r).toFixed(2);
-  }
-
-
 
 
 

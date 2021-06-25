@@ -97,7 +97,7 @@ export class ClientService {
       headers : this.headers,
       withCredentials: true
     }).pipe(
-      map((data: IDeliveryDetails[]) => {
+      map((data: IDeliveryDetails[]) =>{
         return data;
       }), catchError(error => {
         return throwError(error);

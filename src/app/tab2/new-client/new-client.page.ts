@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/services/client/client.service';
 import { IPriceList } from 'src/app/interfaces/IProducts';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
+import { LocationService } from 'src/app/services/location/location.service';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-new-client',
@@ -21,7 +23,8 @@ export class NewClientPage implements OnInit, OnDestroy {
     private clientService: ClientService,
     private db: DexieService,
     public alertController: AlertController,
-
+    private locationService: LocationService,
+    public loadingController: LoadingController
   ) { }
 
   ngOnDestroy(): void {
@@ -38,14 +41,25 @@ export class NewClientPage implements OnInit, OnDestroy {
       dismissed: true
     });
   }
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...',
+      duration: 4000
+    });
+    await loading.present();
 
+    const { role, data } = await loading.onDidDismiss();
+    console.log('Loading dismissed!');
+  }
 
   async addNewClient(): Promise<void>{
+    this.presentLoading();
     const frm = document.querySelector('#frmNewClient') as HTMLFormElement;
     const fd = new FormData(frm);
-    const currentLocation = await this.db.currentLocation.orderBy('id').last();
+    let originLatlng = await this.locationService.getCurrentPosition();
     const clientInfo = {
-      latlong: currentLocation?.gps,
+      latlong: originLatlng,
     };
     for (const key of fd.keys()) {
       if(fd.get(key).toString().length > 0){

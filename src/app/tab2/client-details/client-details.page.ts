@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActionSheetController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -16,10 +17,17 @@ import { ClientService } from 'src/app/services/client/client.service';
 import { FinalReportPage } from './final-report-page/final-report.page';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { ProductService } from 'src/app/services/product/product.service';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+// import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { MapOutletPage } from './map-outlet/map-outlet.page';
 import { LocationService } from 'src/app/services/location/location.service';
 import { AssignedVisitsService } from 'src/app/services/assigned-visits/assigned-visits.service';
+import { GoogleMapsService } from 'src/app/services/google/google-maps.service';
+import { IVisits } from 'src/app/interfaces/IVisits';
+
+
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-client-details',
@@ -27,6 +35,7 @@ import { AssignedVisitsService } from 'src/app/services/assigned-visits/assigned
   styleUrls: ['./client-details.page.scss'],
 })
 export class ClientDetailsPage implements OnInit, OnDestroy {
+  today: String = new Date().toISOString();
 
   clientDetails: IClientDetails[] = [];
   itemGroups: IItemGroup[] = [];
@@ -34,6 +43,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   products: IProduct[] = [];
   product: IProduct;
+
+  itemOnOffer: IProduct[] = [];
 
   deliveryDetails: IDeliveryDetails[] = [];
   deliveryDetail: IDeliveryDetails;
@@ -52,28 +63,22 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   currentlySelectedDeliveryCode: string;
 
-  public POS = [
-    { val: 'Category Branding Displayed', isChecked: false },
-    { val: 'FSU Displayed', isChecked: false },
-    { val: 'Billboard Displayed', isChecked: false }
-  ];
-
 
   finalReport = {
     stock : [],
-    POS: {},
+    offers: {},
     returns: [],
     orders: [],
     payment: {},
     comments: ''
   };
 
-  pictureB64 = 'assets/images/sample-cheque.jpeg';
+  pictureB64: SafeResourceUrl = 'assets/images/sample-cheque.jpeg';
   picture: File = null;
   submit = false;
- 
+  isLoading = true;
+
   // photo :SafeResourceUrl;
-  hide:boolean=false;
   constructor(public actionSheetController: ActionSheetController,
     private activatedRoute: ActivatedRoute,
     private clientService: ClientService,
@@ -82,22 +87,23 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     public modalController: ModalController,
     private toastCtrl: ToastController,
     private db: DexieService,
-    private camera: Camera,
+    // private camera: Camera,
     private locationService: LocationService,
-    private assignedVisitsService: AssignedVisitsService
-
-    ) { }
+    private assignedVisitsService: AssignedVisitsService,
+    private googleMapService: GoogleMapsService,
+    private sanitizer: DomSanitizer
+    ) { 
+    //  this.locationService.watchPosition();
+    }
     @ViewChild(IonSlides) slides: IonSlides;
 
 
   ngOnInit() {
-    this.getScheduledVisits();
-    this.getAllDraftReports();
     this.getClientDetails();
+    this.getDistanceMatrix();
+    this.getAllDraftReports();
     this.getItemGroup();
     this.getDeliveryCode();
-    this.getCurrentLocation();
-
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -108,6 +114,22 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     const mode = win && win.Ionic && win.Ionic.mode;
     return mode === 'ios' ? 'Inbox' : '';
   }
+  itemOnOfferChange(
+    event: {
+      component: IonicSelectableComponent,
+      value: any
+    }
+  ): void{
+    // console.log(this.itemOnOffer);
+    // const names = this.itemOnOffer.map((item) => item.ItemName );
+    // console.log(names);
+      // this.currentlySelectedItem = this.product?.ItemName;
+      // this.currentlySelectedItemId = this.product?.ItemId;
+      // this.currentlySelectedSalesPriceExcl = this.product?.SalePriceExcl;
+  }
+  // addItemToOffer(){
+  //   this.noOfitemOnOffer++;
+  // }
 
   async getAllDraftReports(){
     var regex = new RegExp(this.custCode.toLowerCase(), 'g');
@@ -181,13 +203,13 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   deleteReportFromDraft(CustCode, CustName){
     const self = this;
     this.db.draftReport.where({clientCode: CustCode}).delete()
-    .then(function (deleteCount) {
+    .then(function () {
         self.presentToast(`${CustName} was removed from draft reports!`);
     });
   }
 
   async presentToast(msg) {
-    let toast = await this.toastCtrl.create({
+    const toast = await this.toastCtrl.create({
       message: msg,
       duration: 3000,
       position: 'bottom',
@@ -256,7 +278,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
           finalReport: this.finalReport,
           custCode: this.custCode,
           clientDetails: this.clientDetails[0],
-          isUserInRadius: this.isUserInRadius()
+          isUserInRadius: this.isUserInRadius
         }
 
       });
@@ -285,21 +307,27 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         this.finalReport.stock = uniqueStocks;
         this.presentToast('Stocks added to final report successfully!');
         frm.reset();
+        this.saveReportAsDraft();
       }
     }
 
-    addPOSMaterialToFinalReport(): void{
-        const frm = document.querySelector('#frmPOS') as HTMLFormElement;
-        const fd = new FormData(frm);
-        for (const material of fd.keys()) {
-          if(fd.get(material) === 'on'){
-            this.finalReport.POS[material] = 'Y';
-          }else{
-            delete this.finalReport.POS[material];
-          }
-          this.presentToast('POS added to final report successfully!');
-        }
+
+
+    addOffersToFinalReport(): void{
+      const frm = document.querySelector('#frmOffers') as HTMLFormElement;
+      const fd = new FormData(frm);
+      if (this.formValidation(fd)){
+        const nextKey = Math.floor((Math.random() * 100) + 1);
+        this.finalReport.offers[nextKey] = {
+          price: fd.get('offerPrice'),
+          items: this.itemOnOffer.map((item) => item.ItemName ),
+          offerDetails: fd.get('offerDetails'),
+          endDate: fd.get('endDate')
+        };
+        this.presentToast('Promotion/Offers added to final report successfully!');
+      }
       frm.reset();
+      this.saveReportAsDraft();
     }
 
     addReturnsOfGoodsToFinalReport(): void{
@@ -330,6 +358,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       }
 
       frm.reset();
+      this.saveReportAsDraft();
     }
 
     addOrdersToFinalReport(): void {
@@ -342,27 +371,28 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         for (const key of fd.keys()) {
           if (fd.get(key).toString().length > 0){
             singleOrder[key]  = fd.get(key).toString();
-      singleOrder['DeliveryCode'] = this.currentlySelectedDeliveryCode;
-      if (this.formValidation(fd)){
-        for (const key of fd.keys()) {
-          if (fd.get(key).toString().length > 0){
-            singleOrder[key]  = fd.get(key).toString().replace(',','');
+            singleOrder['DeliveryCode'] = this.currentlySelectedDeliveryCode;
+            if (this.formValidation(fd)){
+              for (const key of fd.keys()) {
+                if (fd.get(key).toString().length > 0){
+                  singleOrder[key]  = fd.get(key).toString().replace(',','');
 
-          } else {
-            delete this.finalReport.orders[key];
-         }
-        }
-        this.finalReport.orders.push(singleOrder);
-         // Removing duplicates orders
-        const uniqueOrders = [
-          ...new Map(this.finalReport.orders.map(
-            item => [item.ItemName, item]
-          )).values()
-        ];
-        this.finalReport.orders = uniqueOrders;
-        this.presentToast('Orders added to final report successfully!');
-      }
+                } else {
+                  delete this.finalReport.orders[key];
+                }
+              }
+              this.finalReport.orders.push(singleOrder);
+              // Removing duplicates orders
+              const uniqueOrders = [
+                ...new Map(this.finalReport.orders.map(
+                  item => [item.ItemName, item]
+                )).values()
+              ];
+              this.finalReport.orders = uniqueOrders;
+              this.presentToast('Orders added to final report successfully!');
+            }
       frm.reset();
+      this.saveReportAsDraft();
     }
   }
   }
@@ -381,6 +411,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         this.presentToast('Payment added to final report successfully!');
       }
       frm.reset();
+      this.saveReportAsDraft();
     }
 
     addCommentToFinalReport(): void{
@@ -390,6 +421,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         this.finalReport.comments = fd.get('comment').toString();
         this.presentToast('Comment added to final report successfully!');
         frm.reset();
+        this.saveReportAsDraft();
       }
     }
 
@@ -411,7 +443,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       this.clientService.getClientDetails(this.custCode)
       .subscribe((data: IClientDetails[]) => {
         this.clientDetails = data;
-        // console.log(data)
+        this.isLoading = false;
       })
     );
   }
@@ -438,7 +470,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   doRefresh(event) {
     // Begin async operation
     this.getClientDetails(); // refetch  order details
-
+    this.getDistanceMatrix();
     setTimeout(() => {
       // Async operation has ended
       event.target.complete();
@@ -521,51 +553,19 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.getSearchedItem(event.text);
   }
 
+  src : SafeResourceUrl;
+  async takePicture(){
 
- async  takePhoto() {
-    // const image = await Plugins.Camera.getPhoto({
-    //   quality:100,
-    //   allowEditing:false,
-    //   resultType:CameraResultType.DataUrl,
-    //   source:CameraSource.Camera
-    // });
-    
-    //   this.photo = this.sanitizer.bypassSecurityTrustResourceUrl(image && (image.dataUrl));
+    const image = await Camera.getPhoto({
+      quality: 80,
+      allowEditing: true,
+      resultType: CameraResultType.Base64
+    })
+    .then(CameraPhoto => {
+      this.pictureB64 = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
 
-    // const options: CameraOptions = {
-    //   quality: 100,
-    //   destinationType: this.camera.DestinationType.DATA_URL,
-    //   encodingType: this.camera.EncodingType.JPEG,
-    //   mediaType: this.camera.MediaType.PICTURE
-    // };
-
-    // this.camera.getPicture(options).then((imageData) => {
-    //  // imageData is either a base64 encoded string or a file URI
-    //  // If it's base64 (DATA_URL):
-    //  this.picture = 'data:image/jpeg;base64,' + imageData;
-    // }, (err) => {
-    //  // Handle error
-    //  alert(err);
-    // });
-    // const selectedFile = document.getElementById('input').files[0];
-
-
-    const options: CameraOptions = {
-      quality: 100,
-      destinationType: this.camera.DestinationType.DATA_URL, // if the app crashes try FILE_URI then convert it Base64 using the logic from the onFileChange() function above
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE
-    }
-    
-    this.camera.getPicture(options).then((imageData) => {
-     // imageData is either a base64 encoded string or a file URI
-     // If it's base64 (DATA_URL):
-     let base64Image = 'data:image/jpeg;base64,' + imageData;
-     this.pictureB64 = base64Image;
-    }, (err) => {
-     // Handle error
-    });
-  }
+    })
+  };
 
 
   async presentAlert(msg, status) {
@@ -582,40 +582,48 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   }
 
   scheduledVisits: any = [];
-  getScheduledVisits(){
-    // console.log(this.clientDetails[0]);
+  checkScheduledVisits(){
+    this.scheduledVisits = [];
     const today = new Date().toLocaleDateString('zh-Hans-CN', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
     });
-    this.subscription.add( //this.currentUser.userCode
-      this.assignedVisitsService.getScheduledVisits(this.custCode,this.currentUser?.userCode , today).subscribe((visits)=> {
-        this.scheduledVisits = visits;
-        // console.log(visits);
+    this.subscription.add(
+      this.assignedVisitsService.checkScheduledVisits(this.custCode, this.currentUser.userCode, today).subscribe((visits)=> {
+        this.scheduledVisits = visits.filter(visit => visit?.CustCode === this.custCode);// checking if user is assigned to this outlet
+        if(this.scheduledVisits.length === 0){
+          this.scheduledVisits = visits;// if the user is not assigned to this outlet today, then we consider using the point_of_inetrest
+        }
       })
     );
 
   }
 
-  currentGPS: string = '';
-  async getCurrentLocation(){
-    const currentLocation = await this.db.currentLocation.orderBy('id').last();
-    this.currentGPS = currentLocation?.gps;
+  isUserInRadius: boolean = false;
 
-  }
+  userDistanceMatrix: any = [];
+  async getDistanceMatrix(){
+    this.isLoading = true;
 
-  distance: any;
-  isUserInRadius(): boolean{
-    const lat1 = this.currentGPS?.split(",")[0]; 
-    const long1 = this.currentGPS?.split(",")[1];
-    const lat2 = this.clientDetails[0]?.latlong.split(",")[0];
-    const long2 = this.clientDetails[0]?.latlong.split(",")[1];
-    this.distance = parseFloat(this.locationService.distance(lat1, lat2, long1, long2)).toFixed(2);
-    const geofence = (this.scheduledVisits?.length > 0)? this.scheduledVisits[0]?.Geofence: 0.00;// If the user is assigned to thic client return the assigned geofence
-    return geofence > this.distance;
+    this.checkScheduledVisits();
+    let originLatlng = await this.locationService.getCurrentPosition();
     
+    if(originLatlng === undefined || originLatlng === null || this.scheduledVisits.length === 0){
+      this.presentAlert("You are most likely not assigned to this client today!", "You can't submit this order")
+      return false;
+    }
+
+    //If the user was assigned by outlet get the latlng, if the user was assigned by point_of_interest get the google_place_id
+    let destinationLatlng = (this.scheduledVisits[0] && this.scheduledVisits[0]?.google_place_id)? `place_id:${this.scheduledVisits[0]?.google_place_id}`: this.clientDetails[0]?.latlong;
+
+    this.googleMapService.getDistanceMatrix(originLatlng, destinationLatlng).subscribe((response)=> {
+      this.userDistanceMatrix = response;
+      this.isUserInRadius = (this.scheduledVisits[0]?.Geofence > this.userDistanceMatrix?.distance?.value);
+      this.isLoading = false;
+    });
   }
+
 
 
 

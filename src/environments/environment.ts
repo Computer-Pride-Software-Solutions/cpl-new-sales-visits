@@ -12,7 +12,9 @@ export const environment = {
     storageBucket: "sales-advisor-866b4.appspot.com",
     messagingSenderId: "848859883407",
     appId: "1:848859883407:web:5396dc2b957b21c85d0dfa"
-  }
+  },
+  GoogleMapBaseURL: 'https://maps.googleapis.com/maps/api',
+  GoogAPIKey: 'AIzaSyDAaXpqmKSvPkXY1hse3ripJVj6DS53KY4'
 };
 
 /*

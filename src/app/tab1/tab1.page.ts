@@ -18,6 +18,7 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
   scheduledVisits: IVisits[] = [];
 
   subscription: Subscription = new Subscription();
+  salesRep = JSON.parse(localStorage.getItem('currentUser')).userCode;
 
   // references the #calendar in the template
   calendarOptions: CalendarOptions = {
@@ -30,10 +31,6 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
     dayMaxEvents: true,
     eventClick: this.handleDateClick.bind(this),
   };
-
-
-  // salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
-
 
   constructor(
     private scheduledService: AssignedVisitsService,
@@ -49,7 +46,7 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
   }
 
   ngOnInit(): void {
-    this.getScheduledVisits();
+    this.getScheduledVisits(this.salesRep);
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -73,20 +70,19 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
     // Refreshing page
     doRefresh(event) {
       // Begin async operation
-      this.getScheduledVisits();
+      this.getScheduledVisits(this.salesRep);
       setTimeout(() => {
         // Async operation has ended
         event.target.complete();
       }, 2000);
     }
 
-  getScheduledVisits(): void{
+  getScheduledVisits(salesRep): void{
       this.subscription.add(
-        this.scheduledService.getVisits()
+        this.scheduledService.getVisits(salesRep)
         .subscribe(visits => {
           // this.scheduledVisits = visits;
           this.calendarOptions.events = visits;
-          // console.log(visits);
         })
       );
   }
@@ -101,10 +97,15 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
   //   );
   // }
   getClientDetails(custCode: string): void{
-    this.router.navigate([`/view-client-details/${custCode}`]);
+    this.router.navigate([`./tabs/tab2/client-details/${custCode}`]);
   }
 
-  handleDateClick(arg): void {
+  handleDateClick(arg) {
+    const custName = arg.event._def.title;
+    const custCode = arg.event._def.publicId;
+    if(custCode === undefined || custCode === null){
+      return;
+    }
     const clickedDate = new Date(arg.event._instance.range.start).toLocaleDateString('en-US', {
       year: 'numeric',
       month: '2-digit',
@@ -115,9 +116,6 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
       month: '2-digit',
       day: '2-digit',
     });
-    const custName = arg.event._def.title;
-    const custCode = arg.event._def.publicId;
-
     this.getVisitSummary(custCode, custName, clickedDate);
   }
 

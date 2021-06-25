@@ -23,9 +23,9 @@ export class AssignedVisitsService {
 
     }
 
-    getVisits(): Observable<IVisits[]> {
-        const endpoint = 'scheduled-visits';
-        return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
+    getVisits(salesRep): Observable<IVisits[]> {
+        const endpoint = 'visits';
+        return this.httpClient.get(`${this.baseUrl}/${endpoint}/${salesRep}`, {
             // params: this.param,
             headers : this.headers,
             withCredentials: true
@@ -39,15 +39,15 @@ export class AssignedVisitsService {
         );
     }
 
-    getScheduledVisits(custCode, salesRepCode, date):Observable<any>{
-      const endpoint = 'visits/scheduled';
+    checkScheduledVisits(custCode, salesRepCode, date):Observable<any>{
+      const endpoint = 'visits/assigned';
       this.param = this.param.append('visit-date', date);
 
       return this.httpClient.get(`${this.baseUrl}/${endpoint}/${custCode}/${salesRepCode}`, {
         params: this.param,
         headers : this.headers,
         withCredentials: true
-      })
+      });
     }
 
     getClientDetails(clientName: string): Observable<IClient[]> {

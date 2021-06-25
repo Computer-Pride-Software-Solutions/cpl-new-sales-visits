@@ -18,27 +18,25 @@ export class FinalReportService {
    }
 
 
-  submitFinalReport(finalReport, gps, custCode, salesRep){
-    const fd = new FormData();
-    if (Object.keys(finalReport.payment).length > 0){
-      fd.append('file', finalReport?.payment?.proofOfPayment, finalReport?.payment?.proofOfPayment?.name);
-    }
+  submitFinalReport(report, custCode){
+    // const fd = new FormData();
+    // if (Object.keys(finalReport.payment).length > 0){
+    //   fd.append('file', finalReport?.payment?.proofOfPayment, finalReport?.payment?.proofOfPayment?.name);
+    // }
 
-    const endpoint = 'final-report';
-    this.param = this.param.append('gps', gps);
-    this.param = this.param.append('finalReport', JSON.stringify(finalReport));
-    this.param = this.param.append('salesRep', salesRep);
-    return this.httpClient.post(`${this.baseUrl}/${endpoint}/${custCode}`, fd, {
+    const endpoint = 'visits';
+    // this.param = this.param.append('gps', gps);
+    // this.param = this.param.append('finalReport', JSON.stringify(finalReport));// Passing large data query parameters might be the reason why users are not able to submit more than 30 items
+    // this.param = this.param.append('salesRep', salesRep);
+    return this.httpClient.post(`${this.baseUrl}/${endpoint}/${custCode}`, report, {
       params: this.param,
       headers : this.headers,
       withCredentials: true
     }).pipe(
-      map((data) => {
+      map((data) =>
         // alert(data['msg']);
-        return data;
-      }), catchError(error => {
-        return throwError(error);
-      })
+         data
+      ), catchError(error => throwError(error))
     );
   }
 

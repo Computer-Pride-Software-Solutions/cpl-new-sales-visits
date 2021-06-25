@@ -3,7 +3,9 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
+  <div class="loader"  *ngIf="isLoading">
+    <ion-spinner name="lines" color="primary" mode="ios"></ion-spinner>
+  </div>
   <div class="container">
     <div class="ion-padding">
       <ion-searchbar mode="ios" (ionInput)='searchClients($event)' placeholder="Type a client"></ion-searchbar>

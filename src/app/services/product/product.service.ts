@@ -65,6 +65,8 @@ export class ProductService {
     );
   }
 
+
+
   getSearchedItem(hint: string, custCode: string): Observable<IProduct[]>{
     if(hint.length > 2){
     this.param = this.param.append('hint', hint);
@@ -84,9 +86,9 @@ export class ProductService {
   }
 
   //methods for new endpoints
-  getAllProducts(chunk:number, hint:string = ''): Observable<IProduct[]>{
+  getAllProducts(chunk:number, hint): Observable<IProduct[]>{
     const endpoint = 'products';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${chunk}${(hint.length > 1)? '/'+hint: ''}`, {
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${chunk}${(hint !== null)? '/'+hint: ''}`, {
       headers : this.headers,
       withCredentials: true
     }).pipe(
@@ -97,4 +99,33 @@ export class ProductService {
       })
     );
   }
+
+  // getAllProductsGroups(chunk:number, hint:string = ''): Observable<any[]>{
+  //   const endpoint = 'item-group';
+  //   return this.httpClient.get(`${this.baseUrl}/${endpoint}/${chunk}${(hint.length > 3)? '/'+hint: ''}`, {
+  //     headers : this.headers,
+  //     withCredentials: true
+  //   }).pipe(
+  //     map((data: any[]) => {
+  //       return data;
+  //     }), catchError(error => {
+  //       return throwError(error);
+  //     })
+  //   );
+  // }
+  getProductsPerGroup(itemGroup): Observable<any[]>{
+    const endpoint = 'items/group';
+      return this.httpClient.get(`${this.baseUrl}/${endpoint}/${itemGroup}`, {
+        headers : this.headers,
+        withCredentials: true
+      }).pipe(
+        map((data: any[]) => {
+          return data;
+        }), catchError(error => {
+          return throwError(error);
+        })
+      );
+  }
 }
+
+

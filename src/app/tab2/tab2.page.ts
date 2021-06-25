@@ -18,7 +18,7 @@ export class Tab2Page {
   subscription: Subscription = new Subscription();
   page = 0;
   hint = '';
-
+  isLoading = true;
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
   constructor(private clientsService: ClientService, public modalController: ModalController,
@@ -36,11 +36,14 @@ export class Tab2Page {
     this.clients = [];
   }
 
+
+
   // Fecthing orders theough the service
   getClients(page: number): void {
     this.subscription = this.clientsService.getClients(page, this.hint)
       .subscribe((data: IClient[]) => {
         this.clients = data;
+        this.isLoading = false;
       }
     );
 

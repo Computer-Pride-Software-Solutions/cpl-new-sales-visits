@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ProductService } from '../../services/product/product.service';
+import { Subscription } from 'rxjs';
+import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-product-details',
@@ -10,8 +13,11 @@ import { map } from 'rxjs/operators';
 })
 export class ProductDetailsPage implements OnInit {
 
+  subscription: Subscription = new Subscription();
+  itemGroup = this.activatedRoute.snapshot.paramMap.get('itemGroup');
+  isLoading = true;
 
-  product: any;
+  products: any[] = [];
   slideOpts = {
     grabCursor: true,
   cubeEffect: {
@@ -168,13 +174,37 @@ export class ProductDetailsPage implements OnInit {
   }
   };
   constructor(
-    private router: Router
+    private router: Router,
+    private productService: ProductService,
+    private activatedRoute: ActivatedRoute,
+
   ) { }
 
   ngOnInit() {
-    this.product = this.router.getCurrentNavigation().extras.state?.product;
+    // this.product = this.router.getCurrentNavigation().extras.state?.product;
     // console.log(this.router.getCurrentNavigation().extras.state.product); // should log out 'bar'
+    this.getProductsPerGroup(this.itemGroup);
+  }
+  @ViewChild(IonContent, { static: false }) content: IonContent;
 
+  isScrolling = false;
+  ScrollToTop() {
+    this.content.scrollToTop(1500);
+  }
+
+  logScrollStart(event) {
+    this.isScrolling = true;
+    // console.log("logScrollStart : When Scroll Starts", event);
+  }
+
+  logScrolling(event) {
+    this.isScrolling = true;
+    // console.log("logScrolling : When Scrolling", event);
+  }
+
+  logScrollEnd(event) {
+    this.isScrolling = false;
+    // console.log("logScrollEnd : When Scroll Ends", event);
   }
 
   getBackButtonText() {
@@ -182,5 +212,15 @@ export class ProductDetailsPage implements OnInit {
     const mode = win && win.Ionic && win.Ionic.mode;
     return mode === 'ios' ? 'Inbox' : '';
   }
+
+
+  getProductsPerGroup(itemGroup){
+    this.subscription.add(
+      this.productService.getProductsPerGroup(itemGroup).subscribe((products) => {
+        this.products = products;
+        this.isLoading = false;
+      })
+    )
+}
 
 }

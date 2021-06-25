@@ -8,6 +8,7 @@ export interface IProduct {
     UOM: string;
     QtyOnHand: number;
     ItemImg:string;
+    ItemGroup: string;
   }
   
   export interface IItemGroup {

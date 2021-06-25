@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-buttons>
       <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
-       <ion-note color="light">{{(product?.ItemName.length>25)? (product?.ItemName | slice:0:25)+' ...':(product?.ItemName) }}</ion-note>
+       <ion-note color="light">{{itemGroup}}</ion-note>
     </ion-buttons>
     <ion-buttons slot="primary">
       <!-- <ion-button (click)="presentActionSheet()">
@@ -11,9 +11,21 @@
     </ion-buttons>
 </ion-toolbar>
 </ion-header>
+<div class="loader"  *ngIf="isLoading">
+  <ion-spinner name="lines" color="primary" mode="ios"></ion-spinner>
+</div>
+<ion-content fullscreen
+[scrollEvents]="true" 
+     (ionScrollStart)="logScrollStart($event)" 
+     (ionScroll)="logScrolling($event)"
+     (ionScrollEnd)="logScrollEnd($event)"
+>
 
-<ion-content fullscreen>
-  <ion-card mode="ios">
+  
+  <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
+    <ion-searchbar mode="ios" placeholder="Type an Item"></ion-searchbar>
+  </div>
+  <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;">
     <ion-slides pager="true" [options]="slideOpts">
       <ion-slide *ngFor="let img of product?.ImageURL.split(';')">
         <img [src]="img" />
@@ -51,4 +63,10 @@
       <!-- Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the Wisconsin Territory in 1836. -->
     </ion-card-content>
   </ion-card>
+
+  <ion-fab size="small" vertical="bottom" horizontal="end"  slot="fixed" (click)="ScrollToTop()">
+    <ion-fab-button>
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

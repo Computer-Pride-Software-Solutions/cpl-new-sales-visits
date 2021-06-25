@@ -28,13 +28,16 @@ export class LoginService {
    }
 
   loginUser(email: string, password: string) {
-    let param = new HttpParams();
-    param = param.append('appcode', 'SalesVisit');
-    param = param.append('email', email);
-    param = param.append('password', password);
-    return this.httpClient.get(`${this.baseUrl}/login`, {
+    // let param = new HttpParams();
+    // param = param.append('appcode', 'SalesVisit');
+    // param = param.append('email', email);
+    // param = param.append('password', password);
+    return this.httpClient.post(`${this.baseUrl}/login/SalesVisit`, {
+      email: email,
+      password: password
+    },{
       headers: this.headers,
-      params: param,
+      // params: param,
       withCredentials: true
     }).pipe(map(auth => {
         if (!auth['isAuthenticated']) {
@@ -56,9 +59,10 @@ export class LoginService {
       headers: this.headers,
       withCredentials: true
     }).pipe(map(auth => {
-      let username: string;
+      let currentUser: any;
       if(localStorage.getItem("currentUser")){
-        username = JSON.parse(localStorage.getItem("currentUser")).username;
+        currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        // currentUser = localStorage.getItem('currentUser');
       }
       if(!auth['isAuthenticated']){
         this.presentAlert(`${auth['msg']}`, '');
@@ -67,7 +71,8 @@ export class LoginService {
       }
       localStorage.setItem("currentUser", JSON.stringify({
         "isAuthenticated" : auth['isAuthenticated'],
-        "username": username
+        "username": currentUser.username,
+        "userCode": currentUser.userCode
       }));
      return auth['isAuthenticated'];
     }),catchError( error => {

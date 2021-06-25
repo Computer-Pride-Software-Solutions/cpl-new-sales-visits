@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import {LoginService} from '../services/login/login.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginPage implements OnInit, OnDestroy {
   constructor(
     private loginService: LoginService,
     private router: Router,
+    public loadingController: LoadingController
 
     ) {
       localStorage.removeItem("currentUser");
@@ -27,12 +29,23 @@ export class LoginPage implements OnInit, OnDestroy {
   ngOnInit() {
 
   }
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Login in...',
+      duration: 3000
+    });
+    await loading.present();
 
+    const { role, data } = await loading.onDidDismiss();
+    console.log('Loading dismissed!');
+  }
   public onPasswordToggle(): void {
     this.showPassword = !this.showPassword;
   }
 
   onSubmit() {
+    this.presentLoading();
     const frm = document.querySelector('#frmLogin') as HTMLFormElement;
     const fd = new FormData(frm);
     const email = fd.get('email').toString();

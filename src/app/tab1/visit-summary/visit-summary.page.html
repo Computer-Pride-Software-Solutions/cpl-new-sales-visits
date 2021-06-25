@@ -1,12 +1,12 @@
 <ion-header fullscreen>
   <ion-toolbar>
-    <ion-title >{{visitHeader.custName}}</ion-title>
+    <ion-title ><small>{{visitHeader.custName}}</small></ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen>
 
-  <ion-title *ngIf="!visitSummary || !visitSummary.Orders.length > 0 && !visitSummary.Returns.length >  0 && !visitSummary.Comment[0]?.SalesRepRemarks.trim().length > 0">No summary Available</ion-title>
+  <ion-title *ngIf="!visitSummary"><small>No summary Available</small></ion-title>
   
   <ion-list *ngIf="visitSummary && visitSummary.Orders.length > 0">
     <ion-list-header>
