@@ -23,7 +23,7 @@
 
   
   <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
-    <ion-searchbar mode="ios" placeholder="Type an Item"></ion-searchbar>
+    <ion-searchbar mode="ios" placeholder="Type an Item"  (ionInput)='searchProduct($event)'></ion-searchbar>
   </div>
   <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;">
     <ion-slides pager="true" [options]="slideOpts">

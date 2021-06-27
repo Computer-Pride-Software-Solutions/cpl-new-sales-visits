@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product/product.service';
 import { Subscription } from 'rxjs';
 import { IonContent } from '@ionic/angular';
@@ -174,7 +172,6 @@ export class ProductDetailsPage implements OnInit {
   }
   };
   constructor(
-    private router: Router,
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
 
@@ -193,17 +190,17 @@ export class ProductDetailsPage implements OnInit {
   }
 
   logScrollStart(event) {
-    this.isScrolling = true;
+    // this.isScrolling = true;
     // console.log("logScrollStart : When Scroll Starts", event);
   }
 
   logScrolling(event) {
-    this.isScrolling = true;
+    // this.isScrolling = true;
     // console.log("logScrolling : When Scrolling", event);
   }
 
   logScrollEnd(event) {
-    this.isScrolling = false;
+    // this.isScrolling = false;
     // console.log("logScrollEnd : When Scroll Ends", event);
   }
 
@@ -213,7 +210,6 @@ export class ProductDetailsPage implements OnInit {
     return mode === 'ios' ? 'Inbox' : '';
   }
 
-
   getProductsPerGroup(itemGroup){
     this.subscription.add(
       this.productService.getProductsPerGroup(itemGroup).subscribe((products) => {
@@ -221,6 +217,18 @@ export class ProductDetailsPage implements OnInit {
         this.isLoading = false;
       })
     )
-}
+  }
+
+  hint: any;
+  searchProduct(event = null){
+    this.hint = (event)? event.target.value.toString().toLowerCase(): '';
+    var regex = new RegExp(this.hint);
+    var results = this.products.filter(report => regex.test(report.ItemName.toLowerCase()));
+    if(this.hint.length === 0 || results.length === 0){
+      this.getProductsPerGroup(this.itemGroup);
+    }else{
+      this.products = results;
+    }
+  }
 
 }
