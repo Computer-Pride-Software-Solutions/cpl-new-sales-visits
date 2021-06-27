@@ -5,6 +5,8 @@ import { ModalController } from '@ionic/angular';
 import { IClient } from '../interfaces/IClient';
 import { ClientService } from '../services/client/client.service';
 import { NewClientPage } from './new-client/new-client.page';
+import { LocationService } from '../services/location/location.service';
+import { DexieService } from '../services/Database/Dexie/dexie.service';
 
 @Component({
   selector: 'app-tab2',
@@ -21,22 +23,45 @@ export class Tab2Page {
   isLoading = true;
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
-  constructor(private clientsService: ClientService, public modalController: ModalController,
-    ) {}
+  constructor(
+    private clientsService: ClientService,
+    public modalController: ModalController,
+    private locationService: LocationService,
+    private db: DexieService,
+  ) {
+
+  }
 
   ngOnInit() {
+    this.watchPosition();
     // loading purchase orders
     this.getClients(this.page);
-
   }
 
   ngOnDestroy() {
     // releasing resources
     this.subscription.unsubscribe();
     this.clients = [];
+    this.locationService.clearLocationDetails();
+    this.locationService.watch?.unsubscribe();
   }
 
+  async watchPosition(){  
 
+    this.locationService.watch.subscribe(async (data) => {
+     await this.db.transaction('rw', this.db.currentLocation, async function () {
+       if(data.coords !== undefined){
+         this.db.currentLocation.put(
+           {
+             lat: data.coords?.latitude,
+             long: data.coords?.longitude,
+             gps: `${data.coords?.latitude},${data.coords?.longitude}`
+           }
+         );
+       }     
+     });
+    });
+ }
 
   // Fecthing orders theough the service
   getClients(page: number): void {
