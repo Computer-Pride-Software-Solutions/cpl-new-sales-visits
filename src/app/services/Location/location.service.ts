@@ -1,27 +1,18 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { from, Observable, throwError, of } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
-
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { Geolocation, Geoposition, PositionError } from '@ionic-native/geolocation/ngx';
 import { DexieService } from '../Database/Dexie/dexie.service';
 
-// import { Geolocation, GeolocationOptions, Geoposition, PositionError } from '@ionic-native/geolocation/ngx';
 @Injectable({
   providedIn: 'root'
 })
-export class LocationService implements OnDestroy {
-  private baseUrl = environment.BASE_URL;
-  private headers = new HttpHeaders();
-  private param = new HttpParams();
+export class LocationService implements OnDestroy, OnInit {
 
   watch;
   options = {
-    maximumAge: 2000,
-    timeout: 9000,
+    maximumAge: 5000,
+    timeout: 8000,
     enableHighAccuracy: true
   };
   currentLatLon;
@@ -33,16 +24,17 @@ export class LocationService implements OnDestroy {
     public alertController: AlertController,
     private toastCtrl: ToastController,
     private db: DexieService,
-    private httpClient: HttpClient,
 
   ) {
-    this.headers = this.headers.set('Content-Type', 'application/json').set('Accept', 'application/json');
-
-    // this.getCurrentLatLon();
+    this.watch = this.geolocation.watchPosition(this.options);
    }
   ngOnDestroy(): void {
-    // this.watch.unsubscribe();
-    // this.clearLocationDetails();
+    this.watch.unsubscribe();
+    this.clearLocationDetails();
+  }
+  
+  ngOnInit(){
+
   }
 
    getCurrentPosition(){   
@@ -64,26 +56,6 @@ export class LocationService implements OnDestroy {
       this.db.currentLocation.clear();
     });
   }
-
-   watchPosition(){
-    this.watch = this.geolocation.watchPosition(this.options);
-    this.watch.subscribe(async (data) => {
-      await this.db.transaction('rw', this.db.currentLocation, async function () {
-        this.db.currentLocation.put(
-          {
-            lat: data.coords?.latitude,
-            long: data.coords?.longitude,
-            gps: `${data.coords?.latitude},${data.coords?.longitude}`
-          }
-        );
-      });
-    }),
-    (err) => {
-      this.presentToast(err.message);
-     }
-
-   }
-
 
 
    async presentToast(msg) {
