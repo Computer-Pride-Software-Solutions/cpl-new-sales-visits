@@ -13,6 +13,8 @@ export class ProductDetailsPage implements OnInit {
 
   subscription: Subscription = new Subscription();
   itemGroup = this.activatedRoute.snapshot.paramMap.get('itemGroup');
+  itemCode = this.activatedRoute.snapshot.paramMap.get('itemCode');
+
   isLoading = true;
 
   products: any[] = [];
@@ -174,14 +176,14 @@ export class ProductDetailsPage implements OnInit {
   constructor(
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
-
   ) { }
 
   ngOnInit() {
-    // this.product = this.router.getCurrentNavigation().extras.state?.product;
-    // console.log(this.router.getCurrentNavigation().extras.state.product); // should log out 'bar'
+   
     this.getProductsPerGroup(this.itemGroup);
+
   }
+
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   isScrolling = false;
@@ -191,18 +193,21 @@ export class ProductDetailsPage implements OnInit {
 
   logScrollStart(event) {
     // this.isScrolling = true;
-    // console.log("logScrollStart : When Scroll Starts", event);
   }
 
   logScrolling(event) {
     // this.isScrolling = true;
-    // console.log("logScrolling : When Scrolling", event);
   }
 
   logScrollEnd(event) {
     // this.isScrolling = false;
-    // console.log("logScrollEnd : When Scroll Ends", event);
   }
+
+  scrollTo(anchor) {
+    let yOffset = document.getElementById(anchor)?.offsetTop;
+    this.content.scrollToPoint(0, yOffset, 6000)
+  }
+
 
   getBackButtonText() {
     const win = window as any;
@@ -215,6 +220,8 @@ export class ProductDetailsPage implements OnInit {
       this.productService.getProductsPerGroup(itemGroup).subscribe((products) => {
         this.products = products;
         this.isLoading = false;
+          // document.getElementById('viewSelectedItem').click();
+        this.scrollTo(this.itemCode);
       })
     )
   }
