@@ -5,9 +5,9 @@
        <ion-note color="light">{{itemGroup}}</ion-note>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <!-- <ion-button (click)="presentActionSheet()">
-        <ion-icon  name="ellipsis-vertical" size="medium" ></ion-icon>
-      </ion-button> -->
+      <ion-button (click)="scrollTo(itemCode)" id="viewSelectedItem">
+        <ion-icon  name="barcode-outline" size="medium" ></ion-icon>
+      </ion-button>
     </ion-buttons>
 </ion-toolbar>
 </ion-header>
@@ -25,7 +25,7 @@
   <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
     <ion-searchbar mode="ios" placeholder="Type an Item"  (ionInput)='searchProduct($event)'></ion-searchbar>
   </div>
-  <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;">
+  <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;" id="{{product?.ItemCode}}">
     <ion-slides pager="true" [options]="slideOpts">
       <ion-slide *ngFor="let img of product?.ImageURL.split(';')">
         <img [src]="img" />
