@@ -1,29 +1,53 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionSheetController, AlertController } from '@ionic/angular';
+import { DexieService } from '../services/Database/Dexie/dexie.service';
 import { LocationService } from '../services/location/location.service';
+import { Geolocation} from '@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage implements OnInit {
+export class TabsPage implements OnInit, OnDestroy {
 
   constructor(public actionSheetController: ActionSheetController,
      private locationService: LocationService,
      private router: Router,
      public alertController: AlertController,
-    ) {}
+     private db: DexieService,
+      public geolocation: Geolocation
 
-  // currentLatLong: string;
-  // async getCurrentLocation(){
-  //   this.currentLatLong = (this.locationService.currenGPS)? await Promise.resolve(this.locationService.currenGPS) : await this.locationService.getCurrentPosition();
-  // }
+    ) {
+
+    }
+  ngOnDestroy(): void {
+    // this.locationService.clearLocationDetails();
+    // this.locationService.watch?.unsubscribe();
+  }
+
 
   ngOnInit() {
-    // this.locationService.watchPosition();
+    // this.watchPosition();
   }
+
+  // async watchPosition(){  
+
+  //    this.locationService.watch.subscribe(async (data) => {
+  //     await this.db.transaction('rw', this.db.currentLocation, async function () {
+  //       if(data.coords !== undefined){
+  //         this.db.currentLocation.put(
+  //           {
+  //             lat: data.coords?.latitude,
+  //             long: data.coords?.longitude,
+  //             gps: `${data.coords?.latitude},${data.coords?.longitude}`
+  //           }
+  //         );
+  //       }     
+  //     });
+  //    });
+  // }
 
   async presentActionSheet() {
     const self = this;

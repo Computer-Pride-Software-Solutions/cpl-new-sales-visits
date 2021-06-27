@@ -38,6 +38,13 @@ export class Tab3Page implements OnInit {
     this.allDraftReports = [];
   }
 
+  deleteAllSentDraftReports(){
+    this.db.draftReport.where("status").equals("Sent").modify((value, ref) => {
+      delete ref.value;
+      this.searchDraftReports();
+    });
+  }
+
 
 
 }

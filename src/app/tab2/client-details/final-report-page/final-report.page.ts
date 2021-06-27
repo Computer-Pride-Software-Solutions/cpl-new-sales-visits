@@ -35,7 +35,6 @@ export class FinalReportPage implements OnInit, OnDestroy {
     public alertController: AlertController,
     private finalReportService: FinalReportService,
     private router: Router,
-    private firebaseService: FirebaseService,
     private db: DexieService,
     private locationService: LocationService
     ) {
@@ -63,21 +62,13 @@ export class FinalReportPage implements OnInit, OnDestroy {
   }
 
   async submitFinalReport(): Promise<any>{
+    this.isLoading = true;
     let originLatlng = await this.locationService.getCurrentPosition();
     if(originLatlng === undefined || originLatlng === null){
       this.presentAlert("We are unable to capture your current location!", "Your Mobile GPS is OFF")
       return false;
     }
 
-    this.isLoading = true;
-
-    if (Object.keys(this.finalReport.payment).length > 0){
-      const url = await this.firebaseService.uploadImageToFirebase('payments',this.finalReport.payment.proofOfPayment);
-      this.finalReport.payment.proofOfPayment = url;
-      // console.log(url);
-    }
-
- 
       this.subscription.add(   
         this.finalReportService.submitFinalReport(
           {
@@ -88,12 +79,19 @@ export class FinalReportPage implements OnInit, OnDestroy {
           this.clientDetails?.CustCode
         ).subscribe( rsp => {
           this.presentAlert(rsp['msg'], rsp['status']);
-          this.removeReportFromDraft(this.clientDetails?.CustCode);
+          // this.removeReportFromDraft(this.clientDetails?.CustCode);
+          this.updateReportStatus(this.clientDetails?.CustCode, 'Sent');
           this.isLoading = false;
         })
       );
     
 
+  }
+
+  async updateReportStatus(clientCode: string, status: string){
+    await this.db.transaction('rw', this.db.draftReport, function () {
+      this.db.draftReport.where("clientCode").equals(clientCode).modify({status: status});
+    });
   }
 
   async removeReportFromDraft(clientCode: string){

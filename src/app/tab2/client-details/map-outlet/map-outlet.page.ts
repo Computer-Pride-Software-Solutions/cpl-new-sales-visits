@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/services/client/client.service';
@@ -29,7 +29,8 @@ export class MapOutletPage implements OnInit {
   ngOnInit() {
     this.getCurrentLocation();
   }
-
+  @Input() clientName: string;
+  @Input() custCode: string;
   async getCurrentLocation(){
     let originLatlng = await this.locationService.getCurrentPosition();
     this.currentLatLong = originLatlng;
@@ -44,14 +45,14 @@ export class MapOutletPage implements OnInit {
     await loading.present();
 
     const { role, data } = await loading.onDidDismiss();
-    console.log('Loading dismissed!');
+    // console.log('Loading dismissed!');
   }
 
-  async mapClient(custCode){
+  async mapClient(){
     this.presentLoading();
 
     this.subscription.add(
-      this.clientService.mapClient(custCode, this.currentLatLong).subscribe((response)=> {
+      this.clientService.mapClient(this.custCode, this.currentLatLong).subscribe((response)=> {
         this.presentAlert(response['msg'], '');
       })
     )

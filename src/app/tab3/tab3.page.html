@@ -16,10 +16,10 @@
     </div>
     <div class="ion-text-center ion-text-uppercase"><ion-note>All DRAFT REPORTS</ion-note></div>
     <ion-list>
-      <ion-item class="item-client" mode="ios" color="primary" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
+      <ion-item class="item-client" mode="ios" color="{{report.status === 'Sent'?'primary':'medium'}}" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
         <ion-label class="ion-text-wrap card-label" color="light">
           <h2>
-            {{ report.clientCode }}
+            {{ report.clientCode }} <ion-badge color="{{(report.status === 'Sent')?'success':'secondary'}}"><small>{{report.status}}</small></ion-badge>
           </h2>
           
           <h3>{{ (report.clientName.length>25)? (report.clientName | slice:0:25)+' ...':(report.clientName) }}</h3>
@@ -32,9 +32,28 @@
 
   </div>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="clearAllDraftReports()">
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="clearAllDraftReports()">
     <ion-fab-button color="danger">
-      <ion-icon name="trash-outline"></ion-icon>     
+      <ion-icon name=""></ion-icon>     
     </ion-fab-button>
+  </ion-fab> -->
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary">
+      <ion-icon name="trash-outline" ></ion-icon>
+    </ion-fab-button>
+     <ion-fab-list side="top">
+       <!--Delete all-->
+      <ion-fab-button color="danger" (click)="clearAllDraftReports()">
+        <!-- <ion-icon name="document-text-outline"></ion-icon><br> -->
+        <ion-label><small>All</small></ion-label>
+
+      </ion-fab-button>
+      <!--Delete sent-->
+      <ion-fab-button color="success" (click)="deleteAllSentDraftReports()">
+        <!-- <ion-icon name="chatbubble-ellipses-outline"></ion-icon> -->
+        <small>Sent</small>
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
 </ion-content>

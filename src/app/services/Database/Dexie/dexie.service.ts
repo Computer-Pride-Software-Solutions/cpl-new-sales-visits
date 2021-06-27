@@ -18,11 +18,11 @@ export class DexieService extends Dexie {
     
         let db = this;
 
-        db.version(1).stores({
-            draftReport: '&clientCode, clientName, date, report',
+        db.version(2).stores({
+            draftReport: '&clientCode, clientName, date, report, status',
             currentLocation: '++id, lat, long, gps'
         });
-        db.version(2).stores({});
+        db.version(3).stores({});
 
         this.draftReport = this.table("draftReport");
         this.currentLocation = this.table("currentLocation");
@@ -63,6 +63,7 @@ export interface IDrafReport{
   clientName: string;
   date: string;
   report: any;
+  status: string;
 }
 
 export interface ICurrentUserLocation{

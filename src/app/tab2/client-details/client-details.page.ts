@@ -35,6 +35,7 @@ import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
   styleUrls: ['./client-details.page.scss'],
 })
 export class ClientDetailsPage implements OnInit, OnDestroy {
+  currentLatLong: any;
   today: String = new Date().toISOString();
 
   clientDetails: IClientDetails[] = [];
@@ -73,8 +74,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     comments: ''
   };
 
-  pictureB64: SafeResourceUrl = 'assets/images/sample-cheque.jpeg';
-  picture: File = null;
+  pictureB64: any;
+  src : SafeResourceUrl = 'assets/images/sample-cheque.jpeg';;
   submit = false;
   isLoading = true;
 
@@ -94,19 +95,32 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer
     ) { 
     //  this.locationService.watchPosition();
+
+     
     }
     @ViewChild(IonSlides) slides: IonSlides;
 
 
   ngOnInit() {
+    this.getCurrentLocation();
     this.getClientDetails();
-    this.getDistanceMatrix();
+    // this.getDistanceMatrix();
     this.getAllDraftReports();
     this.getItemGroup();
     this.getDeliveryCode();
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  async getCurrentLocation(){
+    // let originLatlng = await this.locationService.getCurrentPosition();
+    // let watch = await this.locationService.watchPosition();
+    // console.log(watch)
+    // this.currentLatLong = originLatlng;
+
+    
+
   }
 
   getBackButtonText() {
@@ -155,13 +169,13 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
             self.mapClient();
           }
         }, 
-        {
-        text: 'Save Report as Draft',
-        icon: 'save-outline',
-        handler: () => {
-          self.saveReportAsDraft();
-        }
-        }, 
+        // {
+        // text: 'Save Report as Draft',
+        // icon: 'save-outline',
+        // handler: () => {
+        //   self.saveReportAsDraft();
+        // }
+        // }, 
         {
           text: 'Remove Report From Draft',
           icon: 'trash-outline',
@@ -232,42 +246,12 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         clientCode: self.custCode,
         clientName: self.clientDetails[0]?.CustName,
         date: new Date().toLocaleDateString(),
-        report: self.finalReport
+        report: self.finalReport,
+        status: 'Awaiting'
       });
 
-  
-      // console.log(report);
     });
   }
-
-  // triggerFile(){
-  //   document.getElementById('fileInput').click();
-  // }
-
-
-  // onFileChange(e){
-  //   this.picture =  <File>e.target.files[0];
-
-  //   var file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-  //   const pattern = /image-*/;
-  //   const reader = new FileReader();
-  //   if (!file.type.match(pattern)) {
-  //     alert('invalid format');
-  //     return;
-  //   }
-  //   reader.onload = this._handleReaderLoaded.bind(this);
-  //   reader.readAsDataURL(file);
-  // }
-  // _handleReaderLoaded(e) {
-  //   let reader = e.target;
-  //   this.pictureB64 = reader.result;
-  //   // console.log(this.picture)
-  // }
-
-  // currentLatLong: string;
-  // async getCurrentLocation(){
-  //   this.currentLatLong = (this.locationService.currenGPS)? await Promise.resolve(this.locationService.currenGPS) : await this.locationService.getCurrentPosition();
-  // }
 
     async presentModal() {
       const modal = await this.modalController.create({
@@ -310,7 +294,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         this.saveReportAsDraft();
       }
     }
-
 
 
     addOffersToFinalReport(): void{
@@ -443,6 +426,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       this.clientService.getClientDetails(this.custCode)
       .subscribe((data: IClientDetails[]) => {
         this.clientDetails = data;
+        this. getDistanceMatrix();
         this.isLoading = false;
       })
     );
@@ -553,7 +537,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.getSearchedItem(event.text);
   }
 
-  src : SafeResourceUrl;
   async takePicture(){
 
     const image = await Camera.getPhoto({
@@ -562,8 +545,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       resultType: CameraResultType.Base64
     })
     .then(CameraPhoto => {
-      this.pictureB64 = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
-
+      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
+      this.pictureB64 = CameraPhoto.base64String;
     })
   };
 
@@ -603,25 +586,29 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   isUserInRadius: boolean = false;
 
   userDistanceMatrix: any = [];
-  async getDistanceMatrix(){
-    this.isLoading = true;
+   getDistanceMatrix(){
+    // this.isLoading = true;
+
 
     this.checkScheduledVisits();
-    let originLatlng = await this.locationService.getCurrentPosition();
-    
-    if(originLatlng === undefined || originLatlng === null || this.scheduledVisits.length === 0){
-      this.presentAlert("You are most likely not assigned to this client today!", "You can't submit this order")
-      return false;
-    }
+    // this.db.currentLocation.toCollection().last().then((latestCoordinates)=> {
+    //   console.log(latestCoordinates.gps);
+    // })
 
-    //If the user was assigned by outlet get the latlng, if the user was assigned by point_of_interest get the google_place_id
-    let destinationLatlng = (this.scheduledVisits[0] && this.scheduledVisits[0]?.google_place_id)? `place_id:${this.scheduledVisits[0]?.google_place_id}`: this.clientDetails[0]?.latlong;
+    this.db.currentLocation.toCollection().last().then((latestCoordinates)=> {
+      let destinationLatlng = (this.scheduledVisits[0] && this.scheduledVisits[0]?.google_place_id)? `place_id:${this.scheduledVisits[0]?.google_place_id}`: this.clientDetails[0]?.latlong;
+      
+        this.googleMapService.getDistanceMatrix(latestCoordinates.gps, destinationLatlng).subscribe((response)=> {
+          // console.log(latestCoordinates.gps)
+          this.userDistanceMatrix = response;
+          this.isUserInRadius = ((this.userDistanceMatrix?.distance && !this.userDistanceMatrix?.distance?.text.includes("km"))? true: (this.scheduledVisits[0]?.Geofence > this.userDistanceMatrix?.distance?.value));
+        });
+      });
 
-    this.googleMapService.getDistanceMatrix(originLatlng, destinationLatlng).subscribe((response)=> {
-      this.userDistanceMatrix = response;
-      this.isUserInRadius = (this.scheduledVisits[0]?.Geofence > this.userDistanceMatrix?.distance?.value);
-      this.isLoading = false;
-    });
+      //If the user was assigned by outlet get the latlng, if the user was assigned by point_of_interest get the google_place_id  
+
+      // console.log(this.userDistanceMatrix?.distance?.text);
+
   }
 
 
