@@ -28,9 +28,13 @@ export class MapOutletPage implements OnInit {
 
   ngOnInit() {
     this.getCurrentLocation();
+    if(this.currentMapLatlong !== null){
+      this.presentAlert("You need appoval to re-map a client.", "This client has been mapped already!")
+    }
   }
   @Input() clientName: string;
   @Input() custCode: string;
+  @Input() currentMapLatlong: string;
   async getCurrentLocation(){
     let originLatlng = await this.locationService.getCurrentPosition();
     this.currentLatLong = originLatlng;

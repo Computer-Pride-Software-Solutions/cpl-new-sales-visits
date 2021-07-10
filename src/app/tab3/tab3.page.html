@@ -16,7 +16,7 @@
     </div>
     <div class="ion-text-center ion-text-uppercase"><ion-note>All DRAFT REPORTS</ion-note></div>
     <ion-list>
-      <ion-item class="item-client" mode="ios" color="{{report.status === 'Sent'?'primary':'medium'}}" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
+      <ion-item class="item-client" mode="ios" color="{{(report.status === 'Sent')?'primary':'medium'}}" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
         <ion-label class="ion-text-wrap card-label" color="light">
           <h2>
             {{ report.clientCode }} <ion-badge color="{{(report.status === 'Sent')?'success':'secondary'}}"><small>{{report.status}}</small></ion-badge>
@@ -44,7 +44,8 @@
     </ion-fab-button>
      <ion-fab-list side="top">
        <!--Delete all-->
-      <ion-fab-button color="danger" (click)="clearAllDraftReports()">
+      <ion-fab-button color="danger"
+       (click)="clearAllDraftReports()">
         <!-- <ion-icon name="document-text-outline"></ion-icon><br> -->
         <ion-label><small>All</small></ion-label>
 

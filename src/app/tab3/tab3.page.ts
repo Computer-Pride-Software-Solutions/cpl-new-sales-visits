@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
+import { UserDialogsService } from '../services/common/user-dialogs/user-dialogs.service';
 import { DexieService} from '../services/Database/Dexie/dexie.service';
 
 @Component({
@@ -10,7 +12,11 @@ export class Tab3Page implements OnInit {
 
   allDraftReports = [];
   hint: string = '';
-  constructor(private db: DexieService) { }
+  constructor(
+    private db: DexieService,
+    public alertController: AlertController,
+    private dialoService: UserDialogsService
+    ) { }
 
   ngOnInit() {
     this.searchDraftReports();
@@ -34,17 +40,22 @@ export class Tab3Page implements OnInit {
   }
 
   clearAllDraftReports(){
-    this.db.draftReport.clear();
-    this.allDraftReports = [];
+    const self = this;
+    this.dialoService.confirm('Did you mean to delete all your draft reports?', 'Deleting all draft reports!', function(){
+      self.db.draftReport.clear();
+      self.allDraftReports = [];
+    })
   }
-
+  
   deleteAllSentDraftReports(){
-    this.db.draftReport.where("status").equals("Sent").modify((value, ref) => {
-      delete ref.value;
-      this.searchDraftReports();
-    });
+    const self = this;
+    this.dialoService.confirm('Did you mean to delete all sent reports from your draft?', 'Deleting all sent reports!', function(){
+      self.db.draftReport.where("status").equals("Sent").modify((value, ref) => {
+        delete ref.value;
+        self.searchDraftReports();
+      });
+    })
   }
-
 
 
 }

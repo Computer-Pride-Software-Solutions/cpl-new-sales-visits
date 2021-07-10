@@ -44,8 +44,8 @@
     </div>
 </div>
 
-<ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="mapClient()">
-  <ion-fab-button *ngIf="(currentLatLong)" color="primary">
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+  <ion-fab-button *ngIf="(currentLatLong)" [disabled]="(currentMapLatlong !== null)" color="primary" (click)="mapClient()">
     <ion-icon name="locate-outline"></ion-icon>   
   </ion-fab-button>
 </ion-fab>
