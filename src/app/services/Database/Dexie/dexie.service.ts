@@ -34,10 +34,10 @@ export class DexieService extends Dexie {
                 // db.presentToast("Record created successfuly!");
                 break;
               case 2: // UPDATED
-                db.presentToast("Record updated successfully!");
+                // db.presentToast("Record updated successfully!");
                 break;
               case 3: // DELETED
-                db.presentToast("Record deleted successfully!");
+                // db.presentToast("Record deleted successfully!");
               break;
             }
           });
