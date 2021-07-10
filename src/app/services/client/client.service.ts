@@ -118,7 +118,7 @@ export class ClientService {
   async presentAlert(msg, status) {
     const alert = await this.alertController.create({
       cssClass: 'secondary',
-      header: 'You have been idle for long!',
+      header: 'We are unable to fetch the latest information!',
       subHeader: `${status}`,
       message: `${msg}`,
       mode: 'ios',
