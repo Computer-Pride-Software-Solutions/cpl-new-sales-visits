@@ -48,19 +48,47 @@ export class Tab2Page {
 
   async watchPosition(){  
 
+
     this.locationService.watch.subscribe(async (data) => {
-     await this.db.transaction('rw', this.db.currentLocation, async function () {
-       if(data.coords !== undefined){
-         this.db.currentLocation.put(
-           {
-             lat: data.coords?.latitude,
-             long: data.coords?.longitude,
-             gps: `${data.coords?.latitude},${data.coords?.longitude}`
-           }
-         );
-       }     
-     });
+
+      await this.db.transaction('rw', this.db.currentLocation, async function () {
+        this.db.currentLocation.toCollection().last().then(async (latestCoordinates)=> {
+            if(!latestCoordinates || latestCoordinates === undefined){
+              this.db.currentLocation.put(
+                {
+                  lat: data.coords?.latitude,
+                  long: data.coords?.longitude,
+                  gps: `${data.coords?.latitude},${data.coords?.longitude}`
+                }
+              );
+            }else{
+              this.db.currentLocation.where(":id").equals(latestCoordinates.id).modify(
+                {
+                  lat: data.coords?.latitude,
+                  long: data.coords?.longitude,
+                  gps: `${data.coords?.latitude},${data.coords?.longitude}`
+                }
+              )
+            }     
+    
+        });
+      });
+
     });
+
+    // this.locationService.watch.subscribe(async (data) => {
+    //  await this.db.transaction('rw', this.db.currentLocation, async function () {
+    //    if(data.coords !== undefined){
+    //      this.db.currentLocation.put(
+    //        {
+    //          lat: data.coords?.latitude,
+    //          long: data.coords?.longitude,
+    //          gps: `${data.coords?.latitude},${data.coords?.longitude}`
+    //        }
+    //      );
+    //    }     
+    //  });
+    // });
  }
 
   // Fecthing orders theough the service
