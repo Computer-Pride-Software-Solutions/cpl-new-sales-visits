@@ -11,8 +11,8 @@ export class LocationService implements OnDestroy, OnInit {
 
   watch;
   options = {
-    maximumAge: 5000,
-    timeout: 8000,
+    maximumAge: 6000,
+    timeout: 9000,
     enableHighAccuracy: true
   };
   currentLatLon;
