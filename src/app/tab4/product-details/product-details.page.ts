@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product/product.service';
 import { Subscription } from 'rxjs';
 import { IonContent } from '@ionic/angular';
@@ -15,6 +13,8 @@ export class ProductDetailsPage implements OnInit {
 
   subscription: Subscription = new Subscription();
   itemGroup = this.activatedRoute.snapshot.paramMap.get('itemGroup');
+  itemCode = this.activatedRoute.snapshot.paramMap.get('itemCode');
+
   isLoading = true;
 
   products: any[] = [];
@@ -174,17 +174,16 @@ export class ProductDetailsPage implements OnInit {
   }
   };
   constructor(
-    private router: Router,
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
-
   ) { }
 
   ngOnInit() {
-    // this.product = this.router.getCurrentNavigation().extras.state?.product;
-    // console.log(this.router.getCurrentNavigation().extras.state.product); // should log out 'bar'
+   
     this.getProductsPerGroup(this.itemGroup);
+
   }
+
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   isScrolling = false;
@@ -193,19 +192,22 @@ export class ProductDetailsPage implements OnInit {
   }
 
   logScrollStart(event) {
-    this.isScrolling = true;
-    // console.log("logScrollStart : When Scroll Starts", event);
+    // this.isScrolling = true;
   }
 
   logScrolling(event) {
-    this.isScrolling = true;
-    // console.log("logScrolling : When Scrolling", event);
+    // this.isScrolling = true;
   }
 
   logScrollEnd(event) {
-    this.isScrolling = false;
-    // console.log("logScrollEnd : When Scroll Ends", event);
+    // this.isScrolling = false;
   }
+
+  scrollTo(anchor) {
+    let yOffset = document.getElementById(anchor)?.offsetTop;
+    this.content.scrollToPoint(0, yOffset, 8000)
+  }
+
 
   getBackButtonText() {
     const win = window as any;
@@ -213,14 +215,28 @@ export class ProductDetailsPage implements OnInit {
     return mode === 'ios' ? 'Inbox' : '';
   }
 
-
   getProductsPerGroup(itemGroup){
+    this.isLoading = true;
     this.subscription.add(
       this.productService.getProductsPerGroup(itemGroup).subscribe((products) => {
         this.products = products;
         this.isLoading = false;
+          // document.getElementById('viewSelectedItem').click();
+        this.scrollTo(this.itemCode);
       })
     )
-}
+  }
+
+  hint: any;
+  searchProduct(event = null){
+    this.hint = (event)? event.target.value.toString().toLowerCase(): '';
+    var regex = new RegExp(this.hint);
+    var results = this.products.filter(report => regex.test(report.ItemName.toLowerCase()));
+    if(this.hint.length === 0 || results.length === 0){
+      this.getProductsPerGroup(this.itemGroup);
+    }else{
+      this.products = results;
+    }
+  }
 
 }
