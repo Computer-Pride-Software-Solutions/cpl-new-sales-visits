@@ -27,6 +27,7 @@ import { IVisits } from 'src/app/interfaces/IVisits';
 
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import { UserDialogsService } from 'src/app/services/common/user-dialogs/user-dialogs.service';
 
 
 @Component({
@@ -92,7 +93,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     private locationService: LocationService,
     private assignedVisitsService: AssignedVisitsService,
     private googleMapService: GoogleMapsService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private dialogServices: UserDialogsService
     ) { 
     //  this.locationService.watchPosition();
 
@@ -105,7 +107,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.getCurrentLocation();
     this.getClientDetails();
     // this.getDistanceMatrix();
-    this.getAllDraftReports();
     this.getItemGroup();
     this.getDeliveryCode();
   }
@@ -134,16 +135,9 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       value: any
     }
   ): void{
-    // console.log(this.itemOnOffer);
-    // const names = this.itemOnOffer.map((item) => item.ItemName );
-    // console.log(names);
-      // this.currentlySelectedItem = this.product?.ItemName;
-      // this.currentlySelectedItemId = this.product?.ItemId;
-      // this.currentlySelectedSalesPriceExcl = this.product?.SalePriceExcl;
+
   }
-  // addItemToOffer(){
-  //   this.noOfitemOnOffer++;
-  // }
+
 
   async getAllDraftReports(){
     var regex = new RegExp(this.custCode.toLowerCase(), 'g');
@@ -207,6 +201,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       componentProps: {
         clientName: this.clientDetails[0]?.CustName,
         custCode: this.custCode,
+        currentMapLatlong: this.clientDetails[0]?.latlong
       }
 
     });
@@ -216,9 +211,13 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   deleteReportFromDraft(CustCode, CustName){
     const self = this;
-    this.db.draftReport.where({clientCode: CustCode}).delete()
-    .then(function () {
-        self.presentToast(`${CustName} was removed from draft reports!`);
+    this.dialogServices.confirm(`Did you mean to remove ${CustName} from your draft reports?`, `Removing client from draft reports!`, function(){
+      self.db.draftReport.where({clientCode: CustCode}).delete()
+      .then(function (deleted) {
+        if(deleted){
+          self.presentToast(`${CustName} was removed from your draft reports!`);
+        }
+      });
     });
   }
 
@@ -428,6 +427,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         this.clientDetails = data;
         this. getDistanceMatrix();
         this.isLoading = false;
+        this.getAllDraftReports();
       })
     );
   }
@@ -600,6 +600,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       
         this.googleMapService.getDistanceMatrix(latestCoordinates.gps, destinationLatlng).subscribe((response)=> {
           // console.log(latestCoordinates.gps)
+          // console.log(destinationLatlng);
           this.userDistanceMatrix = response;
           this.isUserInRadius = ((this.userDistanceMatrix?.distance && !this.userDistanceMatrix?.distance?.text.includes("km"))? true: (this.scheduledVisits[0]?.Geofence > this.userDistanceMatrix?.distance?.value));
         });
