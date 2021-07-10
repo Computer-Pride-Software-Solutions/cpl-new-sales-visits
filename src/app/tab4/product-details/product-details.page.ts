@@ -205,7 +205,7 @@ export class ProductDetailsPage implements OnInit {
 
   scrollTo(anchor) {
     let yOffset = document.getElementById(anchor)?.offsetTop;
-    this.content.scrollToPoint(0, yOffset, 6000)
+    this.content.scrollToPoint(0, yOffset, 8000)
   }
 
 
@@ -216,6 +216,7 @@ export class ProductDetailsPage implements OnInit {
   }
 
   getProductsPerGroup(itemGroup){
+    this.isLoading = true;
     this.subscription.add(
       this.productService.getProductsPerGroup(itemGroup).subscribe((products) => {
         this.products = products;
