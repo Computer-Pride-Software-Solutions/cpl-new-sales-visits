@@ -28,10 +28,7 @@ export class LoginService {
    }
 
   loginUser(email: string, password: string) {
-    // let param = new HttpParams();
-    // param = param.append('appcode', 'SalesVisit');
-    // param = param.append('email', email);
-    // param = param.append('password', password);
+
     return this.httpClient.post(`${this.baseUrl}/login/SalesVisit`, {
       email: email,
       password: password
