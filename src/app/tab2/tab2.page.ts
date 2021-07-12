@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
@@ -13,7 +13,7 @@ import { DexieService } from '../services/Database/Dexie/dexie.service';
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page {
+export class Tab2Page implements OnInit, OnDestroy {
 
   clients: IClient[] = [];
   lc = [];
@@ -43,7 +43,7 @@ export class Tab2Page {
     this.subscription.unsubscribe();
     this.clients = [];
     this.locationService.clearLocationDetails();
-    this.locationService.watch?.unsubscribe();
+    this.locationService?.watch?.unsubscribe();
   }
 
   async watchPosition(){  
