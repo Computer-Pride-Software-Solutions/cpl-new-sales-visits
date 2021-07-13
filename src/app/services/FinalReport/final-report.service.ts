@@ -29,7 +29,7 @@ export class FinalReportService {
     // this.param = this.param.append('finalReport', JSON.stringify(finalReport));// Passing large data query parameters might be the reason why users are not able to submit more than 30 items
     // this.param = this.param.append('salesRep', salesRep);
     return this.httpClient.post(`${this.baseUrl}/${endpoint}/${custCode}`, report, {
-      params: this.param,
+      // params: this.param,
       headers : this.headers,
       withCredentials: true
     }).pipe(
