@@ -4,6 +4,11 @@ import { ProductService } from '../../services/product/product.service';
 import { Subscription } from 'rxjs';
 import { IonContent } from '@ionic/angular';
 
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import { ActionSheetController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
+
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.page.html',
@@ -176,6 +181,10 @@ export class ProductDetailsPage implements OnInit {
   constructor(
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    public actionSheetController: ActionSheetController,
+    private toastCtrl: ToastController,
+
   ) { }
 
   ngOnInit() {
@@ -215,6 +224,51 @@ export class ProductDetailsPage implements OnInit {
     return mode === 'ios' ? 'Inbox' : '';
   }
 
+  async presentActionSheet(index) {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'ACTION',
+      cssClass: 'my-custom-class',
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Delete',
+          role: 'destructive',
+          icon: 'trash',
+          handler: () => {
+            this.itemImages.splice(index, 1);
+            this.itemImages = [];
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    // console.log('onDidDismiss resolved with role', role);
+    this.itemImages = [];
+
+  }
+
+
+  async presentToast(msg) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'bottom',
+      mode: 'ios',
+      cssClass: 'toast'
+    });
+    toast.present();
+  }
+
   getProductsPerGroup(itemGroup){
     this.isLoading = true;
     this.subscription.add(
@@ -237,6 +291,48 @@ export class ProductDetailsPage implements OnInit {
     }else{
       this.products = results;
     }
+  }
+
+  thumbnails = [];
+  itemImages = [];
+  async capturePhoto(itemCode){
+    if(this.itemImages.length == 3){
+      this.presentToast("You have reached the maximum number of images per upload!")
+      return;
+    }
+
+
+
+    
+    const image = await Camera.getPhoto({
+      quality: 80,
+      allowEditing: true,
+      resultType: CameraResultType.Base64
+    })
+    .then(CameraPhoto => {
+
+      let newImage = {}
+      let b64 = {}
+
+      //to display =thumbnail
+      newImage[itemCode] = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
+      this.thumbnails.push(newImage);
+
+      // to submit
+      b64[itemCode] = CameraPhoto.base64String
+      this.itemImages.push(b64);
+
+    })
+
+  }
+
+  updateProduct(){
+    console.log(this.itemImages);
+    // this.subscription.add(
+    //   this.productService.updateProduct(this.itemImages).subscribe((response)=> {
+    //     console.log(response);
+    //   })
+    // )
   }
 
 }
