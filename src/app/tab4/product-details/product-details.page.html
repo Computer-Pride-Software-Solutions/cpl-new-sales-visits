@@ -31,11 +31,23 @@
         <img [src]="img" />
       </ion-slide>
     </ion-slides>
+      <ion-item mode="ios">
+        <span *ngFor="let img of thumbnails; let i = index">
+          <ion-thumbnail  *ngIf="img.hasOwnProperty(product?.ItemCode)" (click)="presentActionSheet(i)">
+            <img  [src]="img[product?.ItemCode]">
+          </ion-thumbnail >
+            
+        </span>
+        <ion-icon color="primary" slot="end" name="camera-outline" (click)="capturePhoto(product?.ItemCode)"></ion-icon>
+            <ion-icon color="primary" slot="end" name="cloud-upload-outline" (click)="updateProduct()"></ion-icon>
+      </ion-item>
+
     <ion-card-header>
       <ion-card-subtitle>{{product?.ItemCode}}</ion-card-subtitle>
       <ion-card-title><h6>{{product?.ItemName}}</h6></ion-card-title>
     </ion-card-header>
     <ion-card-content>
+        
       <ion-grid>
         <ion-row class="ion-align-items-center">
           <ion-col>
