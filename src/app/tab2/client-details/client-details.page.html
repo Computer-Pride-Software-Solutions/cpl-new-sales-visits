@@ -27,11 +27,11 @@
         <ion-slide>
           <div class="slide">
             <h2>
-              <ion-icon name="storefront-outline"></ion-icon>
-              <br>
+              <!-- <ion-icon name="storefront-outline"></ion-icon>
+              <br> -->
               <small>Client's Details</small>
             </h2>
-            <div *ngIf="clientDetails.length > 0" style="height:400px;overflow-y: scroll;" class="slide-form">
+            <div *ngIf="clientDetails.length > 0" style="height:500px;overflow-y: scroll;" class="slide-form">
               <ion-list mode="ios">
                 <ion-list-header>
                   <small>Contacts</small>
@@ -48,15 +48,15 @@
                   <ion-icon slot="start" name="person-outline"></ion-icon>
                   <ion-label><small>Contact person: {{clientDetails[0]['contactperson']}}</small></ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item *ngIf="clientDetails[0]['phone'].length > 0">
                   <ion-icon slot="start" name="call-outline"></ion-icon>
                   <ion-label><small>Phone: {{clientDetails[0]['phone']}}</small></ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item *ngIf="clientDetails[0]['email'].length > 0">
                   <ion-icon slot="start" name="mail-outline"></ion-icon>
                   <ion-label><small>Email: {{clientDetails[0]['email']}}</small></ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item *ngIf="clientDetails[0]['addr1'].length > 0">
                   <ion-icon slot="start" name="trail-sign-outline"></ion-icon>
                   <ion-label><small>Address 1: {{clientDetails[0]['addr1']}}</small></ion-label>
                 </ion-item>
@@ -70,7 +70,7 @@
                   <ion-icon slot="start" name="pricetags-outline"></ion-icon>
                   <ion-label><small>Price List: {{clientDetails[0]['PriceListName']}}</small></ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item *ngIf="clientDetails[0]['taxregnno'].length > 0">
                   <ion-icon slot="start" name="eye-outline"></ion-icon>
                   <ion-label><small>Tax Reg No.: {{clientDetails[0]['taxregnno']}}</small></ion-label>
                 </ion-item>
@@ -79,7 +79,7 @@
                   <ion-label><small>Tax Rate: {{clientDetails[0]['CustTaxRate']}}</small></ion-label>
                 </ion-item>
                 <ion-item>
-                  <ion-icon slot="start" name="mail-outline"></ion-icon>
+                  <ion-icon slot="start" name="wallet-outline"></ion-icon>
                   <ion-label><small>Credit Limit: {{clientDetails[0]['creditlimit'] | currency:'KES '}}</small></ion-label>
                 </ion-item>
                 <ion-item>
@@ -99,7 +99,7 @@
           <ion-content>
           <h2>
             <!-- <fa-icon [icon]="faTruck"></fa-icon><br> -->
-            <ion-icon  name="cart-outline"></ion-icon><br>
+            <!-- <ion-icon  name="cart-outline"></ion-icon><br> -->
 
             <small>Placing Orders</small>
           </h2>
@@ -159,7 +159,7 @@
 
           <ion-item *ngIf="product">
             <ion-label position="stacked">(incl . VAT) Price in KES</ion-label>
-            <ion-input readonly name="price" placeholder="(incl. VAT) Price" mode="ios" value="{{product?.InclPrice | number :'2.1-2'}}"></ion-input>
+            <ion-input readonly name="price" placeholder="(incl. VAT) Price" mode="ios" value="{{product?.SalePriceExcl + (product?.SalePriceExcl * (product?.SaleTaxRate/100)) | number :'2.1-2'}}"></ion-input>
           </ion-item>
 
           <ion-item *ngIf="product">
@@ -177,7 +177,7 @@
             <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-button (click)="addOrdersToFinalReport()" size="small" expand="block" mode="ios" color="success" style="margin:auto">Add this Order To Final Report&nbsp; <ion-icon name="add-outline"></ion-icon></ion-button>
+                <ion-button (click)="addOrdersToFinalReport()" size="small"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp; <ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -199,7 +199,7 @@
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faLayerGroup"></fa-icon><br> -->
-            <ion-icon name="layers-outline"></ion-icon><br>
+            <!-- <ion-icon name="layers-outline"></ion-icon><br> -->
 
             <small>Current Stock</small>
           </h2>
@@ -261,7 +261,7 @@
             <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-button size="small" (click)="addStockToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto" ><ion-icon name="add-outline"></ion-icon>Add Stock To Final Report</ion-button>
+                <ion-button size="small" (click)="addStockToFinalReport()"  mode="ios" color="success" style="margin:auto" >Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
  
             </ion-row>
@@ -282,11 +282,11 @@
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faCookieBite"></fa-icon><br> -->
-            <ion-icon  name="heart-dislike-outline"></ion-icon><br>
+            <!-- <ion-icon  name="heart-dislike-outline"></ion-icon><br> -->
 
             <small>Return of goods</small> 
           </h2>
-              <ion-list class="return-of-goods slide-form" mode="ios"  style="overflow-y: scroll!important; height:360px">
+              <ion-list class="return-of-goods slide-form" mode="ios"  style="overflow-y: scroll!important; height:420px">
                 <!-- <ion-grid class="return-of-goods"> -->
                   <form id="frmReturns">
 
@@ -362,7 +362,7 @@
             <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-button size="small" (click)="addReturnsOfGoodsToFinalReport()"  expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add Returns To Final Report</ion-button>
+                <ion-button size="small" (click)="addReturnsOfGoodsToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -384,65 +384,72 @@
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faMoneyBillAlt"></fa-icon><br> -->
-            <ion-icon  name="card-outline"></ion-icon><br>
+            <!-- <ion-icon  name="card-outline"></ion-icon><br> -->
 
             <small>Payment Details</small>
           </h2>
-          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:360px">  
-            <form id="frmPayment" enctype="multipart/form-data">     
-              <ion-item>
-                <ion-label position="stacked">Date Paid</ion-label>
-                  <ion-datetime name="datePaid" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
-              </ion-item>
+          <ion-content>
+            <ion-list mode="ios" class="" style="padding-bottom: 100px!important;">  
+              <form id="frmPayment" enctype="multipart/form-data">     
+                <ion-item>
+                  <ion-label position="stacked">Date Paid</ion-label>
+                    <ion-datetime name="datePaid" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="stacked">Cheque number</ion-label>
+                  <ion-input name="chequeNumber" placeholder="e.g. 12345678" type="text"></ion-input>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="stacked">Amount</ion-label>
+                  <ion-input name="amount" placeholder="e.g. 1000000" type="number"></ion-input>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="stacked">Bank</ion-label>
+                  <ion-input name="bank" placeholder="e.g. Bank of Africa" type="text"></ion-input>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="stacked">Payment Description</ion-label>
+                  <ion-textarea name="paymentDescription" placeholder="e.g Balance"></ion-textarea>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-fab-button size="small" class="" (click)="takePicture()">
+                    <ion-icon size="small" name="camera-outline"></ion-icon>
+                  </ion-fab-button>
+                </ion-item>
+                <ion-item>
+                  <img [src]="src" alt="Cheque" width="50%"/>
+                </ion-item>
+              </form> 
 
-              <ion-item>
-                <ion-label position="stacked">Cheque number</ion-label>
-                <ion-input name="chequeNumber" placeholder="e.g. 12345678" type="text"></ion-input>
-              </ion-item>
-
-              <ion-item>
-                <ion-label position="stacked">Amount</ion-label>
-                <ion-input name="amount" placeholder="e.g. 1000000" type="number"></ion-input>
-              </ion-item>
-
-              <ion-item>
-                <ion-label position="stacked">Bank</ion-label>
-                <ion-input name="bank" placeholder="e.g. Bank of Africa" type="text"></ion-input>
-              </ion-item>
-
-              <ion-item>
-                <ion-label position="stacked">Payment Description</ion-label>
-                <ion-textarea name="paymentDescription" placeholder="e.g Balance"></ion-textarea>
-              </ion-item>
-
-              <ion-item>
-                <ion-fab-button class="ion-margin" (click)="takePicture()">
-                  <ion-icon name="camera-outline"></ion-icon>
-                </ion-fab-button>
-              </ion-item>
-              <ion-item>
-                <img [src]="src" alt="Cheque" width="80%"/>
-              </ion-item>
-            </form>   
-        </ion-list>
+              <!-- <ion-item class="ion-padding"> -->
+                <ion-button class="ion-padding" size="small" (click)="addPaymentToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
+              <!-- </ion-item>   -->
+          </ion-list>
+          </ion-content>
           
+<!--           
           <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-button size="small" (click)="addPaymentToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto">Add Payment To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
+                <ion-button size="small" (click)="addPaymentToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
-          </ion-grid>
+          </ion-grid> -->
         </ion-slide>
 
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faImages"></fa-icon><br> -->
-            <ion-icon name="ribbon-outline"></ion-icon><br>
+            <!-- <ion-icon name="ribbon-outline"></ion-icon><br> -->
 
             <small>Promotion & Offers</small>
           </h2>
-          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:350px">  
+          <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:450px">  
 
           <form id="frmOffers">
             
@@ -484,7 +491,7 @@
                 <ion-button size="small" (click)="addItemToOffer()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add Item To Offer</ion-button>
               </ion-col> -->
               <ion-col>
-                <ion-button size="small" (click)="addOffersToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add POS To Final Report</ion-button>
+                <ion-button size="small" (click)="addOffersToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -525,7 +532,7 @@
         <ion-slide>
           <h2>
             <!-- <fa-icon [icon]="faCommentDots"></fa-icon><br> -->
-            <ion-icon name="chatbox-outline"></ion-icon><br>
+            <!-- <ion-icon name="chatbox-outline"></ion-icon><br> -->
 
             <small> Report Comments</small>
           </h2>
@@ -539,7 +546,7 @@
           <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-button size="small" (click)="addCommentToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add your Comment To Final Report</ion-button>
+                <ion-button size="small" (click)="addCommentToFinalReport()" expand="block" mode="ios" color="success" style="margin:auto">Add To Final Report <ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -594,9 +601,12 @@
 </ion-content>
 <ion-footer class="ion-text-center" style="background-color: #FFFFFF; ">
   <ion-text [color]="(isUserInRadius)? 'success': 'danger'">
-    <ion-icon *ngIf="isUserInRadius" name="walk-outline"></ion-icon>
-    <ion-icon *ngIf="!isUserInRadius" name="sad-outline"></ion-icon><br>
-    <small> You are {{userDistanceMatrix?.distance?.text}} away from your assigned perimeter. <br> <b *ngIf="!isUserInRadius">You can't submit this report!</b></small>
+    <!-- <ion-icon *ngIf="isUserInRadius" name="walk-outline"></ion-icon>
+    <ion-icon *ngIf="!isUserInRadius" name="sad-outline"></ion-icon><br> -->
+    <small> You are {{userDistanceMatrix?.distance?.text}} away from your assigned perimeter.
+       <!-- <br>
+       <b *ngIf="!isUserInRadius">You can't submit this report!</b> -->
+      </small>
   </ion-text>
 </ion-footer>
 

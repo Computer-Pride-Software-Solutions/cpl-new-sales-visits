@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  BASE_URL: 'https://api.cplmobileapp.co.ke/sales-visits-demo/mobile',
+  BASE_URL: 'http://localhost:8000',
   firebase: {
     apiKey: "AIzaSyCRE0Y5jrBzOVKUcwxk92sj_JH_FRnQxqE",
     authDomain: "sales-advisor-866b4.firebaseapp.com",

@@ -127,10 +127,10 @@ export class ProductService {
       );
   }
 
-  updateProduct(itemInfo){
+  updateProduct(itemInfo, itemCode){
     const endpoint = 'items';
 
-    return this.httpClient.put(`${this.baseUrl}/${endpoint}`, itemInfo, {
+    return this.httpClient.put(`${this.baseUrl}/${endpoint}/${itemCode}`, itemInfo, {
       headers : this.headers,
       withCredentials: true
     }).pipe(

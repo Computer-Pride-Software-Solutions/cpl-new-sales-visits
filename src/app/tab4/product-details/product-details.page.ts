@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product/product.service';
 import { Subscription } from 'rxjs';
@@ -8,13 +8,14 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { ActionSheetController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
+import { Directive, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.page.html',
   styleUrls: ['./product-details.page.scss'],
 })
-export class ProductDetailsPage implements OnInit {
+export class ProductDetailsPage implements OnInit, OnDestroy {
 
   subscription: Subscription = new Subscription();
   itemGroup = this.activatedRoute.snapshot.paramMap.get('itemGroup');
@@ -184,13 +185,19 @@ export class ProductDetailsPage implements OnInit {
     private sanitizer: DomSanitizer,
     public actionSheetController: ActionSheetController,
     private toastCtrl: ToastController,
-
+    private el: ElementRef
   ) { }
 
   ngOnInit() {
    
     this.getProductsPerGroup(this.itemGroup);
 
+  }
+
+  ngOnDestroy() {
+    // releasing resources
+    this.subscription.unsubscribe();
+    this.products = [];
   }
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
@@ -235,8 +242,7 @@ export class ProductDetailsPage implements OnInit {
           role: 'destructive',
           icon: 'trash',
           handler: () => {
-            this.itemImages.splice(index, 1);
-            this.itemImages = [];
+           
           }
         },
         {
@@ -253,7 +259,6 @@ export class ProductDetailsPage implements OnInit {
 
     const { role } = await actionSheet.onDidDismiss();
     // console.log('onDidDismiss resolved with role', role);
-    this.itemImages = [];
 
   }
 
@@ -293,46 +298,42 @@ export class ProductDetailsPage implements OnInit {
     }
   }
 
-  thumbnails = [];
-  itemImages = [];
-  async capturePhoto(itemCode){
-    if(this.itemImages.length == 3){
-      this.presentToast("You have reached the maximum number of images per upload!")
-      return;
-    }
 
 
-
-    
+  defaultSRC: any = "https://via.placeholder.com/250";
+  thumbnails:any = [ {img : "https://via.placeholder.com/250"},{img : "https://via.placeholder.com/250"},{img : "https://via.placeholder.com/250"}];
+  itemImagesToSubmit = [];
+  async changeImage(img, itemCode, index){
     const image = await Camera.getPhoto({
-      quality: 80,
+      quality: 50,
       allowEditing: true,
-      resultType: CameraResultType.Base64
+      resultType: CameraResultType.Base64,
+      width:350,
+      height:350
     })
     .then(CameraPhoto => {
 
-      let newImage = {}
       let b64 = {}
-
-      //to display =thumbnail
+      let newImage = {}
       newImage[itemCode] = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
-      this.thumbnails.push(newImage);
+      this.thumbnails[index] = newImage;
+      //img.src = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`)
 
       // to submit
       b64[itemCode] = CameraPhoto.base64String
-      this.itemImages.push(b64);
+      this.itemImagesToSubmit.push(b64);
 
     })
-
   }
 
-  updateProduct(){
-    console.log(this.itemImages);
-    // this.subscription.add(
-    //   this.productService.updateProduct(this.itemImages).subscribe((response)=> {
-    //     console.log(response);
-    //   })
-    // )
+  updateProduct(itemCode){
+    this.isLoading = true;
+    this.subscription.add(
+      this.productService.updateProduct(this.itemImagesToSubmit, itemCode).subscribe((response)=> {
+        this.presentToast(response['msg']);
+        this.getProductsPerGroup(this.itemGroup);
+      })
+    )
   }
 
 }
