@@ -126,6 +126,19 @@ export class ProductService {
         })
       );
   }
+
+  updateProduct(itemInfo, itemCode){
+    const endpoint = 'items';
+
+    return this.httpClient.put(`${this.baseUrl}/${endpoint}/${itemCode}`, itemInfo, {
+      headers : this.headers,
+      withCredentials: true
+    }).pipe(
+      map((data) =>
+         data
+      ), catchError(error => throwError(error))
+    );
+  }
 }
 
 

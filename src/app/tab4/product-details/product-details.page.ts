@@ -1,15 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product/product.service';
 import { Subscription } from 'rxjs';
 import { IonContent } from '@ionic/angular';
+
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import { ActionSheetController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
+import { Directive, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.page.html',
   styleUrls: ['./product-details.page.scss'],
 })
-export class ProductDetailsPage implements OnInit {
+export class ProductDetailsPage implements OnInit, OnDestroy {
 
   subscription: Subscription = new Subscription();
   itemGroup = this.activatedRoute.snapshot.paramMap.get('itemGroup');
@@ -176,12 +182,22 @@ export class ProductDetailsPage implements OnInit {
   constructor(
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    public actionSheetController: ActionSheetController,
+    private toastCtrl: ToastController,
+    private el: ElementRef
   ) { }
 
   ngOnInit() {
    
     this.getProductsPerGroup(this.itemGroup);
 
+  }
+
+  ngOnDestroy() {
+    // releasing resources
+    this.subscription.unsubscribe();
+    this.products = [];
   }
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
@@ -215,6 +231,49 @@ export class ProductDetailsPage implements OnInit {
     return mode === 'ios' ? 'Inbox' : '';
   }
 
+  async presentActionSheet(index) {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'ACTION',
+      cssClass: 'my-custom-class',
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Delete',
+          role: 'destructive',
+          icon: 'trash',
+          handler: () => {
+           
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    // console.log('onDidDismiss resolved with role', role);
+
+  }
+
+
+  async presentToast(msg) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'bottom',
+      mode: 'ios',
+      cssClass: 'toast'
+    });
+    toast.present();
+  }
+
   getProductsPerGroup(itemGroup){
     this.isLoading = true;
     this.subscription.add(
@@ -237,6 +296,44 @@ export class ProductDetailsPage implements OnInit {
     }else{
       this.products = results;
     }
+  }
+
+
+
+  defaultSRC: any = "https://via.placeholder.com/250";
+  thumbnails:any = [ {img : "https://via.placeholder.com/250"},{img : "https://via.placeholder.com/250"},{img : "https://via.placeholder.com/250"}];
+  itemImagesToSubmit = [];
+  async changeImage(img, itemCode, index){
+    const image = await Camera.getPhoto({
+      quality: 50,
+      allowEditing: true,
+      resultType: CameraResultType.Base64,
+      width:350,
+      height:350
+    })
+    .then(CameraPhoto => {
+
+      let b64 = {}
+      let newImage = {}
+      newImage[itemCode] = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
+      this.thumbnails[index] = newImage;
+      //img.src = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`)
+
+      // to submit
+      b64[itemCode] = CameraPhoto.base64String
+      this.itemImagesToSubmit.push(b64);
+
+    })
+  }
+
+  updateProduct(itemCode){
+    this.isLoading = true;
+    this.subscription.add(
+      this.productService.updateProduct(this.itemImagesToSubmit, itemCode).subscribe((response)=> {
+        this.presentToast(response['msg']);
+        this.getProductsPerGroup(this.itemGroup);
+      })
+    )
   }
 
 }

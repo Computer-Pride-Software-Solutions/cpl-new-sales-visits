@@ -466,6 +466,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.subscription.add(
       this.productService.getItemGroups()
       .subscribe((itemGroups: IItemGroup[]) => {
+        // console.log(itemGroups);
         this.itemGroups = itemGroups;
       })
     );
@@ -500,6 +501,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.subscription.add(
       this.productService.getProducts(itemGroup, this.custCode)
       .subscribe((products: IProduct[]) => {
+        console.log(products);
         this.products = products;
        })
    );
@@ -511,6 +513,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.subscription.add(
       this.productService.getSearchedItem(hint, this.custCode)
       .subscribe((products: IProduct[]) => {
+        // console.log(products);
         this.products = products;
        })
     );

@@ -28,14 +28,34 @@
   <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;" id="{{product?.ItemCode}}">
     <ion-slides pager="true" [options]="slideOpts">
       <ion-slide *ngFor="let img of product?.ImageURL.split(';')">
-        <img [src]="img" />
+        <img [src]="img" width="100%"/>
       </ion-slide>
     </ion-slides>
+      <ion-item mode="ios">
+        <!-- <span *ngFor="let img of thumbnails; let i = index">
+          <ion-thumbnail  *ngIf="img.hasOwnProperty(product?.ItemCode)" (click)="presentActionSheet(i)">
+            <img  [src]="img[product?.ItemCode]">
+          </ion-thumbnail >
+        </span> -->
+        <span *ngFor="let img of thumbnails; let i = index">
+          <ion-thumbnail *ngIf="img.hasOwnProperty(product?.ItemCode);else other_content">
+            <img  [src]="img[product?.ItemCode]" (click)="changeImage($event.target, product?.ItemCode, i)">
+          </ion-thumbnail>
+          <ng-template #other_content class="ion-padding" >           
+            <ion-icon class="thumbnail" color="primary" size="large"  name="add-outline" (click)="changeImage($event.target, product?.ItemCode, i)"></ion-icon>
+          </ng-template>      
+        </span>
+        
+        <!-- <ion-icon color="primary" slot="end" name="camera-outline" (click)="capturePhoto(product?.ItemCode)"></ion-icon> -->
+            <ion-icon color="primary" slot="end" name="cloud-upload-outline" (click)="updateProduct(product?.ItemCode)"></ion-icon>
+      </ion-item>
+
     <ion-card-header>
       <ion-card-subtitle>{{product?.ItemCode}}</ion-card-subtitle>
       <ion-card-title><h6>{{product?.ItemName}}</h6></ion-card-title>
     </ion-card-header>
     <ion-card-content>
+        
       <ion-grid>
         <ion-row class="ion-align-items-center">
           <ion-col>
