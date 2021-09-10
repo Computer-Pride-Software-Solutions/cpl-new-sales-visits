@@ -196,7 +196,7 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // releasing resources
-    this.subscription.unsubscribe();
+    // this.subscription.unsubscribe();
     this.products = [];
   }
 

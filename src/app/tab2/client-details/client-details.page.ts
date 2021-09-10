@@ -501,7 +501,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.subscription.add(
       this.productService.getProducts(itemGroup, this.custCode)
       .subscribe((products: IProduct[]) => {
-        console.log(products);
+        // console.log(products);
         this.products = products;
        })
    );
