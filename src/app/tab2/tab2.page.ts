@@ -40,10 +40,10 @@ export class Tab2Page implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // releasing resources
-    this.subscription.unsubscribe();
+    // this.subscription.unsubscribe();
     this.clients = [];
     this.locationService.clearLocationDetails();
-    this.locationService?.watch?.unsubscribe();
+    // this.locationService?.watch?.unsubscribe();
   }
 
   async watchPosition(){  

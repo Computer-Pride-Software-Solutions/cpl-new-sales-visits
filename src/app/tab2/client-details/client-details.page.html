@@ -417,7 +417,7 @@
                 </ion-item>
   
                 <ion-item>
-                  <ion-fab-button size="small" class="" (click)="takePicture()">
+                  <ion-fab-button size="small" class="" (click)="takePicture('payment')">
                     <ion-icon size="small" name="camera-outline"></ion-icon>
                   </ion-fab-button>
                 </ion-item>
@@ -531,18 +531,26 @@
 
         <ion-slide>
           <h2>
-            <!-- <fa-icon [icon]="faCommentDots"></fa-icon><br> -->
-            <!-- <ion-icon name="chatbox-outline"></ion-icon><br> -->
-
+  
             <small> Report Comments</small>
           </h2>
+          
           <form id="frmComment" class="slide-form">
             <ion-item>
               <ion-label position="floating">Comment</ion-label>
               <ion-textarea name="comment" rows="6" cols="20" placeholder="Leave your comment here...">
               </ion-textarea>
             </ion-item>
+            
           </form>
+          <ion-item>
+            <ion-fab-button size="small" class="" (click)="takePicture('comment')">
+              <ion-icon size="small" name="camera-outline"></ion-icon>
+            </ion-fab-button>
+          </ion-item>
+          <ion-item>
+            <img [src]="commentSrc" alt="commment" class="ion-padding" height="80%"/>
+          </ion-item>
           <ion-grid>
             <ion-row>
               <ion-col>

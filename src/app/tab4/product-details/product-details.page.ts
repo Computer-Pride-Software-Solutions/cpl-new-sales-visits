@@ -20,6 +20,8 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   itemGroup = this.activatedRoute.snapshot.paramMap.get('itemGroup');
   itemCode = this.activatedRoute.snapshot.paramMap.get('itemCode');
+  pricelistId = this.activatedRoute.snapshot.paramMap.get('pricelistId');
+
 
   isLoading = true;
 
@@ -196,7 +198,7 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // releasing resources
-    this.subscription.unsubscribe();
+    // this.subscription.unsubscribe();
     this.products = [];
   }
 
@@ -277,7 +279,7 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
   getProductsPerGroup(itemGroup){
     this.isLoading = true;
     this.subscription.add(
-      this.productService.getProductsPerGroup(itemGroup).subscribe((products) => {
+      this.productService.getProductsPerGroup(itemGroup, this.pricelistId).subscribe((products) => {
         this.products = products;
         this.isLoading = false;
           // document.getElementById('viewSelectedItem').click();
