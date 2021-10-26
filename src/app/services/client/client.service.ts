@@ -37,7 +37,7 @@ export class ClientService {
       map((data: IClient[]) => {
         return data;
       }), catchError(error => {
-        this.presentAlert("Kindly Swipe Down to Refresh", "Logout then Login or");
+        this.presentAlert(error.error.error, "Kindly logout then login again!");
 
         return throwError(error);
       })

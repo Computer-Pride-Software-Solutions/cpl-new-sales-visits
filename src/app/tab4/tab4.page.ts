@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { IProduct } from '../interfaces/IProducts';
+import { IPriceList, IProduct } from '../interfaces/IProducts';
 import { ProductService } from '../services/product/product.service';
 import { ActivatedRoute } from '@angular/router';
+import { ClientService } from '../services/client/client.service';
 
 @Component({
   selector: 'app-tab4',
@@ -12,12 +13,16 @@ import { ActivatedRoute } from '@angular/router';
 export class Tab4Page implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   isLoading = true;
+  pricelists: IPriceList[] = [];
 
   constructor(
     private productService: ProductService,
+    private clientService: ClientService,
+
   ) { }
 
   ngOnInit() {
+    this.getPriceList();
     this.getProducts(this.initialChunk);
   }
 
@@ -79,6 +84,21 @@ export class Tab4Page implements OnInit, OnDestroy {
   }
 
 
-  
+  getPriceList(): void{
+    this.subscription.add(
+      this.clientService.getPriceList().subscribe( pricelist => {
+        this.pricelists = pricelist;
+        // console.log(JSON.stringify(this.pricelists));
+      })
+    );
+  }
+
+  plistId: number;
+  getSelectedPriceList(pricelistId){
+    // console.log(pricelistId);
+    this.plistId = pricelistId;
+
+
+  }
 
 }

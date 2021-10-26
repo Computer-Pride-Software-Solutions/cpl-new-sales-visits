@@ -7,6 +7,12 @@
   </div>
 
   <div class="container">
+    <ion-item *ngIf="pricelists && pricelists.length > 0">
+      <ion-label>Select Price List</ion-label>
+      <ion-select placeholder="Select One" name="CustPriceListID" mode="ios" #pricelist (ionChange)="getSelectedPriceList(pricelist.value)">
+        <ion-select-option *ngFor="let pricelist of pricelists" [value]="pricelist.PriceListID">{{pricelist.PriceListName}}</ion-select-option>
+      </ion-select>
+    </ion-item>
     <div class="ion-padding">
       <ion-searchbar mode="ios" (ionInput)='searchProducts($event)' placeholder="Type an Item"></ion-searchbar>
     </div>
@@ -15,7 +21,7 @@
       <ion-note *ngIf="products && products.length > 0">Displaying {{products.length}} Items</ion-note> 
       <ion-note *ngIf="products && products.length < 1">No Items Found</ion-note></div>
     <ion-list>
-    <ion-item class="item-client" mode="ios" color="primary" *ngFor="let product of products" [routerLink]="'./product-details/'+ product.ItemGroup +'/'+ product.ItemCode"   [state]="{ product: product }"  [detail]="true">
+    <ion-item class="item-client" mode="ios" color="primary" *ngFor="let product of products" [routerLink]="'./product-details/'+ product.ItemGroup +'/'+ product.ItemCode+'/'+ ((plistId)? plistId: 1)"   [state]="{ product: product }"  [detail]="true">
       <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
       <ion-label class="ion-text-wrap card-label" color="light">
         <h2>

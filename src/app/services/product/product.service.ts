@@ -95,6 +95,7 @@ export class ProductService {
       map((data: IProduct[]) => {
         return data;
       }), catchError(error => {
+        this.presentAlert(error.error.error, "Kindly logout then login again!");
         return throwError(error);
       })
     );
@@ -113,9 +114,9 @@ export class ProductService {
   //     })
   //   );
   // }
-  getProductsPerGroup(itemGroup): Observable<any[]>{
+  getProductsPerGroup(itemGroup, pricelistId): Observable<any[]>{
     const endpoint = 'items/group';
-      return this.httpClient.get(`${this.baseUrl}/${endpoint}/${itemGroup}`, {
+      return this.httpClient.get(`${this.baseUrl}/${endpoint}/${itemGroup}/${pricelistId}`, {
         headers : this.headers,
         withCredentials: true
       }).pipe(
@@ -138,6 +139,19 @@ export class ProductService {
          data
       ), catchError(error => throwError(error))
     );
+  }
+
+  async presentAlert(msg, status) {
+    const alert = await this.alertController.create({
+      cssClass: 'secondary',
+      header: 'We are unable to fetch the latest information!',
+      subHeader: `${status}`,
+      message: `${msg}`,
+      mode: 'ios',
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 }
 

@@ -72,11 +72,11 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     returns: [],
     orders: [],
     payment: {},
-    comments: ''
+    comments: {}
   };
 
   pictureB64: any;
-  src : SafeResourceUrl = 'assets/images/sample-cheque.jpeg';;
+  src : SafeResourceUrl = 'assets/images/sample-cheque.jpeg';
   submit = false;
   isLoading = true;
 
@@ -400,7 +400,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
       const frm = document.querySelector('#frmComment') as HTMLFormElement;
       const fd = new FormData(frm);
       if (this.formValidation(fd)){
-        this.finalReport.comments = fd.get('comment').toString();
+        this.finalReport.comments['photo'] = this.commentImageB64;
+        this.finalReport.comments['comment'] = fd.get('comment').toString();
         this.presentToast('Comment added to final report successfully!');
         frm.reset();
         this.saveReportAsDraft();
@@ -540,17 +541,36 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.getSearchedItem(event.text);
   }
 
-  async takePicture(){
+  commentSrc :SafeResourceUrl = '';
+  commentImageB64: any;
+  async takePicture(action){
 
-    const image = await Camera.getPhoto({
-      quality: 80,
-      allowEditing: true,
-      resultType: CameraResultType.Base64
-    })
-    .then(CameraPhoto => {
-      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
-      this.pictureB64 = CameraPhoto.base64String;
-    })
+    switch(action){ 
+      case 'payment': 
+          await Camera.getPhoto({
+            quality: 80,
+            allowEditing: true,
+            resultType: CameraResultType.Base64
+          })
+          .then(CameraPhoto => {
+            this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
+            this.pictureB64 = CameraPhoto.base64String;
+          });
+      break;
+      case 'comment':
+        await Camera.getPhoto({
+          quality: 80,
+          allowEditing: true,
+          resultType: CameraResultType.Base64
+        })
+        .then(CameraPhoto => {
+          this.commentSrc = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64, ${CameraPhoto.base64String}`);
+          this.commentImageB64 = CameraPhoto.base64String;
+        });
+        break;
+
+
+    }
   };
 
 
