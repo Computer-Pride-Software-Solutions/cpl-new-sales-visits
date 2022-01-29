@@ -111,7 +111,7 @@ export class Tab2Page implements OnInit, OnDestroy {
     setTimeout(() => {
       // Async operation has ended
       event.target.complete();
-    }, 2000);
+    }, 1000);
   }
 
   loadData(event) {
@@ -124,7 +124,7 @@ export class Tab2Page implements OnInit, OnDestroy {
       // and disable the infinite scroll
       this.getClients(this.page); // Fetching new orders
 
-    }, 500);
+    }, 200);
   }
 
 
