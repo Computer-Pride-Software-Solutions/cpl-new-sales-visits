@@ -69,8 +69,8 @@ export class LoginService {
       }
       sessionStorage.setItem("currentUser", JSON.stringify({
         "isAuthenticated" : auth['isAuthenticated'],
-        "username": currentUser.username,
-        "userCode": currentUser.userCode
+        "username": currentUser?.username,
+        "userCode": currentUser?.userCode
       }));
      return auth['isAuthenticated'];
     }),catchError( error => {
@@ -82,6 +82,9 @@ export class LoginService {
     var subject = new Subject<boolean>();
     this.authenticateUser().subscribe(auth => {
       // console.log(auth['isAuthenticated']);
+      if(!auth['isAuthenticated']){
+        this.router.navigate(["/login"]);
+      }
       subject.next(auth['isAuthenticated']);
     });
       return subject.asObservable();
