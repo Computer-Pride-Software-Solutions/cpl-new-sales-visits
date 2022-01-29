@@ -40,7 +40,7 @@ export class LoginService {
         if (!auth['isAuthenticated']) {
           return false;
         }
-        localStorage.setItem('currentUser', JSON.stringify(auth));
+        sessionStorage.setItem('currentUser', JSON.stringify(auth));
 
         this.router.navigate(['/tabs/tab1']);
         return auth;
@@ -57,16 +57,17 @@ export class LoginService {
       withCredentials: true
     }).pipe(map(auth => {
       let currentUser: any;
-      if(localStorage.getItem("currentUser")){
-        currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        // currentUser = localStorage.getItem('currentUser');
+      if(sessionStorage.getItem("currentUser")){
+        currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+        // currentUser = sessionStorage.getItem('currentUser');
       }
       if(!auth['isAuthenticated']){
         this.presentAlert(`${auth['msg']}`, '');
-        localStorage.removeItem("currentUser");
+        sessionStorage.removeItem("currentUser");
+        this.router.navigate(["/login"]);
         return auth['isAuthenticated'];
       }
-      localStorage.setItem("currentUser", JSON.stringify({
+      sessionStorage.setItem("currentUser", JSON.stringify({
         "isAuthenticated" : auth['isAuthenticated'],
         "username": currentUser.username,
         "userCode": currentUser.userCode

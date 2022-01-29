@@ -13,17 +13,23 @@
 
     <div class="ion-text-center ion-text-uppercase"><ion-note>All Clients</ion-note></div>
     <ion-list>
-    <ion-item class="item-client" mode="ios" color="primary" *ngFor="let client of clients"  [routerLink]="'client-details/'+ client.CustCode" [detail]="true">
-      <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
-      <ion-label class="ion-text-wrap card-label" color="light">
-        <h2>
-          {{ client?.CustCode }}
-        </h2>
-        
-        <h3>{{ (client.CustName?.length>25)? (client?.CustName | slice:0:25)+' ...':(client.CustName) }}</h3>
+      <div *ngFor="let client of clients; let i = index">
+      <ion-item class="item-client" mode="ios" color="primary"  [routerLink]="'client-details/'+ client.CustCode" [detail]="true">
+        <!-- <ion-icon name="wifi" slot="start"></ion-icon> -->
+        <ion-label class="ion-text-wrap card-label" color="light">
+          <h2>
+            {{ client?.CustCode }}
+          </h2>
+          
+          <h3>{{ (client.CustName?.length>25)? (client?.CustName | slice:0:25)+' ...':(client.CustName) }}</h3>
 
-      </ion-label>
-    </ion-item>
+        </ion-label>
+      </ion-item>
+      <span *ngIf="i !== 0 && i%5 === 0" class="ion-padding" hidden>
+        
+      </span>
+    </div>
+
   </ion-list>
 
 </div>

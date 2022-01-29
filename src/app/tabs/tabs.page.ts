@@ -95,7 +95,7 @@ export class TabsPage implements OnInit, OnDestroy {
         }, {
           text: 'Confirm',
           handler: () => {
-            localStorage.removeItem('currentUser');
+            sessionStorage.removeItem('currentUser');
             self.router.navigate(['/login']);
           }
         }

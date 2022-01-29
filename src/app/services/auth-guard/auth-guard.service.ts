@@ -22,12 +22,12 @@ export class AuthGuardService {
     
   canActivate(route: ActivatedRouteSnapshot): boolean {
 
-
+    try{
       this.logingService.auth().subscribe((r)=>console.log(r));
 
       let isAuthenticated = false;
-      if (localStorage.getItem('currentUser')) {
-          isAuthenticated = JSON.parse(localStorage.getItem('currentUser')).isAuthenticated;
+      if (sessionStorage.getItem('currentUser')) {
+          isAuthenticated = JSON.parse(sessionStorage.getItem('currentUser')).isAuthenticated;
       }
 
       if (!isAuthenticated) {
@@ -36,6 +36,11 @@ export class AuthGuardService {
       }
 
       return true;
+    }catch{
+
+    }
+
+      
   }
 
 }

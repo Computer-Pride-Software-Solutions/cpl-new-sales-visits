@@ -12,7 +12,7 @@ export class ProductService {
   private baseUrl = environment.BASE_URL;
   private headers = new HttpHeaders();
   private param = new HttpParams();
-  currentUser = localStorage.getItem('currentUser');
+  currentUser = sessionStorage.getItem('currentUser');
   constructor(private httpClient: HttpClient, public alertController: AlertController) {
     this.headers = this.headers.set('Content-Type', 'application/json')
         .set('Accept', 'application/json');

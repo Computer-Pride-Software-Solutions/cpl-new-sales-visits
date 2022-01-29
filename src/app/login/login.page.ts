@@ -20,7 +20,7 @@ export class LoginPage implements OnInit, OnDestroy {
     public loadingController: LoadingController
 
     ) {
-      localStorage.removeItem("currentUser");
+      sessionStorage.removeItem("currentUser");
     }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

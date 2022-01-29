@@ -54,7 +54,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
 
-  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
 
   currentlySelectedItem: string;
   currentlySelectedItemId: number;
