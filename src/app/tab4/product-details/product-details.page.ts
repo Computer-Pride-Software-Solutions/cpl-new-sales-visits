@@ -9,6 +9,7 @@ import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { ActionSheetController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { Directive, ElementRef } from '@angular/core';
+import { IonSlides } from '@ionic/angular';
 
 @Component({
   selector: 'app-product-details',
@@ -227,6 +228,9 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
     this.content.scrollToPoint(0, yOffset, 8000)
   }
 
+  slidesDidLoad(slides: IonSlides): void {
+    slides.startAutoplay();
+  }
 
   getBackButtonText() {
     const win = window as any;

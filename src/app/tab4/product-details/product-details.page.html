@@ -4,11 +4,11 @@
       <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
        <ion-note color="light">{{itemGroup}}</ion-note>
     </ion-buttons>
-    <ion-buttons slot="primary">
+    <!-- <ion-buttons slot="primary">
       <ion-button (click)="scrollTo(itemCode)" id="viewSelectedItem">
         <ion-icon  name="barcode-outline" size="medium" ></ion-icon>
       </ion-button>
-    </ion-buttons>
+    </ion-buttons> -->
 </ion-toolbar>
 </ion-header>
 <div class="loader"  *ngIf="isLoading">
@@ -81,8 +81,10 @@
         </ion-row>
       </ion-grid>
       <div class="ion-padding ion-align-items-center">
-        <h2>Scroll to view similar items</h2>
-        <ion-slides>
+        <ion-text>
+          <h5 style="margin:0rem 1rem!important;">More items in {{itemGroup}} category</h5>
+        </ion-text>
+        <ion-slides options="{autoplay:true,speed: 100}" #slider (ionSlidesDidLoad)="slidesDidLoad(slider)">
           <ion-slide *ngFor="let similar of similarProducts" >
             <!-- <p>{{'./product-details/'+ similar.ItemGroup +'/'+ similar.ItemCode+'/'+ ((pricelistId)? pricelistId: 1)}}</p> -->
 
