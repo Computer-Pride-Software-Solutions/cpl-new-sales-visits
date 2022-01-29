@@ -19,7 +19,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
 
   subscription: Subscription = new Subscription();
   // custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
-  salesRep = JSON.parse(sessionStorage.getItem('currentUser')).username;
+  salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
   // location: Promise<any>;
   slideOpts = {
     initialSlide: 1,

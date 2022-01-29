@@ -11,7 +11,7 @@ export class FinalReportService {
   private baseUrl = environment.BASE_URL;
   private headers = new HttpHeaders();
   private param = new HttpParams();
-  currentUser = sessionStorage.getItem('currentUser');
+  currentUser = localStorage.getItem('currentUser');
   constructor(private httpClient: HttpClient) {
     this.headers = this.headers.set('Accept', 'application/json');
     // this.param = this.param.append('currentUser', this.currentUser);

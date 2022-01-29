@@ -18,7 +18,7 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
   scheduledVisits: IVisits[] = [];
 
   subscription: Subscription = new Subscription();
-  salesRep = JSON.parse(sessionStorage.getItem('currentUser')).userCode;
+  salesRep = JSON.parse(localStorage.getItem('currentUser')).userCode;
 
   // references the #calendar in the template
   calendarOptions: CalendarOptions = {

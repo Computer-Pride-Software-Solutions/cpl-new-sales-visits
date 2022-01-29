@@ -40,7 +40,7 @@ export class LoginService {
         if (!auth['isAuthenticated']) {
           return false;
         }
-        sessionStorage.setItem('currentUser', JSON.stringify(auth));
+        localStorage.setItem('currentUser', JSON.stringify(auth));
 
         this.router.navigate(['/tabs/tab1']);
         return auth;
@@ -57,17 +57,17 @@ export class LoginService {
       withCredentials: true
     }).pipe(map(auth => {
       let currentUser: any;
-      if(sessionStorage.getItem("currentUser")){
-        currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
-        // currentUser = sessionStorage.getItem('currentUser');
+      if(localStorage.getItem("currentUser")){
+        currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        // currentUser = localStorage.getItem('currentUser');
       }
       if(!auth['isAuthenticated']){
         this.presentAlert(`${auth['msg']}`, '');
-        sessionStorage.removeItem("currentUser");
+        localStorage.removeItem("currentUser");
         this.router.navigate(["/login"]);
         return auth['isAuthenticated'];
       }
-      sessionStorage.setItem("currentUser", JSON.stringify({
+      localStorage.setItem("currentUser", JSON.stringify({
         "isAuthenticated" : auth['isAuthenticated'],
         "username": currentUser?.username,
         "userCode": currentUser?.userCode
@@ -82,9 +82,9 @@ export class LoginService {
     var subject = new Subject<boolean>();
     this.authenticateUser().subscribe(auth => {
       // console.log(auth['isAuthenticated']);
-      if(!auth['isAuthenticated']){
-        this.router.navigate(["/login"]);
-      }
+      // if(!auth['isAuthenticated']){
+      //   this.router.navigate(["/login"]);
+      // }
       subject.next(auth['isAuthenticated']);
     });
       return subject.asObservable();

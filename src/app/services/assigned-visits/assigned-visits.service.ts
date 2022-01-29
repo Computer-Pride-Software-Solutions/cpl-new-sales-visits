@@ -13,7 +13,7 @@ export class AssignedVisitsService {
     private baseUrl = environment.BASE_URL;
     private headers = new HttpHeaders();
     private param = new HttpParams();
-    currentUser = sessionStorage.getItem('currentUser');
+    currentUser = localStorage.getItem('currentUser');
 
     constructor(private httpClient: HttpClient, public alertController: AlertController
       ) {

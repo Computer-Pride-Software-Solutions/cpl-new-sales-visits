@@ -15,7 +15,7 @@ import { map, catchError } from 'rxjs/operators';
 export class VisitSummaryService {
   private headers = new HttpHeaders();
   private param = new HttpParams();
-  currentUser = sessionStorage.getItem('currentUser');
+  currentUser = localStorage.getItem('currentUser');
 
   constructor(private httpClient: HttpClient) {
     this.headers = this.headers.set('Content-Type', 'application/json')

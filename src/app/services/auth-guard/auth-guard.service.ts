@@ -26,8 +26,8 @@ export class AuthGuardService {
       this.logingService.auth().subscribe((r)=>console.log(r));
 
       let isAuthenticated = false;
-      if (sessionStorage.getItem('currentUser')) {
-          isAuthenticated = JSON.parse(sessionStorage.getItem('currentUser')).isAuthenticated;
+      if (localStorage.getItem('currentUser')) {
+          isAuthenticated = JSON.parse(localStorage.getItem('currentUser')).isAuthenticated;
       }
 
       if (!isAuthenticated) {
