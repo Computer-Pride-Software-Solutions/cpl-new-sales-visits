@@ -18,9 +18,9 @@ export class ProductService {
         .set('Accept', 'application/json');
     // this.param = this.param.append('currentUser', this.currentUser);
   }
-  getProductDetails( ItemCode: string): Observable<IProduct[]> {
+  getProductDetails( ItemCode: string, pricelistId:number): Observable<IProduct[]> {
     const endpoint = 'product-details';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${ItemCode}`, {
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${ItemCode}/${pricelistId}`, {
       params: this.param,
       headers : this.headers,
       withCredentials: true

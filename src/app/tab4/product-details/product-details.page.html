@@ -38,7 +38,7 @@
           </ion-thumbnail >
         </span> -->
         <span *ngFor="let img of thumbnails; let i = index">
-          <ion-thumbnail *ngIf="img.hasOwnProperty(product?.ItemCode);else other_content">
+          <ion-thumbnail class="itemImages" *ngIf="img.hasOwnProperty(product?.ItemCode);else other_content">
             <img  [src]="img[product?.ItemCode]" (click)="changeImage($event.target, product?.ItemCode, i)">
           </ion-thumbnail>
           <ng-template #other_content class="ion-padding" >           
@@ -80,7 +80,31 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-      <!-- Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the Wisconsin Territory in 1836. -->
+      <div class="ion-padding ion-align-items-center">
+        <h2>Scroll to view similar items</h2>
+        <ion-slides>
+          <ion-slide *ngFor="let similar of similarProducts" >
+            <!-- <p>{{'./product-details/'+ similar.ItemGroup +'/'+ similar.ItemCode+'/'+ ((pricelistId)? pricelistId: 1)}}</p> -->
+
+            <ion-card (click)="viewItemDetails(similar.ItemGroup, similar.ItemCode, pricelistId)" >
+              <table>
+              <tr>
+                <td>
+                  <ion-thumbnail class="similarItemImages">
+                    <img [src]="similar?.ImageURL.split(';')[0]">
+                  </ion-thumbnail>
+                </td>
+                <td>
+                  <small>
+                    {{similar?.ItemName}}
+                  </small>
+                </td>
+              </tr>
+            </table>
+          </ion-card>
+          </ion-slide>
+        </ion-slides>
+      </div>
     </ion-card-content>
   </ion-card>
 
