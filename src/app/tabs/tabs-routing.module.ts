@@ -36,16 +36,20 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/tabs/tab1',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [AuthGuardService]
   },
   {
     path: 'tabs/tab2/client-details/:custCode',
-    loadChildren: () => import('../tab2/client-details/client-details.module').then( m => m.ClientDetailsPageModule)
+    loadChildren: () => import('../tab2/client-details/client-details.module').then( m => m.ClientDetailsPageModule),
+    canActivate: [AuthGuardService]
+
   },
   {
     path: 'tabs/tab4/product-details/:itemGroup/:itemCode/:pricelistId',
     loadChildren: () => import('../tab4/product-details/product-details.module').then( m => m.ProductDetailsPageModule),
-    // data : {"name": "sam"}
+    canActivate: [AuthGuardService]
+
   }
 ];
 

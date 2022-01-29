@@ -111,7 +111,7 @@ export class Tab2Page implements OnInit, OnDestroy {
     setTimeout(() => {
       // Async operation has ended
       event.target.complete();
-    }, 1000);
+    }, 700);
   }
 
   loadData(event) {
