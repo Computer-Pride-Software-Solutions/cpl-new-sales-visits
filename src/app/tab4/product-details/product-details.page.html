@@ -22,10 +22,10 @@
 >
 
   
-  <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
+  <!-- <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
     <ion-searchbar mode="ios" placeholder="Type an Item"  (ionInput)='searchProduct($event)'></ion-searchbar>
-  </div>
-  <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;" id="{{product?.ItemCode}}">
+  </div> -->
+  <ion-card mode="ios" *ngFor="let product of products" id="{{product?.ItemCode}}">
     <ion-slides pager="true" [options]="slideOpts">
       <ion-slide *ngFor="let img of product?.ImageURL.split(';')">
         <img [src]="img" width="100%"/>
