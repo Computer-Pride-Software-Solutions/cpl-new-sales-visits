@@ -14,6 +14,17 @@
   <div class="loader"  *ngIf="isLoading">
     <ion-spinner name="lines" color="primary" mode="ios"></ion-spinner>
   </div>
+
+  <ion-list>
+    <ion-item>
+      <ion-label>Sales Type</ion-label>
+      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="Quotation">
+        <ion-select-option value="Order">Order</ion-select-option>
+        <ion-select-option value="Quotation">Quotation</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
   <ion-list *ngIf="finalReport.orders.length > 0">
     <ion-list-header>
      <h6><small>TODAY'S ORDERS</small></h6>
