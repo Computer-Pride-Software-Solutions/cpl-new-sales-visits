@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FinalReportService } from 'src/app/services/FinalReport/final-report.service';
-import { FirebaseService } from 'src/app/services/firebase/firebase.service';
+// import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { LocationService } from 'src/app/services/location/location.service';
 
@@ -26,6 +26,9 @@ export class FinalReportPage implements OnInit, OnDestroy {
     speed: 400
   };
   totalOrders = 0;
+
+  salesType = 'Quotation';
+
   @Input() finalReport: any;
   @Input() clientDetails: any; 
   @Input() isUserInRadius: boolean;
@@ -48,6 +51,9 @@ export class FinalReportPage implements OnInit, OnDestroy {
     this.calculateTotalOrderPrice();
   }
 
+  setSalesType(salesType){
+    this.salesType = salesType;
+  }
 
   calculateTotalOrderPrice(): void{
     for (let i = 0; i < this.finalReport.orders.length; i++){
@@ -74,7 +80,8 @@ export class FinalReportPage implements OnInit, OnDestroy {
           {
             finalReport: this.finalReport,
             gps: originLatlng,
-            salesRep: this.salesRep
+            salesRep: this.salesRep,
+            salesType: this.salesType
           },
           this.clientDetails?.CustCode
         ).subscribe( rsp => {

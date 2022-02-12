@@ -4,11 +4,11 @@
       <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
        <ion-note color="light">{{itemGroup}}</ion-note>
     </ion-buttons>
-    <ion-buttons slot="primary">
+    <!-- <ion-buttons slot="primary">
       <ion-button (click)="scrollTo(itemCode)" id="viewSelectedItem">
         <ion-icon  name="barcode-outline" size="medium" ></ion-icon>
       </ion-button>
-    </ion-buttons>
+    </ion-buttons> -->
 </ion-toolbar>
 </ion-header>
 <div class="loader"  *ngIf="isLoading">
@@ -22,10 +22,10 @@
 >
 
   
-  <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
+  <!-- <div class="ion-padding" slot="fixed" style="width: 100%!important" *ngIf="!isScrolling">
     <ion-searchbar mode="ios" placeholder="Type an Item"  (ionInput)='searchProduct($event)'></ion-searchbar>
-  </div>
-  <ion-card mode="ios" *ngFor="let product of products" style="margin:6rem 1rem!important;" id="{{product?.ItemCode}}">
+  </div> -->
+  <ion-card mode="ios" *ngFor="let product of products" id="{{product?.ItemCode}}">
     <ion-slides pager="true" [options]="slideOpts">
       <ion-slide *ngFor="let img of product?.ImageURL.split(';')">
         <img [src]="img" width="100%"/>
@@ -38,7 +38,7 @@
           </ion-thumbnail >
         </span> -->
         <span *ngFor="let img of thumbnails; let i = index">
-          <ion-thumbnail *ngIf="img.hasOwnProperty(product?.ItemCode);else other_content">
+          <ion-thumbnail class="itemImages" *ngIf="img.hasOwnProperty(product?.ItemCode);else other_content">
             <img  [src]="img[product?.ItemCode]" (click)="changeImage($event.target, product?.ItemCode, i)">
           </ion-thumbnail>
           <ng-template #other_content class="ion-padding" >           
@@ -80,7 +80,33 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-      <!-- Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the Wisconsin Territory in 1836. -->
+      <div class="ion-padding ion-align-items-center">
+        <ion-text>
+          <h5 style="margin:0rem 1rem!important;">More items in {{itemGroup}} category</h5>
+        </ion-text>
+        <ion-slides options="{autoplay:true,speed: 100}" #slider (ionSlidesDidLoad)="slidesDidLoad(slider)">
+          <ion-slide *ngFor="let similar of similarProducts" >
+            <!-- <p>{{'./product-details/'+ similar.ItemGroup +'/'+ similar.ItemCode+'/'+ ((pricelistId)? pricelistId: 1)}}</p> -->
+
+            <ion-card (click)="viewItemDetails(similar.ItemGroup, similar.ItemCode, pricelistId)" >
+              <table>
+              <tr>
+                <td>
+                  <ion-thumbnail class="similarItemImages">
+                    <img [src]="similar?.ImageURL.split(';')[0]">
+                  </ion-thumbnail>
+                </td>
+                <td>
+                  <small>
+                    {{similar?.ItemName}}
+                  </small>
+                </td>
+              </tr>
+            </table>
+          </ion-card>
+          </ion-slide>
+        </ion-slides>
+      </div>
     </ion-card-content>
   </ion-card>
 

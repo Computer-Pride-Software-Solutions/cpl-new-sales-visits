@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product/product.service';
 import { Subscription } from 'rxjs';
 import { IonContent } from '@ionic/angular';
@@ -9,6 +9,7 @@ import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { ActionSheetController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { Directive, ElementRef } from '@angular/core';
+import { IonSlides } from '@ionic/angular';
 
 @Component({
   selector: 'app-product-details',
@@ -187,12 +188,13 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     public actionSheetController: ActionSheetController,
     private toastCtrl: ToastController,
-    private el: ElementRef
+    private el: ElementRef,
+    private router: Router,
   ) { }
 
   ngOnInit() {
-   
-    this.getProductsPerGroup(this.itemGroup);
+    this.getProductDetails(this.itemCode, parseInt(this.pricelistId));
+    // this.getProductsPerGroup(this.itemGroup);
 
   }
 
@@ -226,6 +228,9 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
     this.content.scrollToPoint(0, yOffset, 8000)
   }
 
+  slidesDidLoad(slides: IonSlides): void {
+    slides.startAutoplay();
+  }
 
   getBackButtonText() {
     const win = window as any;
@@ -276,14 +281,16 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
     toast.present();
   }
 
+  similarProducts: any[] = [];
+
   getProductsPerGroup(itemGroup){
     this.isLoading = true;
     this.subscription.add(
-      this.productService.getProductsPerGroup(itemGroup, this.pricelistId).subscribe((products) => {
-        this.products = products;
+      this.productService.getProductsPerGroup(itemGroup, this.pricelistId).subscribe((response) => {
+        this.similarProducts = response;
         this.isLoading = false;
           // document.getElementById('viewSelectedItem').click();
-        this.scrollTo(this.itemCode);
+        // this.scrollTo(this.itemCode);
       })
     )
   }
@@ -336,6 +343,22 @@ export class ProductDetailsPage implements OnInit, OnDestroy {
         this.getProductsPerGroup(this.itemGroup);
       })
     )
+  }
+
+  getProductDetails(itemCode, pricelistId){
+    this.isLoading = true;
+    this.subscription.add(
+      this.productService.getProductDetails(itemCode, pricelistId).subscribe((response)=> {
+        this.products = response;
+        this.isLoading = false;
+        // this.presentToast(response['msg']);
+        this.getProductsPerGroup(this.itemGroup);
+        // console.log(response);
+      })
+    )
+  }
+  viewItemDetails(itemGroup, itemCode, pricelistId){
+    this.router.navigate([`tabs/tab4/product-details/${itemGroup}/${itemCode}/${pricelistId}`]);
   }
 
 }

@@ -22,7 +22,7 @@ export class AuthGuardService {
     
   canActivate(route: ActivatedRouteSnapshot): boolean {
 
-
+    try{
       this.logingService.auth().subscribe((r)=>console.log(r));
 
       let isAuthenticated = false;
@@ -36,6 +36,11 @@ export class AuthGuardService {
       }
 
       return true;
+    }catch{
+
+    }
+
+      
   }
 
 }
