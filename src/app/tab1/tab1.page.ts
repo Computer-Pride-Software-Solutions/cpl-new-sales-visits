@@ -18,7 +18,7 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
   scheduledVisits: IVisits[] = [];
 
   subscription: Subscription = new Subscription();
-  salesRep = JSON.parse(localStorage.getItem('currentUser')).userCode;
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   // references the #calendar in the template
   calendarOptions: CalendarOptions = {
@@ -42,11 +42,12 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
 
   }
   ngAfterViewInit(): void {
+    // console.log(this.currentUser)
 
   }
 
   ngOnInit(): void {
-    this.getScheduledVisits(this.salesRep);
+    this.getScheduledVisits(this.currentUser.salesRep);
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -70,7 +71,7 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
     // Refreshing page
     doRefresh(event) {
       // Begin async operation
-      this.getScheduledVisits(this.salesRep);
+      this.getScheduledVisits(this.currentUser.salesRep);
       setTimeout(() => {
         // Async operation has ended
         event.target.complete();

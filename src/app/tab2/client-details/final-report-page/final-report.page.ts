@@ -7,6 +7,7 @@ import { FinalReportService } from 'src/app/services/FinalReport/final-report.se
 // import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { LocationService } from 'src/app/services/location/location.service';
+import { DialogService } from 'src/app/services/Dialog/dialog.service';
 
 @Component({
   selector: 'app-final-report',
@@ -19,7 +20,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
 
   subscription: Subscription = new Subscription();
   // custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
-  salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
+  // salesRep = JSON.parse(localStorage.getItem('currentUser')).username;
   // location: Promise<any>;
   slideOpts = {
     initialSlide: 1,
@@ -28,6 +29,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
   totalOrders = 0;
 
   salesType = 'Quotation';
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   @Input() finalReport: any;
   @Input() clientDetails: any; 
@@ -39,7 +41,8 @@ export class FinalReportPage implements OnInit, OnDestroy {
     private finalReportService: FinalReportService,
     private router: Router,
     private db: DexieService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private dialogService: DialogService
     ) {
 
      }
@@ -67,31 +70,34 @@ export class FinalReportPage implements OnInit, OnDestroy {
     });
   }
 
-  async submitFinalReport(): Promise<any>{
-    this.isLoading = true;
-    let originLatlng = await this.locationService.getCurrentPosition();
-    if(originLatlng === undefined || originLatlng === null){
-      this.presentAlert("We are unable to capture your current location!", "Your Mobile GPS is OFF")
-      return false;
-    }
+  submitFinalReport(){
+    const self = this;
+    this.dialogService.confirmDialog('Submit Final Report!','Confirm that you meant to submit this report.', async function(){
+      self.isLoading = true;
+      let originLatlng = await self.locationService.getCurrentPosition();
+      if(originLatlng === undefined || originLatlng === null){
+        self.presentAlert("We are unable to capture your current location!", "Your Mobile GPS is OFF")
+        return false;
+      }
 
-      this.subscription.add(   
-        this.finalReportService.submitFinalReport(
+      self.subscription.add(   
+        self.finalReportService.submitFinalReport(
           {
-            finalReport: this.finalReport,
+            finalReport: self.finalReport,
             gps: originLatlng,
-            salesRep: this.salesRep,
-            salesType: this.salesType
+            salesRep: self.currentUser.salesRep,
+            salesType: self.salesType
           },
-          this.clientDetails?.CustCode
+          self.clientDetails?.CustCode
         ).subscribe( rsp => {
-          this.presentAlert(rsp['msg'], rsp['status']);
+          self.presentAlert(rsp['msg'], rsp['status']);
           // this.removeReportFromDraft(this.clientDetails?.CustCode);
-          this.updateReportStatus(this.clientDetails?.CustCode, 'Sent');
-          this.isLoading = false;
+          self.updateReportStatus(self.clientDetails?.CustCode, 'Sent');
+          self.isLoading = false;
         })
       );
     
+    })
 
   }
 
@@ -107,31 +113,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
     });
   }
 
-  async confirmSubmission() {
-    const self = this;
-    const alert = await this.alertController.create({
-      header: `Submit Final Report!`,
-      message: `Confirm that you meant to submit this report.`,
-      mode: 'ios',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: (blah) => {
-            return false;
-          }
-        }, {
-          text: 'Confirm',
-          handler: () => {
-            self.submitFinalReport();
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
+  
 
   async presentAlert(msg, status) {
     const alert = await this.alertController.create({

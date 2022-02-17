@@ -62,7 +62,7 @@
                 </ion-item>
               </ion-list>
 
-              <ion-list mode="ios">
+              <ion-list mode="ios" *ngIf="currentUser.userRights.includes('can view financial')">
                 <ion-list-header>
                   <small>Financial</small>
                 </ion-list-header>        

@@ -19,8 +19,8 @@
     <ion-item>
       <ion-label>Sales Type</ion-label>
       <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="Quotation">
-        <ion-select-option value="Order">Order</ion-select-option>
-        <ion-select-option value="Quotation">Quotation</ion-select-option>
+        <ion-select-option value="Order" *ngIf="currentUser.userRights.includes('can create orders')">Order</ion-select-option>
+        <ion-select-option value="Quotation"*ngIf="currentUser.userRights.includes('can create quotation')">Quotation</ion-select-option>
       </ion-select>
     </ion-item>
   </ion-list>
@@ -178,7 +178,7 @@
 
   <ion-fab  vertical="bottom" horizontal="end" slot="fixed" >
     <!-- [disabled]="!isUserInRadius" -->
-    <ion-fab-button  color="primary"  (click)="confirmSubmission()">
+    <ion-fab-button  color="primary"  (click)="submitFinalReport()">
       <ion-icon name="cloud-upload-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
