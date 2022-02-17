@@ -27,12 +27,9 @@ export class LoginService {
     .set('Accept', 'application/json');
    }
 
-  loginUser(email: string, password: string) {
+  loginUser(credentials) {
 
-    return this.httpClient.post(`${this.baseUrl}/login/SalesVisit`, {
-      email: email,
-      password: password
-    },{
+    return this.httpClient.post(`${this.baseUrl}/login/SalesVisit`, credentials,{
       headers: this.headers,
       // params: param,
       withCredentials: true
@@ -40,6 +37,8 @@ export class LoginService {
         if (!auth['isAuthenticated']) {
           return false;
         }
+        // console.log(auth);
+
         localStorage.setItem('currentUser', JSON.stringify(auth));
 
         this.router.navigate(['/tabs/tab1']);
@@ -59,7 +58,6 @@ export class LoginService {
       let currentUser: any;
       if(localStorage.getItem("currentUser")){
         currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        // currentUser = localStorage.getItem('currentUser');
       }
       if(!auth['isAuthenticated']){
         this.presentAlert(`${auth['msg']}`, '');
@@ -67,11 +65,9 @@ export class LoginService {
         this.router.navigate(["/login"]);
         return auth['isAuthenticated'];
       }
-      localStorage.setItem("currentUser", JSON.stringify({
-        "isAuthenticated" : auth['isAuthenticated'],
-        "username": currentUser?.username,
-        "userCode": currentUser?.userCode
-      }));
+      currentUser.isAuthenticated = auth['isAuthenticated'];
+      currentUser.userRights = auth['userRights'];
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
      return auth['isAuthenticated'];
     }),catchError( error => {
         return throwError( error );
@@ -81,10 +77,7 @@ export class LoginService {
   auth(): Observable<boolean> {
     var subject = new Subject<boolean>();
     this.authenticateUser().subscribe(auth => {
-      // console.log(auth['isAuthenticated']);
-      // if(!auth['isAuthenticated']){
-      //   this.router.navigate(["/login"]);
-      // }
+
       subject.next(auth['isAuthenticated']);
     });
       return subject.asObservable();
