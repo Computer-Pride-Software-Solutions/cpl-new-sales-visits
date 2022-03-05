@@ -114,6 +114,17 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  removeItem(itemName){
+   this.dialogServices.confirm(`Confirm that you meant to remove ${itemName} from the final report!`,"Removing item", ()=> {
+    const newOrder = this.finalReport.orders.filter(function( orders ) {
+      return orders.ItemName !== itemName;
+    });
+    this.finalReport.orders = newOrder;
+    this.saveReportAsDraft();
+   })
+  }
+
+
   async getCurrentLocation(){
     // let originLatlng = await this.locationService.getCurrentPosition();
     // let watch = await this.locationService.watchPosition();

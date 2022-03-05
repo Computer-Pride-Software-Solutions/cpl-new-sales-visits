@@ -29,7 +29,7 @@ export class PasswordResetPage implements OnInit, AfterViewInit {
 
   validateOTPForm = new FormGroup({
     email: new FormControl(this.userEmail, Validators.email),
-    otp: new FormControl('',  [Validators.required, Validators.minLength(6), Validators.maxLength(6)]),
+    otp: new FormControl('',  [Validators.required, Validators.maxLength(6)]),
   });
 
 // p = ''
@@ -38,8 +38,8 @@ export class PasswordResetPage implements OnInit, AfterViewInit {
 
   resetPassword = new FormGroup({
     email: new FormControl(this.userEmail, Validators.email),
-    password: new FormControl('',  [Validators.required, Validators.minLength(8), Validators.maxLength(8)]),
-    repeatPassword: new FormControl('',  [Validators.required, Validators.minLength(8), Validators.maxLength(8)]),
+    password: new FormControl('',  [Validators.required, Validators.minLength(8), Validators.maxLength(20)]),
+    repeatPassword: new FormControl('',  [Validators.required, Validators.minLength(8), Validators.maxLength(20)]),
   });
 
   ngOnInit() {
@@ -90,7 +90,7 @@ export class PasswordResetPage implements OnInit, AfterViewInit {
   }
 
   setValidators(password){
-    this.resetPassword.get('repeatPassword').setValidators([Validators.pattern(password),Validators.required, Validators.minLength(8), Validators.maxLength(8)])
+    this.resetPassword.get('repeatPassword').setValidators([Validators.pattern(password),Validators.required, Validators.minLength(8), Validators.maxLength(20)])
   }
 
   async validateOTP(){
