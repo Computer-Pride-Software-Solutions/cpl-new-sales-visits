@@ -85,7 +85,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
           {
             finalReport: self.finalReport,
             gps: originLatlng,
-            salesRep: self.currentUser.salesRep,
+            salesRep: self.currentUser.username,
             salesType: self.salesType
           },
           self.clientDetails?.CustCode

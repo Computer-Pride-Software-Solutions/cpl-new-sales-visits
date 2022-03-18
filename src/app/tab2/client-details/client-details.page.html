@@ -182,7 +182,7 @@
             </ion-row>
           </ion-grid>
 
-          <div *ngIf="finalReport" class="stagged-item"> 
+          <!-- <div *ngIf="finalReport" class="stagged-item"> 
             <ol>
                 <li  *ngFor="let order of finalReport.orders" style="margin:5px 0px; text-align:left;">
                   <small>
@@ -192,7 +192,19 @@
                 </li> 
             </ol>
 
-          </div>
+          </div> -->
+
+          <ion-list *ngIf="finalReport" class="stagged-item">
+            <ion-item  *ngFor="let order of finalReport.orders; let i = index">
+              <small>
+                {{i+1}}.
+                {{order.ItemName}} 
+                <ion-badge color="success" mode="ios">{{order.QTY}}</ion-badge>
+              </small>
+              <ion-icon color="warning" slot="end" (click)="removeItem(order.ItemName)"  name="remove-circle-outline"></ion-icon>
+            </ion-item>
+          </ion-list>
+
         </ion-content>
         </ion-slide>
 

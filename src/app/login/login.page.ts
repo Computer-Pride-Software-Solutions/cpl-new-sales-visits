@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import {LoginService} from '../services/login/login.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit, OnDestroy {
+export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
   public showPassword: boolean = false;
   subscription: Subscription = new Subscription();
@@ -24,10 +24,13 @@ export class LoginPage implements OnInit, OnDestroy {
     ) {
       localStorage.removeItem("currentUser");
     }
+  ngAfterViewInit(): void {
+    this.loginForm.reset();
+  }
 
     loginForm = new FormGroup({
       email: new FormControl('', Validators.email),
-      password: new FormControl('',  [Validators.required, Validators.minLength(8), Validators.maxLength(8)]),
+      password: new FormControl('',  [Validators.required, Validators.minLength(8), Validators.maxLength(20)]),
     });
 
   ngOnDestroy(): void {
@@ -35,7 +38,7 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.loginForm.reset();
   }
   async presentLoading() {
     const loading = await this.loadingController.create({
@@ -77,12 +80,11 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   showPasswordReset(){
-    const email = this.loginForm.getRawValue().email.trim();
-    if(email.trim().length == 0){
-      this.presentToast("Your email is required!");
+    if(!this.loginForm.get('email').valid){
+      this.presentToast("A valid email address is required!");
       return false;
     }
-    this.router.navigate([`/password-reset/${email}`]);
+    this.router.navigate([`/password-reset/${this.loginForm.getRawValue().email}`]);
   }
 
 

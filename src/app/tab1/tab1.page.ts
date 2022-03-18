@@ -42,12 +42,11 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
 
   }
   ngAfterViewInit(): void {
-    // console.log(this.currentUser)
 
   }
 
   ngOnInit(): void {
-    this.getScheduledVisits(this.currentUser.salesRep);
+    this.getScheduledVisits(this.currentUser.username);
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -71,7 +70,7 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
     // Refreshing page
     doRefresh(event) {
       // Begin async operation
-      this.getScheduledVisits(this.currentUser.salesRep);
+      this.getScheduledVisits(this.currentUser.username);
       setTimeout(() => {
         // Async operation has ended
         event.target.complete();
