@@ -14,6 +14,7 @@ export class Tab4Page implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   isLoading = true;
   pricelists: IPriceList[] = [];
+  page:number = 0;
 
   constructor(
     private productService: ProductService,
@@ -23,7 +24,7 @@ export class Tab4Page implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getPriceList();
-    this.getProducts(this.initialChunk);
+    this.getProducts(this.page);
   }
 
   ngOnDestroy() {
@@ -34,7 +35,7 @@ export class Tab4Page implements OnInit, OnDestroy {
   // Refreshing page
   doRefresh(event) {
     // Begin async operation
-    this.getProducts(this.initialChunk);
+    this.getProducts(this.page);
     setTimeout(() => {
       // Async operation has ended
       event.target.complete();
@@ -66,20 +67,19 @@ export class Tab4Page implements OnInit, OnDestroy {
     //   return false;
     // }
     // this.products = searchedProducts;
-    this.getProducts(this.initialChunk, this.hint);
+    this.getProducts(this.page, this.hint);
     return true;
 
   }
 
-  initialChunk:number = 150;
   loadData(event) {
-    this.initialChunk += 150;
+    this.page = this.page + 1;
     setTimeout(() => {
       event.target.complete();
 
       // App logic to determine if all data is loaded
       // and disable the infinite scroll
-      this.getProducts(this.initialChunk, this.hint); // Fetching new orders
+      this.getProducts(this.page, this.hint); // Fetching new orders
     }, 500);
   }
 

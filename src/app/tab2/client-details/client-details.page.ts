@@ -121,6 +121,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     });
     this.finalReport.orders = newOrder;
     this.saveReportAsDraft();
+    this.presentToast(`${itemName} was removed from your final report!`);
+
    })
   }
 
