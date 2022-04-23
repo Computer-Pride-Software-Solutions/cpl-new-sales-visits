@@ -4,6 +4,7 @@ import { ActionSheetController, AlertController } from '@ionic/angular';
 import { DexieService } from '../services/Database/Dexie/dexie.service';
 import { LocationService } from '../services/location/location.service';
 import { Geolocation} from '@ionic-native/geolocation/ngx';
+import { PlatformLocation } from '@angular/common';
 
 @Component({
   selector: 'app-tabs',
@@ -13,14 +14,16 @@ import { Geolocation} from '@ionic-native/geolocation/ngx';
 export class TabsPage implements OnInit, OnDestroy {
 
   constructor(public actionSheetController: ActionSheetController,
-     private locationService: LocationService,
-     private router: Router,
-     public alertController: AlertController,
-     private db: DexieService,
-      public geolocation: Geolocation
-
+      private locationService: LocationService,
+      private router: Router,
+      public alertController: AlertController,
+      private db: DexieService,
+      public geolocation: Geolocation,
+      location: PlatformLocation
     ) {
-
+      location.onPopState(() => {
+        history.forward();
+    });
     }
   ngOnDestroy(): void {
     // this.locationService.clearLocationDetails();
@@ -31,6 +34,8 @@ export class TabsPage implements OnInit, OnDestroy {
   ngOnInit() {
     // this.watchPosition();
   }
+
+  
 
   // async watchPosition(){  
 

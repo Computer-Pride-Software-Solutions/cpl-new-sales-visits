@@ -31,11 +31,16 @@
               <br> -->
               <small>Client's Details</small>
             </h2>
-            <div *ngIf="clientDetails.length > 0" style="height:500px;overflow-y: scroll;" class="slide-form">
+            <div *ngIf="clientDetails.length > 0" style="height:600px;overflow-y: scroll;" class="slide-form">
               <ion-list mode="ios">
                 <ion-list-header>
                   <small>Contacts</small>
                 </ion-list-header> 
+                <ion-item>
+                  <!-- <ion-icon slot="start" name="information-circle-outline"></ion-icon> -->
+                  <ion-label  position="floating">Other Reference</ion-label>
+                  <ion-input [formControl]="otherCustomerference"  type="text" min="0" placeholder="e.g. Computer Pride Ltd" mode="ios"></ion-input>
+                </ion-item>  
                 <ion-item>
                   <ion-icon slot="start" name="information-circle-outline"></ion-icon>
                   <ion-label><small>Name: {{clientDetails[0]['CustName']}}</small></ion-label>
@@ -546,7 +551,8 @@
   
             <small> Report Comments</small>
           </h2>
-          
+          <ion-content>
+            <ion-list mode="ios" class="" style="padding-bottom: 100px!important;">  
           <form id="frmComment" class="slide-form">
             <ion-item>
               <ion-label position="floating">Comment</ion-label>
@@ -560,8 +566,8 @@
               <ion-icon size="small" name="camera-outline"></ion-icon>
             </ion-fab-button>
           </ion-item>
-          <ion-item>
-            <img [src]="commentSrc" alt="commment" class="ion-padding" height="80%"/>
+          <ion-item style="text-align: center!important;">
+            <img style="max-height: 200px;" [src]="commentSrc" alt="comment" class="ion-padding" height="80%"/>
           </ion-item>
           <ion-grid>
             <ion-row>
@@ -570,6 +576,8 @@
               </ion-col>
             </ion-row>
           </ion-grid>
+            </ion-list>
+          </ion-content>
         </ion-slide>
 
 
@@ -584,35 +592,35 @@
     </ion-fab-button>
      <ion-fab-list side="top">
        <!--Final report-->
-      <ion-fab-button color="light" (click)="presentModal()">
+      <ion-fab-button data-desc="Final Report" color="light" (click)="presentModal()">
         <ion-icon name="document-text-outline"></ion-icon>
       </ion-fab-button>
       <!--comment-->
-      <ion-fab-button color="light" (click)="goToSlide(6)">
+      <ion-fab-button data-desc="Comment" color="light" (click)="goToSlide(6)">
         <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
       </ion-fab-button>
       <!--POS-->
-      <ion-fab-button color="light" (click)="goToSlide(5)">
+      <ion-fab-button data-desc="Promotion" color="light" (click)="goToSlide(5)">
         <ion-icon name="ribbon-outline"></ion-icon>
       </ion-fab-button>
       <!--Payment-->
-      <ion-fab-button color="light" (click)="goToSlide(4)">
+      <ion-fab-button data-desc="Payment" color="light" (click)="goToSlide(4)">
         <ion-icon name="wallet-outline"></ion-icon>
       </ion-fab-button>
       <!--Returns-->
-      <ion-fab-button color="light" (click)="goToSlide(3)">
+      <ion-fab-button data-desc="Returns" color="light" (click)="goToSlide(3)">
         <ion-icon name="heart-dislike-outline"></ion-icon>
       </ion-fab-button>
       <!--Stocks-->
-      <ion-fab-button color="light" (click)="goToSlide(2)">
+      <ion-fab-button data-desc="Stocks" color="light" (click)="goToSlide(2)">
         <ion-icon name="layers-outline"></ion-icon>
       </ion-fab-button>
       <!--Orders-->
-      <ion-fab-button color="light" (click)="goToSlide(1)">
+      <ion-fab-button data-desc="Orders" color="light" (click)="goToSlide(1)">
         <ion-icon name="cart-outline"></ion-icon>
       </ion-fab-button>
       <!---Info-->
-      <ion-fab-button color="light" (click)="goToSlide(0)">
+      <ion-fab-button data-desc="Info" color="light" (click)="goToSlide(0)">
         <ion-icon name="home-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>

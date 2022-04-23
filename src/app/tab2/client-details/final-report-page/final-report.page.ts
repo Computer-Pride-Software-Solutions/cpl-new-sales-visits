@@ -86,13 +86,14 @@ export class FinalReportPage implements OnInit, OnDestroy {
             finalReport: self.finalReport,
             gps: originLatlng,
             salesRep: self.currentUser.username,
-            salesType: self.salesType
+            salesType: self.salesType,
+            otherReference: self.clientDetails?.otherReference
           },
-          self.clientDetails?.CustCode
+          self.clientDetails.details?.CustCode
         ).subscribe( rsp => {
           self.presentAlert(rsp['msg'], rsp['status']);
           // this.removeReportFromDraft(this.clientDetails?.CustCode);
-          self.updateReportStatus(self.clientDetails?.CustCode, 'Sent');
+          self.updateReportStatus(self.clientDetails?.details.CustCode, 'Sent');
           self.isLoading = false;
         })
       );

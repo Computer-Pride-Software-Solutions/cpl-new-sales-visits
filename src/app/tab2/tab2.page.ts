@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IonInfiniteScroll } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
@@ -7,19 +7,23 @@ import { ClientService } from '../services/client/client.service';
 import { NewClientPage } from './new-client/new-client.page';
 import { LocationService } from '../services/location/location.service';
 import { DexieService } from '../services/Database/Dexie/dexie.service';
+import { FormControl, Validators } from '@angular/forms';
+import { debounce, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page implements OnInit, OnDestroy {
+export class Tab2Page implements OnInit, OnDestroy, AfterViewInit {
 
   clients: IClient[] = [];
   lc = [];
   subscription: Subscription = new Subscription();
   page = 0;
-  hint = '';
+  // hint = '';
+  clientHint = new FormControl('', [Validators.minLength(3), Validators.min(3)]);
+
   isLoading = true;
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
@@ -31,11 +35,14 @@ export class Tab2Page implements OnInit, OnDestroy {
   ) {
 
   }
+  ngAfterViewInit(): void {
+    this.searchClients();
+  }
 
   ngOnInit() {
     this.watchPosition();
     // loading purchase orders
-    this.getClients(this.page);
+    // this.getClients(this.page);
   }
 
   ngOnDestroy() {
@@ -92,8 +99,8 @@ export class Tab2Page implements OnInit, OnDestroy {
  }
 
   // Fecthing orders theough the service
-  getClients(page: number): void {
-    this.subscription = this.clientsService.getClients(page, this.hint)
+  getClients(page: number, hint): void {
+    this.subscription = this.clientsService.getClients(page, hint)
       .subscribe((data: IClient[]) => {
         this.clients = data;
         this.isLoading = false;
@@ -107,7 +114,7 @@ export class Tab2Page implements OnInit, OnDestroy {
   doRefresh(event) {
     // Begin async operation
     this.page = 0; // Resetting page number to reload orders
-    this.getClients(this.page); // refetch orders
+    this.getClients(this.page, this.clientHint.value); // refetch orders
     setTimeout(() => {
       // Async operation has ended
       event.target.complete();
@@ -122,7 +129,7 @@ export class Tab2Page implements OnInit, OnDestroy {
 
       // App logic to determine if all data is loaded
       // and disable the infinite scroll
-      this.getClients(this.page); // Fetching new orders
+      this.getClients(this.page, this.clientHint.value); // Fetching new orders
 
     }, 200);
   }
@@ -138,10 +145,12 @@ export class Tab2Page implements OnInit, OnDestroy {
     return await modal.present();
   }
 
-  searchClients(event){
-    this.hint = event.target.value.toLowerCase();
-    // console.log(hint);
-    this.getClients(0);
+  searchClients(){
+    
+    this.getClients(0, this.clientHint.value);
+
+    const result = this.clientHint.valueChanges.pipe(debounceTime(800));
+    result.subscribe((hint) => this.getClients(0, hint.toLowerCase()));
   }
 
 

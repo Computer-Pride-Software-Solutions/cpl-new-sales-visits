@@ -88,7 +88,7 @@ export class ProductService {
   //methods for new endpoints
   getAllProducts(chunk:number, hint): Observable<IProduct[]>{
     const endpoint = 'products';
-    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${chunk}${(hint !== null)? '/'+hint: ''}`, {
+    return this.httpClient.get(`${this.baseUrl}/${endpoint}/${chunk}${(hint.length > 1)? '/'+hint: ''}`, {
       headers : this.headers,
       withCredentials: true
     }).pipe(

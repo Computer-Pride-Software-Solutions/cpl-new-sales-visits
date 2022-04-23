@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons>
-      <ion-back-button [text]="getBackButtonText()" defaultHref="/" color="light"></ion-back-button>
+      <ion-back-button [text]="getBackButtonText()" defaultHref="/tabs/tab4" color="light"></ion-back-button>
        <ion-note color="light">{{itemGroup}}</ion-note>
     </ion-buttons>
     <!-- <ion-buttons slot="primary">
@@ -39,7 +39,7 @@
         </span> -->
         <span *ngFor="let img of thumbnails; let i = index">
           <ion-thumbnail class="itemImages" *ngIf="img.hasOwnProperty(product?.ItemCode);else other_content">
-            <img  [src]="img[product?.ItemCode]" (click)="changeImage($event.target, product?.ItemCode, i)">
+            <img style="max-height:350px;"  [src]="img[product?.ItemCode]" (click)="changeImage($event.target, product?.ItemCode, i)">
           </ion-thumbnail>
           <ng-template #other_content class="ion-padding" >           
             <ion-icon class="thumbnail" color="primary" size="large"  name="add-outline" (click)="changeImage($event.target, product?.ItemCode, i)"></ion-icon>
@@ -62,10 +62,13 @@
             <small>QTY</small>
           </ion-col>
           <ion-col>
-           <small>PRICE INCL.</small>
+           <small>EXCL.</small>
           </ion-col>
           <ion-col>
-            <small>TAX AMOUNT</small>
+            <small>TAX</small>
+          </ion-col>
+          <ion-col>
+            <small>INCL.</small>
           </ion-col>
         </ion-row>
         <ion-row class="ion-align-items-center">
@@ -73,10 +76,15 @@
             <small>{{product?.QtyOnHand | number}} {{product?.UOM}}</small>
           </ion-col>
           <ion-col>
-            <small>{{(product?.SalePriceExcl * product?.SaleTaxRate/100) + product?.SalePriceExcl | currency:'KES '}}</small>
+            <small>
+              {{ product?.SalePriceExcl | currency:'KES '}}</small>
           </ion-col>
           <ion-col>
             <small>{{(product?.SalePriceExcl * product?.SaleTaxRate/100) | currency:'KES '}}</small>
+          </ion-col>
+          <ion-col>
+            <small>
+              {{(product?.SalePriceExcl * product?.SaleTaxRate/100) + product?.SalePriceExcl | currency:'KES '}}</small>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -110,9 +118,9 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-fab size="small" vertical="bottom" horizontal="end"  slot="fixed" (click)="ScrollToTop()">
+  <!-- <ion-fab size="small" vertical="bottom" horizontal="end"  slot="fixed" (click)="ScrollToTop()">
     <ion-fab-button>
       <ion-icon name="chevron-up-circle-outline"></ion-icon> 
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 </ion-content>

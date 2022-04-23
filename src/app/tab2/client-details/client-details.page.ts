@@ -28,8 +28,10 @@ import { IVisits } from 'src/app/interfaces/IVisits';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { UserDialogsService } from 'src/app/services/common/user-dialogs/user-dialogs.service';
+import { FormControl, Validators } from '@angular/forms';
 
-
+import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
 @Component({
   selector: 'app-client-details',
   templateUrl: './client-details.page.html',
@@ -64,9 +66,13 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   currentlySelectedItemGroup: string;
 
   currentlySelectedDeliveryCode: string;
+  otherCustomerference = new FormControl('');
 
 
   finalReport = {
+    clientDetails: {
+      otherReference: '',
+    },
     stock : [],
     offers: {},
     returns: [],
@@ -79,6 +85,9 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   src : SafeResourceUrl = 'assets/images/sample-cheque.jpeg';
   submit = false;
   isLoading = true;
+
+
+
 
   // photo :SafeResourceUrl;
   constructor(public actionSheetController: ActionSheetController,
@@ -94,11 +103,10 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     private assignedVisitsService: AssignedVisitsService,
     private googleMapService: GoogleMapsService,
     private sanitizer: DomSanitizer,
-    private dialogServices: UserDialogsService
+    private dialogServices: UserDialogsService,
+
     ) { 
     //  this.locationService.watchPosition();
-
-     
     }
     @ViewChild(IonSlides) slides: IonSlides;
 
@@ -132,9 +140,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     // let watch = await this.locationService.watchPosition();
     // console.log(watch)
     // this.currentLatLong = originLatlng;
-
-    
-
   }
 
   getBackButtonText() {
@@ -266,6 +271,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   }
 
     async presentModal() {
+      // console.log(this.otherCustomerference.value);
       const modal = await this.modalController.create({
         component: FinalReportPage,
         cssClass: 'my-custom-class',
@@ -273,7 +279,10 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
         componentProps: {
           finalReport: this.finalReport,
           custCode: this.custCode,
-          clientDetails: this.clientDetails[0],
+          clientDetails: {
+            details: this.clientDetails[0],
+            otherReference: this.otherCustomerference.value
+          },
           isUserInRadius: this.isUserInRadius
         }
 
@@ -554,7 +563,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.getSearchedItem(event.text);
   }
 
-  commentSrc :SafeResourceUrl = '';
+  commentSrc :SafeResourceUrl = 'https://via.placeholder.com/600x200';
   commentImageB64: any;
   async takePicture(action){
 

@@ -8,7 +8,7 @@
   </div>
   <div class="container">
     <div class="ion-padding">
-      <ion-searchbar mode="ios" (ionInput)='searchClients($event)' placeholder="Type a client"></ion-searchbar>
+      <ion-searchbar mode="ios" [formControl]="clientHint" placeholder="Type a client"></ion-searchbar>
     </div>
 
     <div class="ion-text-center ion-text-uppercase"><ion-note>All Clients</ion-note></div>
