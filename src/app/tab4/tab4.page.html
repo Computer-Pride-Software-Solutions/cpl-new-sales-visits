@@ -14,7 +14,7 @@
       </ion-select>
     </ion-item>
     <div class="ion-padding">
-      <ion-searchbar mode="ios" (ionInput)='searchProducts($event)' placeholder="Type an Item"></ion-searchbar>
+      <ion-searchbar [formControl]="itemHint" mode="ios"  placeholder="Type an Item"></ion-searchbar>
     </div>
 
     <div class="ion-text-center ion-text-uppercase">
