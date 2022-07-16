@@ -67,7 +67,7 @@ export class Tab4Page implements OnInit, OnDestroy, AfterViewInit {
   //check first if the product is already on the frontend before making another API request
   // hint: string = '';
   searchProducts(): void{
-    const result = this.itemHint.valueChanges.pipe(debounceTime(600));
+    const result = this.itemHint.valueChanges.pipe(debounceTime(500));
     result.subscribe((hint) => this.getProducts(this.page, hint.toLowerCase()));
   }
 

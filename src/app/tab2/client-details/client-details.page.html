@@ -34,11 +34,12 @@
             <div *ngIf="clientDetails.length > 0" style="height:600px;overflow-y: scroll;" class="slide-form">
               <ion-list mode="ios">
                 <ion-list-header>
-                  <small>Contacts</small>
+                  <small>Info</small>
                 </ion-list-header> 
+        
                 <ion-item>
-                  <!-- <ion-icon slot="start" name="information-circle-outline"></ion-icon> -->
-                  <ion-label  position="floating">Other Reference</ion-label>
+                  <ion-icon slot="start" name="business-outline"></ion-icon>
+                  <ion-label position="stacked"><small>Cash Client Reference</small></ion-label>
                   <ion-input [formControl]="otherCustomerference"  type="text" min="0" placeholder="e.g. Computer Pride Ltd" mode="ios"></ion-input>
                 </ion-item>  
                 <ion-item>
