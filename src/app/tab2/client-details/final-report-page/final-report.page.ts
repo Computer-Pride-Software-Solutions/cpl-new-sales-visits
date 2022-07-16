@@ -28,7 +28,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
   };
   totalOrders = 0;
 
-  salesType = 'Quotation';
+  salesType = 'PO';
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   @Input() finalReport: any;
@@ -138,6 +138,10 @@ export class FinalReportPage implements OnInit, OnDestroy {
     this.dismissModal();
     this.router.navigate(['/tabs/tab2']);
 
+  }
+
+  printOrder(){
+    console.log("Printing");
   }
 
 
