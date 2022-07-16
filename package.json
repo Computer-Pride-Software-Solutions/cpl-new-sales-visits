@@ -42,6 +42,7 @@
     "dexie-observable": "^3.0.0-beta.11",
     "firebase": "^8.6.3",
     "ionic-selectable": "^4.9.0",
+    "pdfmake": "^0.2.5",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
