@@ -149,7 +149,7 @@ export class Tab2Page implements OnInit, OnDestroy, AfterViewInit {
     
     this.getClients(0, this.clientHint.value);
 
-    const result = this.clientHint.valueChanges.pipe(debounceTime(800));
+    const result = this.clientHint.valueChanges.pipe(debounceTime(600));
     result.subscribe((hint) => this.getClients(0, hint.toLowerCase()));
   }
 
