@@ -1,9 +1,80 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>invoice</ion-title>
+    <ion-title>INVOICES</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-card>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          From: <ion-datetime mode="ios" [value]="today" presentation="date"></ion-datetime>
+        </ion-col>
+        <ion-col>
+          To: <ion-datetime mode="ios" [value]="today" presentation="date"></ion-datetime>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-searchbar placeholder="Type client ..."></ion-searchbar>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  
+  <ion-accordion-group>
+    <ion-accordion value="first">
+      <ion-item slot="header">
+        <ion-label>First Accordion</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        First Content
+      </div>
+    </ion-accordion>
+    <ion-accordion value="second">
+      <ion-item slot="header">
+        <ion-label>Second Accordion</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        Second Content
+      </div>
+    </ion-accordion>
+    <ion-accordion value="third">
+      <ion-item slot="header">
+        <ion-label>Third Accordion</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        Third Content
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+
+  <!-- <ion-list>
+    <div>
+    <ion-item class="item-client" mode="ios" color="primary"  [routerLink]="" [detail]="true">
+      <ion-label class="ion-text-wrap card-label" color="light">
+        <h2>
+          EN LTD
+        </h2>
+        <h3>Espace Numerique LTD</h3>
+      </ion-label>
+    </ion-item> 
+    <ion-icon name="wifi" slot="start"></ion-icon>
+    <ion-icon name="wifi" slot="center"></ion-icon>
+    <ion-icon name="wifi" slot="end"></ion-icon>
+     
+  </div>
+
+</ion-list> -->
 
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-button (click)="dismissModal()">Close</ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-footer>

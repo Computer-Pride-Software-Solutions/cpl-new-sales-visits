@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-invoice',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InvoicePage implements OnInit {
 
-  constructor() { }
+  today = new Date().toLocaleDateString();
+  constructor(
+    public modalController: ModalController,
+    ) { }
 
   ngOnInit() {
   }
 
+  dismissModal() {
+    this.modalController.dismiss({
+      dismissed: true
+    });
+  }
 }
