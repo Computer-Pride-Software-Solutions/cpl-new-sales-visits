@@ -57,7 +57,11 @@ const routes: Routes = [
     loadChildren: () => import('../tab4/product-details/product-details.module').then( m => m.ProductDetailsPageModule),
     canActivate: [AuthGuardService]
 
+  },  {
+    path: 'invoice',
+    loadChildren: () => import('./invoice/invoice.module').then( m => m.InvoicePageModule)
   }
+
 ];
 
 @NgModule({
