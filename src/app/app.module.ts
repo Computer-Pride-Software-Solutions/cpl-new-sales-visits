@@ -8,8 +8,8 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireStorageModule, BUCKET  } from '@angular/fire/storage';
+// import { AngularFireModule } from '@angular/fire';
+// import { AngularFireStorageModule, BUCKET  } from '@angular/fire/storage';
 import { environment } from 'src/environments/environment';
 import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -21,8 +21,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireStorageModule,
+    // AngularFireModule.initializeApp(environment.firebase),
+    // AngularFireStorageModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the app is stable
