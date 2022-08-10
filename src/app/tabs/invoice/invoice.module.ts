@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { InvoicePageRoutingModule } from './invoice-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { InvoicePage } from './invoice.page';
 
@@ -13,7 +14,8 @@ import { InvoicePage } from './invoice.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    InvoicePageRoutingModule
+    InvoicePageRoutingModule,
+    ReactiveFormsModule
   ],
   declarations: [InvoicePage]
 })
