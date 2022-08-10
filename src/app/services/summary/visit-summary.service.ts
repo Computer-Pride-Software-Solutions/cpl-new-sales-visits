@@ -23,9 +23,11 @@ export class VisitSummaryService {
     // this.param = this.param.append('currentUser', this.currentUser);
   }
 
-  getVisitsSummary(custName, visitDate): Observable<any[]> {
+  getVisitsSummary(custName, daterange): Observable<any[]> {
     const endpoint = 'visit-summary';
-    this.param = this.param.append('visitDate', visitDate);
+    this.param = this.param.append('from', daterange.from);
+    this.param = this.param.append('to', daterange.to);
+
     let URL = `${envDev.BASE_URL}/${endpoint}/${custName}`;
     return this.httpClient.get(`${URL}`, {
       params: this.param,
