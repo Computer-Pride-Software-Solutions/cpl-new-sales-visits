@@ -116,19 +116,20 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
       month: '2-digit',
       day: '2-digit',
     });
-    this.getVisitSummary(custCode, custName, clickedDate);
+    this.getVisitSummary(custCode, custName, {from: clickedDate, to: clickedDate});
   }
 
-  getVisitSummary(custCode, custName, visitDate): void{
+  getVisitSummary(custCode, custName, daterange): void{
     const header = {
       "custName" : custName,
-      "visitDate": visitDate
+      "daterange": daterange
     }
 
     this.subscription.add(
-      this.visitSummaryService.getVisitsSummary(custCode, visitDate).subscribe(summary =>{
+      this.visitSummaryService.getVisitsSummary(custCode, daterange).subscribe(summary =>{
         if(Object.keys(summary).length > 0){
           this.presentModal(header, summary);
+          console.log(summary)
         }else{
 
           this.getClientDetails(custCode);
