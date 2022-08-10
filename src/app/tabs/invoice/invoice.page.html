@@ -4,70 +4,48 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [formGroup]="invoiceFilterForm" style="background: transparent!important;">
   <ion-card>
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          From: <ion-datetime mode="ios" [value]="today" presentation="date"></ion-datetime>
-        </ion-col>
-        <ion-col>
-          To: <ion-datetime mode="ios" [value]="today" presentation="date"></ion-datetime>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <ion-searchbar placeholder="Type client ..."></ion-searchbar>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <ion-item lines="none">
+      <ion-text slot="start" id="open-fromDate-modal">From: {{this.invoiceFilterForm.getRawValue().fromDate}}</ion-text>
+      <ion-text slot="end" id="open-toDate-modal">To: {{this.invoiceFilterForm.getRawValue().toDate}}</ion-text>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-searchbar formControlName="client" debounce="500" #hint (ionInput)="searchClient(hint.value)" placeholder="Type client ..."></ion-searchbar>
+    </ion-item>
   </ion-card>
 
+  <ion-modal trigger="open-fromDate-modal">
+    <ng-template>
+      <ion-content>
+        <ion-datetime  size="cover" formControlName="fromDate" (ionChange)="dateRangeChanged()" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal trigger="open-toDate-modal">
+    <ng-template>
+      <ion-content>
+        <ion-datetime size="cover"  formControlName="toDate" (ionChange)="dateRangeChanged()" [showDefaultButtons]="true"  mode="md" presentation="date"></ion-datetime>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
   
-  <ion-accordion-group>
-    <ion-accordion value="first">
+  <ion-accordion-group class="ion-padding">
+    <ion-accordion value="{{index}}" *ngFor="let invoice of invoices; let index=index;">
       <ion-item slot="header">
-        <ion-label>First Accordion</ion-label>
+        <ion-label>{{invoice.client}}</ion-label>
       </ion-item>
       <div class="ion-padding" slot="content">
-        First Content
+        {{invoice.description}}
+
+      <div class="ion-padding">
+        <ion-icon slot="end"  (click)="printOrder()" color="primary" size="small" name="print-outline"></ion-icon>
       </div>
-    </ion-accordion>
-    <ion-accordion value="second">
-      <ion-item slot="header">
-        <ion-label>Second Accordion</ion-label>
-      </ion-item>
-      <div class="ion-padding" slot="content">
-        Second Content
       </div>
-    </ion-accordion>
-    <ion-accordion value="third">
-      <ion-item slot="header">
-        <ion-label>Third Accordion</ion-label>
-      </ion-item>
-      <div class="ion-padding" slot="content">
-        Third Content
-      </div>
+
     </ion-accordion>
   </ion-accordion-group>
-
-  <!-- <ion-list>
-    <div>
-    <ion-item class="item-client" mode="ios" color="primary"  [routerLink]="" [detail]="true">
-      <ion-label class="ion-text-wrap card-label" color="light">
-        <h2>
-          EN LTD
-        </h2>
-        <h3>Espace Numerique LTD</h3>
-      </ion-label>
-    </ion-item> 
-    <ion-icon name="wifi" slot="start"></ion-icon>
-    <ion-icon name="wifi" slot="center"></ion-icon>
-    <ion-icon name="wifi" slot="end"></ion-icon>
-     
-  </div>
-
-</ion-list> -->
 
 </ion-content>
 
