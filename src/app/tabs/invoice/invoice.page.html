@@ -4,43 +4,60 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [formGroup]="invoiceFilterForm" style="background: transparent!important;">
+<ion-content  style="background: transparent!important;">
   <ion-card>
     <ion-item lines="none">
       <ion-text slot="start" id="open-fromDate-modal">From: {{this.invoiceFilterForm.getRawValue().fromDate}}</ion-text>
       <ion-text slot="end" id="open-toDate-modal">To: {{this.invoiceFilterForm.getRawValue().toDate}}</ion-text>
     </ion-item>
     <ion-item lines="none">
-      <ion-searchbar formControlName="client" debounce="500" #hint (ionInput)="searchClient(hint.value)" placeholder="Type client ..."></ion-searchbar>
+      <ion-searchbar [formControl]="client" placeholder="Type client ..."></ion-searchbar>
     </ion-item>
   </ion-card>
 
-  <ion-modal trigger="open-fromDate-modal">
-    <ng-template>
-      <ion-content>
-        <ion-datetime  size="cover" formControlName="fromDate" (ionChange)="dateRangeChanged()" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <ion-modal trigger="open-toDate-modal">
-    <ng-template>
-      <ion-content>
-        <ion-datetime size="cover"  formControlName="toDate" (ionChange)="dateRangeChanged()" [showDefaultButtons]="true"  mode="md" presentation="date"></ion-datetime>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
+  <div [formGroup]="invoiceFilterForm">
+    <ion-modal trigger="open-fromDate-modal">
+      <ng-template>
+        <ion-content>
+          <ion-datetime  size="cover" formControlName="fromDate" (ionChange)="dateRangeChanged()" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
   
-  <ion-accordion-group class="ion-padding">
-    <ion-accordion value="{{index}}" *ngFor="let invoice of invoices; let index=index;">
+    <ion-modal trigger="open-toDate-modal">
+      <ng-template>
+        <ion-content>
+          <ion-datetime size="cover"  formControlName="toDate" (ionChange)="dateRangeChanged()" [showDefaultButtons]="true"  mode="md" presentation="date"></ion-datetime>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </div>
+  
+  
+  <ion-accordion-group class="ion-padding" (ionChange)="getOrders($event)" expand="inset" mode="md">
+    <ion-accordion value="{{visit.VSTNo}}" *ngFor="let visit of visits; let index=index;">
       <ion-item slot="header">
-        <ion-label>{{invoice.client}}</ion-label>
+        <ion-label>{{visit.VSTShopName}}</ion-label>
       </ion-item>
       <div class="ion-padding" slot="content">
-        {{invoice.description}}
-
+        <ion-grid>
+          <ion-row class="ion-text-uppercase">
+            <!-- <ion-col class="ion-text-left"><small><b>#</b></small></ion-col> -->
+            <ion-col class="ion-text-left"><small><b>ITEM</b></small></ion-col>
+            <ion-col class="ion-text-center"><small><b>QTY</b></small></ion-col>
+            <ion-col class="ion-text-center"><small><b>Price</b></small></ion-col>
+            <ion-col class="ion-text-right"><small><b>Tot INCL.</b></small></ion-col>
+          </ion-row>
+          <ion-row *ngFor="let order of visitOrders; let i = index;">
+            <!-- <ion-col class="ion-text-left"><small>{{i+1}}</small></ion-col> -->
+            <ion-col class="ion-text-left"><small>{{order.ItemName}}</small></ion-col>
+            <ion-col class="ion-text-center"><small>{{order.STKQTY | number}}</small></ion-col>
+            <ion-col class="ion-text-center"><small>{{order.UnitPriceIncl | currency:'KES '}}</small></ion-col>
+            <ion-col class="ion-text-right"><small>{{order.STKPriceIncl | currency:'KES '}}</small></ion-col>
+          </ion-row>
+        </ion-grid>
       <div class="ion-padding">
-        <ion-icon slot="end"  (click)="printOrder()" color="primary" size="small" name="print-outline"></ion-icon>
+        <ion-icon slot="end" *ngIf="visit.QRCodeURL"  (click)="printOrder(visit.VSTNo)" color="primary" size="large" name="print-outline"></ion-icon>
       </div>
       </div>
 
