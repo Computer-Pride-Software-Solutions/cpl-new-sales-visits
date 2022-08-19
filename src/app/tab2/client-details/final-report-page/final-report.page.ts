@@ -8,7 +8,7 @@ import { FinalReportService } from 'src/app/services/FinalReport/final-report.se
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { LocationService } from 'src/app/services/location/location.service';
 import { DialogService } from 'src/app/services/Dialog/dialog.service';
-import { PdfmakeService } from 'src/app/services/pdfmake/pdfmake.service';
+// import { PdfmakeService } from 'src/app/services/pdfmake/pdfmake.service';
 
 @Component({
   selector: 'app-final-report',
@@ -44,7 +44,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
     private db: DexieService,
     private locationService: LocationService,
     private dialogService: DialogService,
-    private printService: PdfmakeService
+    // private printService: PdfmakeService
     ) {
 
      }
@@ -142,9 +142,9 @@ export class FinalReportPage implements OnInit, OnDestroy {
 
   }
 
-  printOrder(){
-    this.printService.printSalesOrder();
-  }
+  // printOrder(){
+  //   this.printService.printSalesOrder();
+  // }
 
 
 }
