@@ -81,21 +81,11 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
       this.subscription.add(
         this.scheduledService.getVisits(salesRep)
         .subscribe(visits => {
-          // this.scheduledVisits = visits;
           this.calendarOptions.events = visits;
         })
       );
   }
 
-  // getClientDetails(clientName: string): void{
-  //   this.subscription.add(
-  //     this.scheduledService.getClientDetails(clientName)
-  //     .subscribe(client => {
-  //         const custCode = client[0].CustCode;
-  //         this.router.navigate([`/view-client-details/${custCode}`]);
-  //     })
-  //   );
-  // }
   getClientDetails(custCode: string): void{
     this.router.navigate([`./tabs/tab2/client-details/${custCode}`]);
   }
@@ -129,7 +119,6 @@ export class Tab1Page implements OnInit, OnDestroy, AfterViewInit  {
       this.visitSummaryService.getVisitsSummary(custCode, daterange).subscribe(summary =>{
         if(Object.keys(summary).length > 0){
           this.presentModal(header, summary);
-          console.log(summary)
         }else{
 
           this.getClientDetails(custCode);
