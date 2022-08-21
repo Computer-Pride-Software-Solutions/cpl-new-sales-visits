@@ -80,8 +80,9 @@ export class PdfmakeService {
       
       content: [
         {
-          image: `data:image/jpeg;base64,${company.logo}`
-        ,width: 80, alignment:'center'
+          image: `${company.logo}`,
+          width: 80,
+          alignment:'center'
         },
         {text:  `${company.custname}\n\n`, bold:true, style:'headerContent'},
 
