@@ -188,17 +188,6 @@
             </ion-row>
           </ion-grid>
 
-          <!-- <div *ngIf="finalReport" class="stagged-item"> 
-            <ol>
-                <li  *ngFor="let order of finalReport.orders" style="margin:5px 0px; text-align:left;">
-                  <small>
-                    {{order.ItemName}} 
-                    <ion-badge color="success" mode="ios">{{order.QTY}}</ion-badge>
-                  </small>                 
-                </li> 
-            </ol>
-
-          </div> -->
 
           <ion-list *ngIf="finalReport" class="stagged-item">
             <ion-item  *ngFor="let order of finalReport.orders; let i = index">
@@ -216,14 +205,10 @@
 
         <ion-slide>
           <h2>
-            <!-- <fa-icon [icon]="faLayerGroup"></fa-icon><br> -->
-            <!-- <ion-icon name="layers-outline"></ion-icon><br> -->
-
             <small>Current Stock</small>
           </h2>
 
           <ion-list class="return-of-goods slide-form" mode="ios">
-            <!-- <ion-grid class="return-of-goods"> -->
               <form id="frmStock">
 
                 <ion-item>
@@ -271,10 +256,17 @@
 
                   <ion-item>
                     <ion-label position="stacked">Item Expiry Date</ion-label>
-                    <ion-datetime name="expiryDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+                    <ion-input name="expiryDate" id="open-currentStockExpiryDate-modal" value="{{currentStockExpiryDate.value}}" mode="ios"></ion-input>
                   </ion-item>
 
             </form>
+            <ion-modal trigger="open-currentStockExpiryDate-modal">
+              <ng-template>
+                <ion-content>
+                  <ion-datetime  size="cover"  (ionChange)="dateChanged($event, 'currentStockExpiryDate')" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
+                </ion-content>
+              </ng-template>
+            </ion-modal>
           </ion-list>
             <ion-grid>
             <ion-row>
@@ -299,13 +291,10 @@
 
         <ion-slide>
           <h2>
-            <!-- <fa-icon [icon]="faCookieBite"></fa-icon><br> -->
-            <!-- <ion-icon  name="heart-dislike-outline"></ion-icon><br> -->
-
+          
             <small>Return of goods</small> 
           </h2>
               <ion-list class="return-of-goods slide-form" mode="ios"  style="overflow-y: scroll!important; height:420px">
-                <!-- <ion-grid class="return-of-goods"> -->
                   <form id="frmReturns">
 
                     <ion-item>
@@ -363,9 +352,19 @@
 
                   <ion-item>
                     <ion-label position="stacked">Item Expiry Date</ion-label>
-                    <ion-datetime name="expiryDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+                    <!-- <ion-datetime name="expiryDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime> -->
+                    <ion-input name="expiryDate" id="open-returnExpiryDate-modal" value="{{returnExpiryDate.value}}" mode="ios"></ion-input>
+
                   </ion-item>
                 </form>
+
+                <ion-modal trigger="open-returnExpiryDate-modal">
+                  <ng-template>
+                    <ion-content>
+                      <ion-datetime name="expiryDate" size="cover" (ionChange)="dateChanged($event, 'returnExpiryDate')" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
+                    </ion-content>
+                  </ng-template>
+                </ion-modal>
               </ion-list>
             <ng-template #noItems>
               <ion-item>
@@ -401,9 +400,6 @@
 
         <ion-slide>
           <h2>
-            <!-- <fa-icon [icon]="faMoneyBillAlt"></fa-icon><br> -->
-            <!-- <ion-icon  name="card-outline"></ion-icon><br> -->
-
             <small>Payment Details</small>
           </h2>
           <ion-content>
@@ -411,9 +407,16 @@
               <form id="frmPayment" enctype="multipart/form-data">     
                 <ion-item>
                   <ion-label position="stacked">Date Paid</ion-label>
-                    <ion-datetime name="datePaid" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
-                </ion-item>
-  
+                    <ion-input name="datePaid" id="open-paymentDate-modal" value="{{paymentDate.value}}" mode="ios"></ion-input>
+
+                  </ion-item>
+                  <ion-modal trigger="open-paymentDate-modal">
+                    <ng-template>
+                      <ion-content>
+                        <ion-datetime name="paymentDate" size="cover" (ionChange)="dateChanged($event, 'paymentDate')" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
+                      </ion-content>
+                    </ng-template>
+                  </ion-modal>
                 <ion-item>
                   <ion-label position="stacked">Cheque number</ion-label>
                   <ion-input name="chequeNumber" placeholder="e.g. 12345678" type="text"></ion-input>
@@ -444,27 +447,13 @@
                 </ion-item>
               </form> 
 
-              <!-- <ion-item class="ion-padding"> -->
                 <ion-button class="ion-padding" size="small" (click)="addPaymentToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
-              <!-- </ion-item>   -->
           </ion-list>
           </ion-content>
-          
-<!--           
-          <ion-grid>
-            <ion-row>
-              <ion-col>
-                <ion-button size="small" (click)="addPaymentToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-grid> -->
         </ion-slide>
 
         <ion-slide>
           <h2>
-            <!-- <fa-icon [icon]="faImages"></fa-icon><br> -->
-            <!-- <ion-icon name="ribbon-outline"></ion-icon><br> -->
-
             <small>Promotion & Offers</small>
           </h2>
           <ion-list mode="ios" class="slide-form" style="overflow-y: scroll!important; height:450px">  
@@ -495,8 +484,16 @@
             </ion-item>
             <ion-item>
               <ion-label position="stacked">End Date</ion-label>
-              <ion-datetime name="endDate" value="{{today}}" placeholder="Select Date" mode="ios"></ion-datetime>
+              <ion-input name="endDate" id="open-promotionDate-modal" value="{{promotionDate.value}}" mode="ios"></ion-input>
+              <ion-modal trigger="open-promotionDate-modal">
+                <ng-template>
+                  <ion-content>
+                    <ion-datetime name="promotionDate" size="cover" (ionChange)="dateChanged($event, 'promotionDate')" [showDefaultButtons]="true"  mode="md"  presentation="date"></ion-datetime>
+                  </ion-content>
+                </ng-template>
+              </ion-modal>
             </ion-item>
+
             <ion-item>
               <ion-label position="stacked">More details</ion-label>
               <ion-textarea name="offerDetails" mode="ios" placeholder="Buy 1 get 1 Free"></ion-textarea>
@@ -505,9 +502,6 @@
           </ion-list>
             <ion-grid>
             <ion-row>
-              <!-- <ion-col >
-                <ion-button size="small" (click)="addItemToOffer()" expand="block" mode="ios" color="success" style="margin:auto"><ion-icon name="add-outline"></ion-icon>Add Item To Offer</ion-button>
-              </ion-col> -->
               <ion-col>
                 <ion-button size="small" (click)="addOffersToFinalReport()"  mode="ios" color="success" style="margin:auto">Add To Final Report&nbsp;<ion-icon name="add-outline"></ion-icon></ion-button>
               </ion-col>
