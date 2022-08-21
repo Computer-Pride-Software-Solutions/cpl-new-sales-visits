@@ -58,6 +58,7 @@
         </ion-grid>
       <div class="ion-padding">
         <ion-icon slot="end" *ngIf="visit.QRCodeURL"  (click)="printOrder(visit.VSTNo)" color="primary" size="large" name="print-outline"></ion-icon>
+      <ion-text color="danger" class="ion-text-center" *ngIf="!visit.QRCodeURL"> <small>This invoice is not processed yet!</small> </ion-text>
       </div>
       </div>
 
