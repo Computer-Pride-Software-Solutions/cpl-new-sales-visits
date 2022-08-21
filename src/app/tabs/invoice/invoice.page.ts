@@ -1,13 +1,12 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import {format} from 'date-fns';
+// import {format} from 'date-fns';
 import { Subscription } from 'rxjs';
-import { VisitSummaryService } from 'src/app/services/summary/visit-summary.service';
 import { VisitService } from 'src/app/services/visit/visit.service';
-import { debounce, debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { PdfmakeService } from 'src/app/services/pdfmake/pdfmake.service';
-import { ThirdPartyDraggable } from '@fullcalendar/interaction';
+import { CompanyDetailsService } from 'src/app/services/company/company-details.service';
 
 @Component({
   selector: 'app-invoice',
@@ -21,7 +20,6 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
   invoiceFilterForm = new FormGroup({
     fromDate: new FormControl(this.today, Validators.required),
     toDate: new FormControl(this.today, Validators.required),
-    // client: new FormControl('')
   });
 
   client = new FormControl('', [Validators.minLength(3), Validators.min(3)]);
@@ -33,7 +31,8 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public modalController: ModalController,
     public visitServive: VisitService,
-    private printService: PdfmakeService
+    private printService: PdfmakeService,
+    private companyService: CompanyDetailsService
 
 
     ) { }
@@ -47,7 +46,7 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.getVisits();
-    // console.log("Sam");
+    this.getCompanyDetails();
   }
 
   dismissModal() {
@@ -58,7 +57,6 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
 
 
   dateRangeChanged(){
-    // console.log(this.invoiceFilterForm.getRawValue())
     this.getVisits(this.client.value);
 
   }
@@ -89,7 +87,12 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
 
   printOrder(VSTNo){
     const selectedVisit = this.visits.filter((visit)=> visit.VSTNo === VSTNo)
-    this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit});
+    this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit, companyDetails: this.companyService.getCompanyDetails()});
+  }
+  
+  async getCompanyDetails(){
+    const company =  await this.companyService.getCompanyDetails();
+    return company;
   }
  
 }
