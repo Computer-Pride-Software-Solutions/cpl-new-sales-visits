@@ -85,9 +85,12 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
     
   }
 
-  printOrder(VSTNo){
+  loading = false;
+  async printOrder(VSTNo){
+    this.loading = true;
     const selectedVisit = this.visits.filter((visit)=> visit.VSTNo === VSTNo)
-    this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit, companyDetails: this.companyService.getCompanyDetails()});
+    await this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit, companyDetails: this.companyService.getCompanyDetails()});
+    this.loading = false;
   }
   
   async getCompanyDetails(){
