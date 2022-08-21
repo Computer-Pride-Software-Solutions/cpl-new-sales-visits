@@ -18,8 +18,9 @@
   <ion-list>
     <ion-item>
       <ion-label>Sales Type</ion-label>
-      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="Quotation">
-        <ion-select-option value="Order" *ngIf="currentUser.userRights.includes('can create orders')">Order</ion-select-option>
+      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="PO">
+        <ion-select-option value="invoice" *ngIf="currentUser.userRights.includes('can create orders')">Invoice</ion-select-option>
+        <ion-select-option value="SO" *ngIf="currentUser.userRights.includes('can create orders')">Sales Order</ion-select-option>
         <ion-select-option value="Quotation"*ngIf="currentUser.userRights.includes('can create quotation')">Quotation</ion-select-option>
       </ion-select>
     </ion-item>
@@ -43,7 +44,10 @@
             <ion-col  class="ion-text-right"><small>{{order.price | currency:'KES '}}</small></ion-col>
             <ion-col  class="ion-text-right"><small>{{order.QTY * order.price | currency:'KES '}}</small></ion-col>
           </ion-row>
-          <ion-row>        
+          <ion-row class="ion-paddingg">     
+            <!-- <ion-col class="ion-text-left">
+              <ion-icon (click)="printOrder()" color="primary" size="large" name="print-outline"></ion-icon>
+            </ion-col>   -->
             <ion-col class="ion-text-right"><small><strong>TOTAL: {{this.totalOrders | currency:'KES '}}</strong></small></ion-col>
           </ion-row>
         </ion-grid>

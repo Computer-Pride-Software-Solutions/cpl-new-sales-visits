@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActionSheetController, AlertController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { DexieService } from '../services/Database/Dexie/dexie.service';
 import { LocationService } from '../services/location/location.service';
 import { Geolocation} from '@ionic-native/geolocation/ngx';
 import { PlatformLocation } from '@angular/common';
+import { InvoicePage } from './invoice/invoice.page';
 
 @Component({
   selector: 'app-tabs',
@@ -19,7 +20,8 @@ export class TabsPage implements OnInit, OnDestroy {
       public alertController: AlertController,
       private db: DexieService,
       public geolocation: Geolocation,
-      location: PlatformLocation
+      location: PlatformLocation,
+      private modalController: ModalController
     ) {
       location.onPopState(() => {
         history.forward();
@@ -62,21 +64,30 @@ export class TabsPage implements OnInit, OnDestroy {
       mode:'ios',
       buttons: [
         {
-        text: 'LOGOUT',
-        role: 'destructive',
-        icon: 'log-out-outline',
-        handler: () => {
-          self.confirmLogout()
-        }
+          text: 'Invoices',
+          role: 'selected',
+          icon: 'document-text-outline',
+          handler: () => {
+            self.getInvoices()
+          }
+        },
+        {
+          text: 'LOGOUT',
+          role: 'destructive',
+          icon: 'log-out-outline',
+          handler: () => {
+            self.confirmLogout()
+          }
         }, 
        {
-        text: 'Cancel',
-        icon: 'close',
-        role: 'cancel',
-        handler: () => {
-          // console.log('Cancel clicked');
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+          handler: () => {
+            // console.log('Cancel clicked');
+          }
         }
-      }]
+      ]
     });
     await actionSheet.present();
 
@@ -108,6 +119,15 @@ export class TabsPage implements OnInit, OnDestroy {
     });
   
     await alert.present();
+  }
+
+  async getInvoices(){
+    const modal = await this.modalController.create({
+      component: InvoicePage,
+      cssClass: 'my-custom-class',
+      mode: 'ios',
+    });
+    return await modal.present();
   }
 
 }

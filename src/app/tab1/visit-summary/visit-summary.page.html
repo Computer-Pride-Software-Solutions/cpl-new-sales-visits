@@ -10,7 +10,7 @@
   
   <ion-list *ngIf="visitSummary && visitSummary.Orders.length > 0">
     <ion-list-header>
-      <h6><small>ORDERS PLACED ON {{visitHeader.visitDate}}</small></h6>
+      <h6><small>ORDERS FROM {{visitHeader.daterange.from}} TO {{visitHeader.daterange.to}}</small></h6>
     </ion-list-header> 
     <ion-item>
       <ion-grid>
@@ -32,7 +32,7 @@
 
   <ion-list  *ngIf="visitSummary && visitSummary.Returns.length > 0">
     <ion-list-header>
-      <h6><small>ITEMS RETURNED ON {{visitHeader.visitDate}}</small></h6>
+      <h6><small>ITEMS RETURNED FROM {{visitHeader.daterange.from}} TO {{visitHeader.daterange.to}}</small></h6>
     </ion-list-header> 
     <ion-item>
       <ion-grid>
@@ -54,7 +54,7 @@
 
   <ion-list  *ngIf="visitSummary && visitSummary.Comment[0]?.SalesRepRemarks.trim().length > 0">
     <ion-list-header>
-      <h6><small>SALES REP COMMENT ON {{visitHeader.visitDate}}</small></h6>
+      <h6><small>SALES REP COMMENT FROM {{visitHeader.daterange.from}} TO {{visitHeader.daterange.to}}</small></h6>
     </ion-list-header> 
     <ion-item>
       {{visitSummary.Comment[0]?.SalesRepRemarks}}

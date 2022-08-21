@@ -22,7 +22,7 @@ import { MapOutletPage } from './map-outlet/map-outlet.page';
 import { LocationService } from 'src/app/services/location/location.service';
 import { AssignedVisitsService } from 'src/app/services/assigned-visits/assigned-visits.service';
 import { GoogleMapsService } from 'src/app/services/google/google-maps.service';
-import { IVisits } from 'src/app/interfaces/IVisits';
+// import { IVisits } from 'src/app/interfaces/IVisits';
 
 
 import { Camera, CameraResultType } from '@capacitor/camera';
@@ -30,8 +30,11 @@ import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { UserDialogsService } from 'src/app/services/common/user-dialogs/user-dialogs.service';
 import { FormControl, Validators } from '@angular/forms';
 
-import { IonRouterOutlet, Platform } from '@ionic/angular';
-import { Plugins } from '@capacitor/core';
+// import { IonRouterOutlet, Platform } from '@ionic/angular';
+// import { Plugins } from '@capacitor/core';
+
+import {format} from 'date-fns';
+
 @Component({
   selector: 'app-client-details',
   templateUrl: './client-details.page.html',
@@ -39,7 +42,8 @@ import { Plugins } from '@capacitor/core';
 })
 export class ClientDetailsPage implements OnInit, OnDestroy {
   currentLatLong: any;
-  today: String = new Date().toISOString();
+  // today: String = new Date().toISOString();
+  today = new Date().toJSON().slice(0,10);
 
   clientDetails: IClientDetails[] = [];
   itemGroups: IItemGroup[] = [];
@@ -85,7 +89,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   src : SafeResourceUrl = 'assets/images/sample-cheque.jpeg';
   submit = false;
   isLoading = true;
-
 
 
 
@@ -657,7 +660,14 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   }
 
+  currentStockExpiryDate = new FormControl(this.today);
+  returnExpiryDate = new FormControl(this.today);
+  paymentDate = new FormControl(this.today);
+  promotionDate = new FormControl(this.today);
 
-
+  dateChanged(event, formInput){
+    const expiryDate = format(new Date(event.target.value), 'yyyy-MM-dd')
+    this[`${formInput}`].setValue(expiryDate);
+  }
 
 }
