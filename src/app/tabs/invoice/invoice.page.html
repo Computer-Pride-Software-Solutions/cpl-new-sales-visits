@@ -57,8 +57,12 @@
           </ion-row>
         </ion-grid>
       <div class="ion-padding">
-        <ion-icon slot="end" *ngIf="visit.QRCodeURL"  (click)="printOrder(visit.VSTNo)" color="primary" size="large" name="print-outline"></ion-icon>
-      <ion-text color="danger" class="ion-text-center" *ngIf="!visit.QRCodeURL"> <small>This invoice is not processed yet!</small> </ion-text>
+        <span (click)="printOrder(visit.VSTNo)">
+          <ion-icon [hidden]="loading" *ngIf="visit.QRCodeURL"   color="primary" size="large" name="print-outline"></ion-icon>
+          <ion-spinner [hidden]="!loading" size="large" color="primary" name="lines" mode="ios"></ion-spinner>
+        </span>
+      
+        <ion-text color="danger" class="ion-text-center" *ngIf="!visit.QRCodeURL"> <small>This invoice is not processed yet!</small> </ion-text>
       </div>
       </div>
 
