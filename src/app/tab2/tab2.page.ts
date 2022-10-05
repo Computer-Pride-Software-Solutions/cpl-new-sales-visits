@@ -100,6 +100,7 @@ export class Tab2Page implements OnInit, OnDestroy, AfterViewInit {
 
   // Fecthing orders theough the service
   getClients(page: number, hint): void {
+    this.isLoading = true;
     this.subscription = this.clientsService.getClients(page, hint)
       .subscribe((data: IClient[]) => {
         this.clients = data;

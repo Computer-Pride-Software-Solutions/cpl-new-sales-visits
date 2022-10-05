@@ -182,7 +182,7 @@
 
   <ion-fab  vertical="bottom" horizontal="end" slot="fixed" >
     <!-- [disabled]="!isUserInRadius" -->
-    <ion-fab-button  color="primary"  (click)="submitFinalReport()">
+    <ion-fab-button  [disabled]="isLoading"  color="primary"  (click)="submitFinalReport()">
       <ion-icon name="cloud-upload-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
