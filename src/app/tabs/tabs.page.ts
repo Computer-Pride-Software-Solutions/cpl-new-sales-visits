@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionSheetController, AlertController, ModalController } from '@ionic/angular';
 import { DexieService } from '../services/Database/Dexie/dexie.service';
-import { LocationService } from '../services/location/location.service';
 import { Geolocation} from '@ionic-native/geolocation/ngx';
 import { PlatformLocation } from '@angular/common';
 import { InvoicePage } from './invoice/invoice.page';
+import { LocationService } from '../services/Location/location.service';
 
 @Component({
   selector: 'app-tabs',

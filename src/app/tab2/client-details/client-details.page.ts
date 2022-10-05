@@ -19,7 +19,6 @@ import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { ProductService } from 'src/app/services/product/product.service';
 // import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { MapOutletPage } from './map-outlet/map-outlet.page';
-import { LocationService } from 'src/app/services/location/location.service';
 import { AssignedVisitsService } from 'src/app/services/assigned-visits/assigned-visits.service';
 import { GoogleMapsService } from 'src/app/services/google/google-maps.service';
 // import { IVisits } from 'src/app/interfaces/IVisits';
@@ -34,6 +33,7 @@ import { FormControl, Validators } from '@angular/forms';
 // import { Plugins } from '@capacitor/core';
 
 import {format} from 'date-fns';
+import { LocationService } from 'src/app/services/Location/location.service';
 
 @Component({
   selector: 'app-client-details',

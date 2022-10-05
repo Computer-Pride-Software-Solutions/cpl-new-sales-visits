@@ -5,10 +5,10 @@ import { ModalController } from '@ionic/angular';
 import { IClient } from '../interfaces/IClient';
 import { ClientService } from '../services/client/client.service';
 import { NewClientPage } from './new-client/new-client.page';
-import { LocationService } from '../services/location/location.service';
 import { DexieService } from '../services/Database/Dexie/dexie.service';
 import { FormControl, Validators } from '@angular/forms';
 import { debounce, debounceTime } from 'rxjs/operators';
+import { LocationService } from '../services/Location/location.service';
 
 @Component({
   selector: 'app-tab2',
