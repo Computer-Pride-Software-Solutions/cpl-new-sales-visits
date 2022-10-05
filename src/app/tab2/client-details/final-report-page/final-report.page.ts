@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { FinalReportService } from 'src/app/services/FinalReport/final-report.service';
 // import { FirebaseService } from 'src/app/services/firebase/firebase.service';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
-import { LocationService } from 'src/app/services/location/location.service';
 import { DialogService } from 'src/app/services/Dialog/dialog.service';
+import { LocationService } from 'src/app/services/Location/location.service';
 // import { PdfmakeService } from 'src/app/services/pdfmake/pdfmake.service';
 
 @Component({

@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 import { ClientService } from 'src/app/services/client/client.service';
 import { IPriceList } from 'src/app/interfaces/IProducts';
 import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
-import { LocationService } from 'src/app/services/location/location.service';
 import { LoadingController } from '@ionic/angular';
+import { LocationService } from 'src/app/services/Location/location.service';
 
 @Component({
   selector: 'app-new-client',
