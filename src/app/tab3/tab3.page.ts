@@ -41,7 +41,7 @@ export class Tab3Page implements OnInit {
 
   clearAllDraftReports(){
     const self = this;
-    this.dialoService.confirm('Did you mean to delete all your draft reports?', 'Deleting all draft reports!', function(){
+    this.dialoService.confirm('Did you mean to clear your Outbox? All your reports will be deleted!', 'Clear Outbox!', function(){
       self.db.draftReport.clear();
       self.allDraftReports = [];
     })
