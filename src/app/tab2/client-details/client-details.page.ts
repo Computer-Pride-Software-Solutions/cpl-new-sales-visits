@@ -536,6 +536,18 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getSearchedItem(hint): void{
     try{
+      //Checking item from existing products array
+      // if(this.currentlySelectedItemGroup.length > 0){
+      //   let tempProd: IProduct[] = [...this.products];
+      //   const products: IProduct[] = this.products.filter((product)=> {
+      //     return product.ItemName.toLowerCase().includes(hint.toLowerCase())
+      //   })
+      //   if(products.length > 0){
+      //     this.products = products;
+      //   }else{
+      //     this.products = tempProd
+      //   }
+      // }
       this.subscription.add(
         this.productService.getSearchedItem(hint, this.custCode)
         .subscribe((products: IProduct[]) => {
