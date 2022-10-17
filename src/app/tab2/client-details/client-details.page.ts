@@ -536,19 +536,19 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getSearchedItem(hint): void{
     try{
-    this.subscription.add(
-      this.productService.getSearchedItem(hint, this.custCode)
-      .subscribe((products: IProduct[]) => {
-        // console.log(products);
-        this.products = products;
-       })
-    );
-    this.currentlySelectedItem = this.product?.ItemName;
-    this.currentlySelectedItemId = this.product?.ItemId;
-    this.currentlySelectedSalesPriceExcl = this.product?.SalePriceExcl;
-      }catch (err){
+      this.subscription.add(
+        this.productService.getSearchedItem(hint, this.custCode)
+        .subscribe((products: IProduct[]) => {
+          // console.log(products);
+          this.products = products;
+        })
+      );
+      this.currentlySelectedItem = this.product?.ItemName;
+      this.currentlySelectedItemId = this.product?.ItemId;
+      this.currentlySelectedSalesPriceExcl = this.product?.SalePriceExcl;
+    }catch (err){
           //
-      }
+    }
   }
 
 
