@@ -18,9 +18,9 @@
   <ion-list>
     <ion-item>
       <ion-label>Sales Type</ion-label>
-      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="invoice">
-        <ion-select-option value="invoice" *ngIf="currentUser.userRights.includes('can create orders')">Invoice</ion-select-option>
-        <ion-select-option value="SO" *ngIf="currentUser.userRights.includes('can create orders')">Sales Order</ion-select-option>
+      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="Sales Order">
+        <ion-select-option value="Invoice" *ngIf="currentUser.userRights.includes('can create orders')">Invoice</ion-select-option>
+        <ion-select-option value="Sales Order" *ngIf="currentUser.userRights.includes('can create orders')">Sales Order</ion-select-option>
         <ion-select-option value="Quotation"*ngIf="currentUser.userRights.includes('can create quotation')">Quotation</ion-select-option>
       </ion-select>
     </ion-item>
