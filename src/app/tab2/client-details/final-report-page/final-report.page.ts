@@ -29,7 +29,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
   };
   totalOrders = 0;
 
-  salesType = 'PO';
+  salesType = 'Sales Order';
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   @Input() finalReport: any;

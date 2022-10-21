@@ -14,7 +14,7 @@
     <div class="ion-padding">
       <ion-searchbar mode="ios" placeholder="Type a client"  (ionInput)='searchDraftReports($event)'></ion-searchbar>
     </div>
-    <div class="ion-text-center ion-text-uppercase"><ion-note>All DRAFT REPORTS</ion-note></div>
+    <div class="ion-text-center ion-text-uppercase"><ion-note>OUTBOX</ion-note></div>
     <ion-list>
       <ion-item class="item-client" mode="ios" color="medium" *ngFor="let report of allDraftReports"  [routerLink]="'../tab2/client-details/'+ report.clientCode" [detail]="true">
         <ion-label class="ion-text-wrap card-label" color="light">

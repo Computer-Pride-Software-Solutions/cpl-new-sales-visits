@@ -536,19 +536,31 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
 
   getSearchedItem(hint): void{
     try{
-    this.subscription.add(
-      this.productService.getSearchedItem(hint, this.custCode)
-      .subscribe((products: IProduct[]) => {
-        // console.log(products);
-        this.products = products;
-       })
-    );
-    this.currentlySelectedItem = this.product?.ItemName;
-    this.currentlySelectedItemId = this.product?.ItemId;
-    this.currentlySelectedSalesPriceExcl = this.product?.SalePriceExcl;
-      }catch (err){
+      //Checking item from existing products array
+      // if(this.currentlySelectedItemGroup.length > 0){
+      //   let tempProd: IProduct[] = [...this.products];
+      //   const products: IProduct[] = this.products.filter((product)=> {
+      //     return product.ItemName.toLowerCase().includes(hint.toLowerCase())
+      //   })
+      //   if(products.length > 0){
+      //     this.products = products;
+      //   }else{
+      //     this.products = tempProd
+      //   }
+      // }
+      this.subscription.add(
+        this.productService.getSearchedItem(hint, this.custCode)
+        .subscribe((products: IProduct[]) => {
+          // console.log(products);
+          this.products = products;
+        })
+      );
+      this.currentlySelectedItem = this.product?.ItemName;
+      this.currentlySelectedItemId = this.product?.ItemId;
+      this.currentlySelectedSalesPriceExcl = this.product?.SalePriceExcl;
+    }catch (err){
           //
-      }
+    }
   }
 
 

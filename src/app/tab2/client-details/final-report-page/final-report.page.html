@@ -18,9 +18,9 @@
   <ion-list>
     <ion-item>
       <ion-label>Sales Type</ion-label>
-      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="PO">
-        <ion-select-option value="invoice" *ngIf="currentUser.userRights.includes('can create orders')">Invoice</ion-select-option>
-        <ion-select-option value="SO" *ngIf="currentUser.userRights.includes('can create orders')">Sales Order</ion-select-option>
+      <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="Sales Order">
+        <ion-select-option value="Invoice" *ngIf="currentUser.userRights.includes('can create orders')">Invoice</ion-select-option>
+        <ion-select-option value="Sales Order" *ngIf="currentUser.userRights.includes('can create orders')">Sales Order</ion-select-option>
         <ion-select-option value="Quotation"*ngIf="currentUser.userRights.includes('can create quotation')">Quotation</ion-select-option>
       </ion-select>
     </ion-item>
@@ -182,7 +182,7 @@
 
   <ion-fab  vertical="bottom" horizontal="end" slot="fixed" >
     <!-- [disabled]="!isUserInRadius" -->
-    <ion-fab-button  color="primary"  (click)="submitFinalReport()">
+    <ion-fab-button  [disabled]="isLoading"  color="primary"  (click)="submitFinalReport()">
       <ion-icon name="cloud-upload-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
