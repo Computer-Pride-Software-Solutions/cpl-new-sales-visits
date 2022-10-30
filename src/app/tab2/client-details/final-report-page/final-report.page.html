@@ -34,15 +34,17 @@
         <ion-grid>
           <ion-row class="ion-text-uppercase">
             <ion-col class="ion-text-left"><small>ITEM</small></ion-col>
-            <ion-col class="ion-text-right"><small>QTY</small></ion-col>
-            <ion-col class="ion-text-right"><small>Price</small></ion-col>
+            <ion-col class="ion-text-center"><small>QTY</small></ion-col>
+            <ion-col class="ion-text-center"><small>Dis.</small></ion-col>
+            <ion-col class="ion-text-center"><small>Price</small></ion-col>
             <ion-col class="ion-text-right"><small>LINE TOT.</small></ion-col>
           </ion-row>
           <ion-row *ngFor="let order of finalReport.orders; let i = index;">
             <ion-col class="ion-text-left"><small>{{order.ItemName}}</small></ion-col>
-            <ion-col  class="ion-text-right"><small>{{order.QTY | number}}</small></ion-col>
-            <ion-col  class="ion-text-right"><small>{{order.price | currency:'KES '}}</small></ion-col>
-            <ion-col  class="ion-text-right"><small>{{order.QTY * order.price | currency:'KES '}}</small></ion-col>
+            <ion-col  class="ion-text-center"><small>{{order.QTY | number}}</small></ion-col>
+            <ion-col  class="ion-text-center"><small>{{ order.Discount | number}}</small></ion-col>
+            <ion-col  class="ion-text-center"><small>{{order.price - (order.price * (order.Discount/100))| currency:'KES '}}</small></ion-col>
+            <ion-col  class="ion-text-right"><small>{{order.QTY * (order.price - (order.price * (order.Discount/100))) | currency:'KES '}}</small></ion-col>
           </ion-row>
           <ion-row class="ion-paddingg">     
             <!-- <ion-col class="ion-text-left">

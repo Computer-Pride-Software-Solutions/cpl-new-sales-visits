@@ -4,7 +4,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class CompanyDetailsService {
+export class CustomerService {
+
   private baseUrl = environment.BASE_URL;
   private headers = new HttpHeaders();
 
@@ -13,9 +14,9 @@ export class CompanyDetailsService {
         .set('Accept', 'application/json');
    }
 
-   getCompanyDetails() {
-    const endpoint = 'clients';
-    let URL = `${this.baseUrl}/${endpoint}`;
+   getCustomer(customerId) {
+    const endpoint = 'customers';
+    let URL = `${this.baseUrl}/${endpoint}/${customerId}`;
 
     let promise = new Promise((resolve, reject) => {
       this.httpClient.get(URL, {
@@ -27,5 +28,4 @@ export class CompanyDetailsService {
     });
     return promise;
   }
-
 }

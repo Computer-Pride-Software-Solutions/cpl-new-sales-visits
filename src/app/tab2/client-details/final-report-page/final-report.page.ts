@@ -62,7 +62,9 @@ export class FinalReportPage implements OnInit, OnDestroy {
 
   calculateTotalOrderPrice(): void{
     for (let i = 0; i < this.finalReport.orders.length; i++){
-      this.totalOrders += this.finalReport.orders[i].QTY * this.finalReport.orders[i].price;
+      const totalPrice = this.finalReport.orders[i].QTY * this.finalReport.orders[i].price;
+      const disountedAmount = totalPrice * (parseInt(this.finalReport.orders[i].Discount)/100)
+      this.totalOrders += (this.finalReport.orders[i].QTY * this.finalReport.orders[i].price) - disountedAmount;
     }
   }
 
