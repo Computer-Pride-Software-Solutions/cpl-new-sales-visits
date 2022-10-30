@@ -10,8 +10,7 @@ export class PdfmakeService {
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
    }
 
-   async printSalesOrder({orders, visitInfo, companyDetails}){
-
+   async printSalesOrder({orders, visitInfo, companyDetails, customer}){
     const company = await companyDetails;
 
     let totalIncl = orders.reduce((n, {STKPriceIncl}) => n + STKPriceIncl, 0);
@@ -72,7 +71,7 @@ export class PdfmakeService {
       },
       pageSize: 'A5',
       info: {
-        title: `Kulal Invoice No. - ${visitInfo[0].ERPInvoiceNo}`,
+        title: `Kulal Invoice No. - ${visitInfo.ERPInvoiceNo}`,
         author: 'Sam Tomashi',
         subject: 'kulal Invoice Receipt',
         keywords: 'Receipt, KRA, QRCode',
@@ -82,18 +81,27 @@ export class PdfmakeService {
         {
           image: `${company.logo}`,
           width: 80,
-          alignment:'center'
+          alignment:'right',
+          fontsize: 13,
+          bold:true,
         },
-        {text:  `${company.custname}\n\n`, bold:true, style:'headerContent'},
+        {
+          columns:[
+            {text: `Customer Name: ${customer.CustName}\n PIN: ${customer.taxregnno}`, alignment:'left'},
+            {text: `${company.custname}\n
+            PIN No.: ${company.pin}\n
+            Tel: ${company.tel}\n
+            Cell: ${company.cell}\n
+            Email: ${company.email}\n
+            Website: ${company.website}\n\n
+            `, style: 'subheader'},
 
-        {text: `PIN No.: ${company.pin}`, style: 'subheader'},
-        {text: `Tel: ${company.tel}`, style: 'subheader'},
-        {text: `Cell: ${company.cell}`, style: 'subheader'},
-        {text: `Email: ${company.email}`, style: 'subheader'},
-        {text: `Website: ${company.website}`, style: 'subheader'},
+          ]
 
-        {text: `Visit No.: ${visitInfo[0].VSTNo}`, alignment:'right'},
-        {text: `\nDate: ${today}\n\n` , style: 'subheader', alignment:'right'},
+        },
+
+        {text: `Visit No.: ${visitInfo.VSTNo}`, alignment:'right'},
+        {text: `\nDate: ${visitInfo.VSTDate}\n\n` , style: 'subheader', alignment:'right'},
   
         {
           style: 'tableExample',
@@ -136,7 +144,7 @@ export class PdfmakeService {
         {text:'----------------------------------------------------------------------------------------------------------------------------------------'},
 
         {
-          text:`YOU WERE SERVED BY: ${visitInfo[0].VSTRep.toUpperCase()}`, bold:true, alignment:'left', fontSize:7
+          text:`YOU WERE SERVED BY: ${visitInfo.VSTRep.toUpperCase()}`, bold:true, alignment:'left', fontSize:7
         },
 
         {
@@ -145,10 +153,14 @@ export class PdfmakeService {
 
         {
           columns: [
-            { qr: `\n\n\n ${visitInfo[0].QRCodeURL} \n\n`, alignment:'right', fit: 90},
+            { qr: `\n\n\n ${visitInfo.QRCodeURL} \n\n`, alignment:'right', fit: 90},
 
-            {text:`KRA CU No.: ${visitInfo[0].TaxCUNo }\n Trader Invoice No.: ${visitInfo[0].ERPInvoiceNo }\n KRA Invoice No.: ${visitInfo[0].TaxInvoiceNo }`, alignment:'left'},
+            {text:`KRA CU No.: ${visitInfo.TaxCUNo }\n Trader Invoice No.: ${visitInfo.ERPInvoiceNo }\n KRA Invoice No.: ${visitInfo.TaxInvoiceNo }`, alignment:'left'},
           ]
+        },
+
+        {
+          text: `Printed on: ${today}`, alignment:'center',
         }
 
       ],
@@ -162,7 +174,7 @@ export class PdfmakeService {
         subheader: {
           fontSize: 8,
           bold: true,
-          alignment:"left"
+          alignment:"right"
         },
         serviceProvider: {
           fontSize: 5,
