@@ -7,6 +7,7 @@ import { VisitService } from 'src/app/services/visit/visit.service';
 import { debounceTime } from 'rxjs/operators';
 import { PdfmakeService } from 'src/app/services/pdfmake/pdfmake.service';
 import { CompanyDetailsService } from 'src/app/services/company/company-details.service';
+import { CustomerService } from 'src/app/services/customer/customer.service';
 
 @Component({
   selector: 'app-invoice',
@@ -32,7 +33,9 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
     public modalController: ModalController,
     public visitServive: VisitService,
     private printService: PdfmakeService,
-    private companyService: CompanyDetailsService
+    private companyService: CompanyDetailsService,
+    private customerService: CustomerService
+
 
 
     ) { }
@@ -70,6 +73,7 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.visitServive.getVisits(hint, this.invoiceFilterForm.getRawValue()).subscribe(visits =>{
           this.visits = visits;
+          console.log(this.visits);
       })
     );
   }
@@ -88,14 +92,20 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
   loading = false;
   async printOrder(VSTNo){
     this.loading = true;
-    const selectedVisit = this.visits.filter((visit)=> visit.VSTNo === VSTNo)
-    await this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit, companyDetails: this.companyService.getCompanyDetails()});
+    const selectedVisit = this.visits.find((visit)=> visit.VSTNo === VSTNo)
+    const customer = await this.customerService.getCustomer(selectedVisit.CustId);
+    await this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit, companyDetails: this.companyService.getCompanyDetails(), customer: customer});
     this.loading = false;
+    // console.log(customer)
   }
   
   async getCompanyDetails(){
     const company =  await this.companyService.getCompanyDetails();
     return company;
   }
+
+  // async getCustomer(customerId){
+  //   return await this.customerService.getCustomer(customerId);
+  // }
  
 }
