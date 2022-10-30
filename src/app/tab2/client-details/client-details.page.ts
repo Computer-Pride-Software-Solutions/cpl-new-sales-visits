@@ -397,6 +397,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
               ];
               this.finalReport.orders = uniqueOrders;
               this.presentToast('Orders added to final report successfully!');
+              // console.log(this.finalReport.orders)
             }
       frm.reset();
       this.saveReportAsDraft();
