@@ -13,15 +13,25 @@ export class PdfmakeService {
    async printSalesOrder({orders, visitInfo, companyDetails, customer}){
     const company = await companyDetails;
 
-    let totalIncl = orders.reduce((n, {STKPriceIncl}) => n + STKPriceIncl, 0);
-    let totalExcl = orders.reduce((n, {STKPriceExcl}) => n + STKPriceExcl, 0);
-    const totalVAT = new Intl.NumberFormat('en-US',
-      { style: 'currency', currency: 'KES' }
-    ).format(totalIncl - totalExcl);
+    // let totalIncl = orders.reduce((n, {STKPriceIncl, STKPriceExcl, Discount, STKQTY}) =>
+    //  n + Math.round(((Math.round((STKPriceExcl/STKQTY *(1-(Discount/100)))*100))/100*STKQTY * (1+((STKPriceIncl - STKPriceExcl)/STKPriceExcl)))*100)/100, 0);
+
+    // let totalIncl = orders.reduce((n, {STKPriceIncl, STKPriceExcl, Discount, STKQTY}) =>
+    //  n + ((Math.round((STKPriceIncl/STKQTY / (1+((STKPriceIncl - STKPriceExcl)/STKPriceExcl)) *(1-(Discount/100)))*100))/100*STKQTY) * (1+((STKPriceIncl - STKPriceExcl)/STKPriceExcl)), 0);
+
+    let totalExcl = orders.reduce((n, {STKPriceExcl, Discount, STKQTY}) => n + (Math.round((STKPriceExcl/STKQTY *(1-(Discount/100)))*100))/100*STKQTY, 0);
     
-    totalIncl = new Intl.NumberFormat('en-US',
+    // let totalExcl = orders.reduce((n, {STKPriceIncl,STKPriceExcl, Discount, STKQTY}) => n + (Math.round((STKPriceIncl/STKQTY / (1+((STKPriceIncl - STKPriceExcl)/STKPriceExcl)) *(1-(Discount/100)))*100))/100*STKQTY, 0);
+    let totalVAT = orders.reduce((n, {STKPriceExcl, STKPriceIncl, Discount, STKQTY}) => n + ((Math.round((STKPriceExcl/STKQTY * (1-(Discount/100)))*100))/100*STKQTY * ((STKPriceIncl - STKPriceExcl)/STKPriceExcl)), 0)
+    
+    
+    let totalIncl = new Intl.NumberFormat('en-US',
       { style: 'currency', currency: 'KES' }
-    ).format(totalIncl);
+    ).format(totalExcl + totalVAT);
+
+    totalVAT = new Intl.NumberFormat('en-US',
+    { style: 'currency', currency: 'KES' }
+  ).format(totalVAT);
 
     totalExcl = new Intl.NumberFormat('en-US',
       { style: 'currency', currency: 'KES' }
@@ -29,9 +39,9 @@ export class PdfmakeService {
 
     const body:any = [
         [
-          {text: 'CODE', style: 'tableHeader', alignment:'left'},
           {text: 'ITEM', style: 'tableHeader', alignment:'left'},
           {text: 'QTY', style: 'tableHeader', alignment:'center'},
+          {text: 'DIS.', style: 'tableHeader', alignment:'center'},
           {text: 'PRICE', style: 'tableHeader', alignment:'center'},
           {text: 'TAX', style: 'tableHeader', alignment:'center'},
           {text: 'TOTAL', style: 'tableHeader', alignment:'right'},           
@@ -40,25 +50,32 @@ export class PdfmakeService {
     
     orders.forEach((item:any)=> {
       const tax = item.STKPriceIncl - item.STKPriceExcl;
-      const UnitPriceIncl = new Intl.NumberFormat('en-US',
-        { style: 'currency', currency: 'KES' }
-      ).format(item.UnitPriceIncl);
 
-      const vat = new Intl.NumberFormat('en-US',
-        { style: 'currency', currency: 'KES' }
-      ).format(tax);
+      const disUnitPriceExcl = Math.round((item.STKPriceExcl/item.STKQTY * (1-(item.Discount/100))) * 100)/100;
+      const disUnitPriceTax = disUnitPriceExcl * (tax/item.STKPriceExcl);
+      // const disUnitPriceIncl = disUnitPriceExcl + disUnitPriceTax;
+      const disLinePriceExcl = disUnitPriceExcl * item.STKQTY;
 
-      const StkPriceIncl = new Intl.NumberFormat('en-US',
+     const formatedDisUnitPriceExcl = new Intl.NumberFormat('en-US',
         { style: 'currency', currency: 'KES' }
-      ).format(item.STKPriceIncl);
+      ).format(disUnitPriceExcl);
+
+      const formatedDisUnitPriceTax = new Intl.NumberFormat('en-US',
+        { style: 'currency', currency: 'KES' }
+      ).format(disUnitPriceTax);
+
+
+      const formatedDisLinePriceExcl = new Intl.NumberFormat('en-US',
+        { style: 'currency', currency: 'KES' }
+      ).format(disLinePriceExcl);
 
       const row = [
-        {text:`${item.ItemCode}`, alignment:'left', fontSize:7},
-        {text:`${item.ItemName}`, alignment:'left', fontSize:7},
+        {text:`${item.ItemCode} | ${item.ItemName}`, alignment:'left', fontSize:7},
         {text:`${item.STKQTY}`, alignment:'center', fontSize:7},
-        {text:`${UnitPriceIncl}`, alignment:'center', fontSize:7},
-        {text:`${vat}`, alignment:'center', fontSize:7},
-        {text:`${StkPriceIncl}`, alignment:'right', fontSize:7},
+        {text:`${item.Discount}`, alignment:'center', fontSize:7},
+        {text:`${formatedDisUnitPriceExcl}`, alignment:'center', fontSize:7},
+        {text:`${formatedDisUnitPriceTax}`, alignment:'center', fontSize:7},
+        {text:`${formatedDisLinePriceExcl}`, alignment:'right', fontSize:7},
       ];
        body.push(row)
      });
@@ -67,13 +84,15 @@ export class PdfmakeService {
     const docDefinition = {
       header: '',
       footer: {
-          text: 'Solution provided by Computer Pride Ltd \n www.computer-pride.com', style: 'serviceProvider', alignment:'center' 
+          text: `Solution provided by Computer Pride Ltd \n www.computer-pride.com \n\nPrinted on: ${today}`, style: 'serviceProvider', alignment:'center' 
       },
-      pageSize: 'A5',
+      pageSize: 'A6',
+      pageMargins: [ 15, 10, 15, 30 ],
+
       info: {
-        title: `Kulal Invoice No. - ${visitInfo.ERPInvoiceNo}`,
+        title: `${company.custname} Invoice No. - ${visitInfo.ERPInvoiceNo}`,
         author: 'Sam Tomashi',
-        subject: 'kulal Invoice Receipt',
+        subject: `${company.custname} Invoice Receipt`,
         keywords: 'Receipt, KRA, QRCode',
       },
       
@@ -91,9 +110,8 @@ export class PdfmakeService {
             {text: `${company.custname}\n
             PIN No.: ${company.pin}\n
             Tel: ${company.tel}\n
-            Cell: ${company.cell}\n
             Email: ${company.email}\n
-            Website: ${company.website}\n\n
+            Website: ${company.website}\n
             `, style: 'subheader'},
 
           ]
@@ -107,61 +125,61 @@ export class PdfmakeService {
           style: 'tableExample',
           table: {
             headerRows: 1,
-            widths:'auto',
+            widths: ['auto', 'auto','auto','auto', 'auto', 'auto'],
             body: body,
             layout: 'lightHorizontalLines'
           },
-          layout: 'headerLineOnly'
+          layout: 'lightHorizontalLines'
         },
                 
-        {text:'\n----------------------------------------------------------------------------------------------------------------------------------------'},
         {
           text:`VAT: ${totalVAT}`, bold:true, alignment:'right', fontSize:7, margin: [0, 0, 0, 0],
         },
         {
           text:`TOTAL: ${totalIncl}`, bold:true, alignment:'right', fontSize:7, margin: [0, 0, 0, 0],
         },
-        {text:'----------------------------------------------------------------------------------------------------------------------------------------'},
         
         {text:'\nVAT SUMMARY', bold:true, fontsize:7, alignment:'left'},
-        {text:'----------------------------------------------------------------------------------------------------------------------------------------'},
+        
         {
-          columns:[
-            {text:'RATE', alignment:'left', bold:true, style:'tableHeader'},
-            {text:'Excl.', alignment:'center', bold:true, style:'tableHeader'},
-            {text:'VAT', alignment:'center',bold:true, style:'tableHeader'},
-            {text:'TOTAL', alignment:'right',bold:true, style:'tableHeader'},
-          ]
+          style: 'tableExample',
+          table: {
+            // headerRows: 1,
+            widths: ['auto', '*','*','auto'],
+            body: [
+              [
+                { text: 'RATE', alignment:'left'}, { text: 'EXCL.', alignment:'center'},
+                { text: 'VAT', alignment:'center'}, { text: 'TOTAL', alignment:'right'}
+              ],
+              [
+                { text: '16%', alignment:'left'}, { text: `${totalExcl}`, alignment:'center'},
+                { text: `${totalVAT}`, alignment:'center'}, { text: `${totalIncl}`, alignment:'right'}
+              ]
+            ],
+            layout: 'lightHorizontalLines'
+          },
+          layout: 'lightHorizontalLines'
         },
-        {
-          columns:[
-            {text:'16%', alignment:'left', style:'tableHeader'},
-            {text:`${totalExcl}`, alignment:'center', style:'tableHeader'},
-            {text:`${totalVAT}`, alignment:'center', style:'tableHeader'},
-            {text:`${totalIncl}`, alignment:'right', style:'tableHeader'},
-          ]
-        },
-        {text:'----------------------------------------------------------------------------------------------------------------------------------------'},
 
         {
           text:`YOU WERE SERVED BY: ${visitInfo.VSTRep.toUpperCase()}`, bold:true, alignment:'left', fontSize:7
         },
 
         {
-          text:`\nKULAL LIPA NA MPESA BUY GOODS 5702585\n\n`, bold:true, alignment:'left', fontSize:7
+          text:`\n${company.custname} LIPA NA MPESA BUY GOODS 5702585\n\n`, bold:true, alignment:'left', fontSize:7
         },
 
         {
           columns: [
-            { qr: `\n\n\n ${visitInfo.QRCodeURL} \n\n`, alignment:'right', fit: 90},
+            { qr: `\n\n\n ${visitInfo.QRCodeURL} \n\n`, alignment:'right', fit: 50},
 
-            {text:`KRA CU No.: ${visitInfo.TaxCUNo }\n Trader Invoice No.: ${visitInfo.ERPInvoiceNo }\n KRA Invoice No.: ${visitInfo.TaxInvoiceNo }`, alignment:'left'},
+            {
+              text:`KRA CU No.: ${visitInfo.TaxCUNo }\n Trader Invoice No.: ${visitInfo.ERPInvoiceNo }\n KRA Invoice No.: ${visitInfo.TaxInvoiceNo }`,
+               alignment:'left',
+               fontSize: 8
+            },
           ]
         },
-
-        {
-          text: `Printed on: ${today}`, alignment:'center',
-        }
 
       ],
       styles: {
@@ -174,7 +192,8 @@ export class PdfmakeService {
         subheader: {
           fontSize: 8,
           bold: true,
-          alignment:"right"
+          alignment:"right",
+          margin:0
         },
         serviceProvider: {
           fontSize: 5,
@@ -206,6 +225,6 @@ export class PdfmakeService {
       }
     }
     pdfMake.createPdf(docDefinition).open();
-
+    
   }
 }
