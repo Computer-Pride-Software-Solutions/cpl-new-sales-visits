@@ -400,6 +400,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
               // console.log(this.finalReport.orders)
             }
       frm.reset();
+      frm.Discount.value = 0;
       this.saveReportAsDraft();
     }
   }
