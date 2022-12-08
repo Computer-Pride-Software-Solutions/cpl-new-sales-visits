@@ -73,7 +73,6 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.visitServive.getVisits(hint, this.invoiceFilterForm.getRawValue()).subscribe(visits =>{
           this.visits = visits;
-          console.log(this.visits);
       })
     );
   }
@@ -96,7 +95,6 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
     const customer = await this.customerService.getCustomer(selectedVisit.CustId);
     await this.printService.printSalesOrder({orders: this.visitOrders, visitInfo: selectedVisit, companyDetails: this.companyService.getCompanyDetails(), customer: customer});
     this.loading = false;
-    // console.log(customer)
   }
   
   async getCompanyDetails(){
