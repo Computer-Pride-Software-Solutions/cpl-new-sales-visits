@@ -57,9 +57,9 @@ export class NewClientPage implements OnInit, OnDestroy {
     this.presentLoading();
     const frm = document.querySelector('#frmNewClient') as HTMLFormElement;
     const fd = new FormData(frm);
-    let originLatlng = await this.locationService.getCurrentPosition();
+    // let originLatlng = await this.locationService.getCurrentPosition();
     const clientInfo = {
-      latlong: originLatlng,
+      latlong: "",
     };
     for (const key of fd.keys()) {
       if(fd.get(key).toString().length > 0){
