@@ -73,7 +73,6 @@ export class InvoicePage implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.add(
       this.visitServive.getVisits(hint, this.invoiceFilterForm.getRawValue()).subscribe(visits =>{
           this.visits = visits;
-          console.log(this.visits);
       })
     );
   }
