@@ -71,9 +71,9 @@ export class PdfmakeService {
       },
       pageSize: 'A5',
       info: {
-        title: `Kulal Invoice No. - ${visitInfo.ERPInvoiceNo}`,
+        title: `${company.custname} Invoice No. - ${visitInfo.ERPInvoiceNo}`,
         author: 'Sam Tomashi',
-        subject: 'kulal Invoice Receipt',
+        subject: '${company.custname} Invoice Receipt',
         keywords: 'Receipt, KRA, QRCode',
       },
       
@@ -87,7 +87,7 @@ export class PdfmakeService {
         },
         {
           columns:[
-            {text: `Customer Name: ${customer.CustName}\n PIN: ${customer.taxregnno}`, alignment:'left'},
+            {text: `${customer.CustName}\n ${!customer.addr1 || customer.addr1 === ''? customer.addr2: customer.addr1}`, alignment:'left'},
             {text: `${company.custname}\n
             PIN No.: ${company.pin}\n
             Tel: ${company.tel}\n
@@ -148,7 +148,7 @@ export class PdfmakeService {
         },
 
         {
-          text:`\nKULAL LIPA NA MPESA BUY GOODS 5702585\n\n`, bold:true, alignment:'left', fontSize:7
+          text:`\n${company.custname} ${company.payments} \n\n`, bold:true, alignment:'left', fontSize:7
         },
 
         {
@@ -174,7 +174,8 @@ export class PdfmakeService {
         subheader: {
           fontSize: 8,
           bold: true,
-          alignment:"right"
+          alignment:"right",
+          style: { wordWrap: false },
         },
         serviceProvider: {
           fontSize: 5,
@@ -206,6 +207,12 @@ export class PdfmakeService {
       }
     }
     pdfMake.createPdf(docDefinition).open();
+
+    /** Avoinding automatic file download */
+    // pdfMake.createPdf(docDefinition).getBlob((blob) => {
+    //   var fileURL = URL.createObjectURL(blob);
+    //   window.open(`https://mozilla.github.io/pdf.js/web/viewer.html?file=${fileURL}`, '_blank');
+    // });
 
   }
 }
