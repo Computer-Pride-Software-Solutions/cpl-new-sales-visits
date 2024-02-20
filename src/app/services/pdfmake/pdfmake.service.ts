@@ -67,13 +67,17 @@ export class PdfmakeService {
     const docDefinition = {
       header: '',
       footer: {
-          text: 'Solution provided by Computer Pride Ltd \n www.computer-pride.com', style: 'serviceProvider', alignment:'center' 
+          text: `Printed on: ${today}\n\n
+          Solution provided by Computer Pride Ltd \n 
+          www.computer-pride.com  
+         
+          `, style: 'serviceProvider', alignment:'center' 
       },
       pageSize: 'A5',
       info: {
         title: `${company.custname} Invoice No. - ${visitInfo.ERPInvoiceNo}`,
         author: 'Sam Tomashi',
-        subject: '${company.custname} Invoice Receipt',
+        subject: `${company.custname} Invoice Receipt`,
         keywords: 'Receipt, KRA, QRCode',
       },
       
@@ -100,7 +104,7 @@ export class PdfmakeService {
 
         },
 
-        {text: `Visit No.: ${visitInfo.VSTNo}`, alignment:'right'},
+        {text: `VISIT NO.: ${visitInfo.VSTNo}`, alignment:'right'},
         {text: `\nDate: ${visitInfo.VSTDate}\n\n` , style: 'subheader', alignment:'right'},
   
         {
@@ -155,13 +159,13 @@ export class PdfmakeService {
           columns: [
             { qr: `\n\n\n ${visitInfo.QRCodeURL} \n\n`, alignment:'right', fit: 90},
 
-            {text:`KRA CU No.: ${visitInfo.TaxCUNo }\n Trader Invoice No.: ${visitInfo.ERPInvoiceNo }\n KRA Invoice No.: ${visitInfo.TaxInvoiceNo }`, alignment:'left'},
+            {text:`\n\nKRA CU No.: ${visitInfo.TaxCUNo }\n
+             Trader Invoice No.: ${visitInfo.ERPInvoiceNo }\n
+             KRA Invoice No.: ${visitInfo.TaxInvoiceNo }`, alignment:'left'},
           ]
         },
 
-        {
-          text: `Printed on: ${today}`, alignment:'center',
-        }
+        
 
       ],
       styles: {
