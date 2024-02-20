@@ -152,7 +152,9 @@ export class PdfmakeService {
         },
 
         {
-          text:`\n${company.custname} ${company.payments} \n\n`, bold:true, alignment:'left', fontSize:7
+          text:`\n ${company.payments} \n
+          ${company.messageline1} \n
+          ${company.messageline2} \n\n`, bold:true, alignment:'left', fontSize:7
         },
 
         {
