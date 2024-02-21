@@ -110,7 +110,11 @@ export class PdfmakeService {
         },
         {
           columns:[
-            {text: `${customer.CustName}\n ${!customer.addr1 || customer.addr1 === ''? customer.addr2: customer.addr1}`, alignment:'left'},
+            {text: `${customer.CustName}\n 
+            ${!customer.addr1 || customer.addr1 === ''? customer.addr2: customer.addr1}
+            \n ${customer.taxregnno}`,
+             alignment:'left'},
+            
             {text: `${company.custname}\n
             PIN No.: ${company.pin}\n
             Tel: ${company.tel}\n
