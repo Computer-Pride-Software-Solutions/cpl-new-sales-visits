@@ -401,6 +401,8 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
             }
       frm.reset();
       this.saveReportAsDraft();
+      frm.Discount.value = '0';
+
     }
   }
   }
