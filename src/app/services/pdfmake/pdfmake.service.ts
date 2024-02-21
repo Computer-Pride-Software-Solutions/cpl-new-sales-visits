@@ -10,6 +10,9 @@ export class PdfmakeService {
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
    }
 
+
+ 
+
    async printSalesOrder({orders, visitInfo, companyDetails, customer}){
     const company = await companyDetails;
 
@@ -63,16 +66,32 @@ export class PdfmakeService {
        body.push(row)
      });
 
-    const today = new Date().toLocaleString();
     const docDefinition = {
       header: '',
-      footer: {
-          text: `Printed on: ${today}\n\n
-          Solution provided by Computer Pride Ltd \n 
-          www.computer-pride.com  
+      // footer: {
+      //     text: `Printed on: ${today}\n\n
+      //     Solution provided by Computer Pride Ltd \n 
+      //     www.computer-pride.com  
          
-          `, style: 'serviceProvider', alignment:'center' 
+      //     `, style: 'serviceProvider', alignment:'center' 
+      // },
+
+      footer: function(currentPage, pageCount){
+        const today = new Date().toLocaleString();
+        if (currentPage === pageCount) {
+          return{    
+                text: `Printed on: ${today}\n\nSolution provided by Computer Pride Ltd\nwww.computer-pride.com\n\nPage ${currentPage} / ${pageCount}`, 
+                style: 'serviceProvider', 
+                alignment:'center' 
+          }
+        }
+        return {
+          text: `Page ${currentPage} / ${pageCount}`,
+          alignment: 'center',
+          style: 'serviceProvider'
+        }
       },
+
       pageSize: 'A5',
       info: {
         title: `${company.custname} Invoice No. - ${visitInfo.ERPInvoiceNo}`,
