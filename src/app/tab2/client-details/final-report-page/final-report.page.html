@@ -17,14 +17,31 @@
 
   <ion-list>
     <ion-item>
-      <ion-label>Sales Type</ion-label>
+      <ion-label position="floating">Sales Type</ion-label>
       <ion-select [(ngModel)]="salesType" #ctrl="ngModel" interface="popover" (ionChange)="setSalesType(salesType)" value="Sales Order">
         <ion-select-option value="Invoice" *ngIf="currentUser.userRights.includes('can create orders')">Invoice</ion-select-option>
         <ion-select-option value="Sales Order" *ngIf="currentUser.userRights.includes('can create orders')">Sales Order</ion-select-option>
         <ion-select-option value="Quotation"*ngIf="currentUser.userRights.includes('can create quotation')">Quotation</ion-select-option>
       </ion-select>
     </ion-item>
+
+    <ion-item *ngIf="projects && projects.length > 0">
+                <ion-label position="floating">Select Project Code (optional)</ion-label>
+                <ionic-selectable
+                  headerColor="primary"
+                  [(ngModel)]="project"
+                  [items]="projects"
+                  itemValueField="projcode"
+                  itemTextField="projcode"
+                  [canSearch]="true"
+                  (onChange)="projectCodeChange($event)"
+                  name="projectCode"
+                  [canClear]="true"
+                  closeButtonSlot="end">
+                </ionic-selectable>
+              </ion-item>
   </ion-list>
+
 
   <ion-list *ngIf="finalReport.orders.length > 0">
     <ion-list-header>

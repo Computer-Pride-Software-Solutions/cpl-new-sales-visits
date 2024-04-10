@@ -9,6 +9,7 @@ import { DexieService } from 'src/app/services/Database/Dexie/dexie.service';
 import { DialogService } from 'src/app/services/Dialog/dialog.service';
 import { LocationService } from 'src/app/services/Location/location.service';
 // import { PdfmakeService } from 'src/app/services/pdfmake/pdfmake.service';
+import { IonicSelectableComponent } from 'ionic-selectable';
 
 @Component({
   selector: 'app-final-report',
@@ -32,6 +33,10 @@ export class FinalReportPage implements OnInit, OnDestroy {
   salesType = 'Sales Order';
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
+
+  projects: any[];
+  project: any = "";
+
   @Input() finalReport: any;
   @Input() clientDetails: any; 
   @Input() isUserInRadius: boolean;
@@ -53,6 +58,7 @@ export class FinalReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getAllProjects();
     this.calculateTotalOrderPrice();
   }
 
@@ -84,15 +90,19 @@ export class FinalReportPage implements OnInit, OnDestroy {
         return false;
       }
 
-      self.subscription.add(   
-        self.finalReportService.submitFinalReport(
-          {
-            finalReport: self.finalReport,
+      const report = {
+            finalReport: {
+              ...self.finalReport,
+              projcode: (self.project.projcode)? self.project.projcode: ""
+            },
             gps: originLatlng,
             salesRep: self.currentUser.username,
             salesType: self.salesType,
             otherReference: self.clientDetails?.otherReference
-          },
+          }
+          // console.log(report)
+      self.subscription.add(   
+        self.finalReportService.submitFinalReport(report,
           self.clientDetails.details?.CustCode
         ).subscribe( rsp => {
           self.presentAlert(rsp['msg'], rsp['status']);
@@ -149,4 +159,22 @@ export class FinalReportPage implements OnInit, OnDestroy {
   // }
 
 
+ projectCodeChange( event: {
+    component: IonicSelectableComponent,
+      value: any
+    }): void{
+      this.project = event.value
+  }
+
+
+   getAllProjects(){
+    this.isLoading = true;
+    this.subscription.add(
+      this.finalReportService.getAllProjects()
+      .subscribe((data: any[]) => {
+        this.projects = [...data];
+        this.isLoading = false;
+      })
+    );
+  }
 }
