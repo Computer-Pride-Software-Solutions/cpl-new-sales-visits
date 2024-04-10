@@ -105,6 +105,21 @@ export class ClientService {
     );
   }
 
+  getAllProjects(): Observable<any[]>{
+        const endpoint = 'projects';
+        return this.httpClient.get(`${this.baseUrl}/${endpoint}`, {
+        headers : this.headers,
+        withCredentials: true
+      }).pipe(
+        map((data: any[]) =>{
+          return data;
+        }), catchError(error => {
+          return throwError(error);
+        })
+      );
+
+  }
+
   mapClient(custCode: string, latlon: string){
     const endpoint = 'client';
     return this.httpClient.put(`${this.baseUrl}/${endpoint}/${custCode}`, {
