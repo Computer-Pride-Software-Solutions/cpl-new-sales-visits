@@ -114,21 +114,7 @@
           <ion-list mode="ios" class="slide-form">
             <form id="frmOrder">
 
-            <ion-item *ngIf="projects && projects.length > 0">
-                <ion-label position="floating">Projects</ion-label>
-                <ionic-selectable
-                  headerColor="primary"
-                  [(ngModel)]="project"
-                  [items]="projects"
-                  itemValueField="projcode"
-                  itemTextField="projcode"
-                  [canSearch]="true"
-                  (onChange)="projectCodeChange($event)"
-                  name="projectCode"
-                  [canClear]="true"
-                  closeButtonSlot="end">
-                </ionic-selectable>
-              </ion-item>
+            
 
               <ion-item *ngIf="deliveryDetails && deliveryDetails.length > 0">
                 <ion-label position="floating">Delivery Address</ion-label>

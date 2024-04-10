@@ -57,8 +57,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
   deliveryDetails: IDeliveryDetails[] = [];
   deliveryDetail: IDeliveryDetails;
 
-  projects: any[];
-  project: any;
 
   subscription: Subscription = new Subscription();
   custCode = this.activatedRoute.snapshot.paramMap.get('custCode');
@@ -124,7 +122,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     // this.getDistanceMatrix();
     this.getItemGroup();
     this.getDeliveryCode();
-    this.getAllProjects();
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -401,7 +398,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
                 )).values()
               ];
               this.finalReport.orders = uniqueOrders;
-              this.finalReport["projcode"] = this.project.projcode;
               this.presentToast('Orders added to final report successfully!');
               // console.log(this.finalReport.orders)
             }
@@ -532,13 +528,7 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this.currentlySelectedDeliveryCode= event.value?.DelAddrCode
   }
 
-   projectCodeChange( event: {
-    component: IonicSelectableComponent,
-    value: any
-  }): void{
-    this.project = event.value
-    // console.log(this.project)
-  }
+  
 
   getItems(itemGroup: string): void{
     this.subscription.add(
@@ -699,15 +689,6 @@ export class ClientDetailsPage implements OnInit, OnDestroy {
     this[`${formInput}`].setValue(expiryDate);
   }
 
-  getAllProjects(){
-    this.isLoading = true;
-    this.subscription.add(
-      this.clientService.getAllProjects()
-      .subscribe((data: any[]) => {
-        this.projects = [...data];
-        this.isLoading = false;
-      })
-    );
-  }
+ 
 
 }
