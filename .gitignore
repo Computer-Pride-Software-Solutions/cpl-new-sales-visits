@@ -33,3 +33,4 @@ environment.ts
 /android
 /.angular
 *.cache
+/.firebase
